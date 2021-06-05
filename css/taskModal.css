@@ -1,0 +1,129 @@
+.blur-out {
+  filter: blur(0.5em);
+}
+.disabled {
+  display: none !important;
+}
+
+.taskModal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30em;
+  height: 40em;
+  margin-left: -15em;
+  margin-top: -20em;
+  background-color: #333;
+
+  border-radius: 1em;
+}
+
+.taskModal .header {
+  background-color: black;
+  height: 3em;
+  line-height: 2em;
+  border-radius: 1em 1em 0 0;
+  padding: 0.5em 1em;
+  font-size: 1em;
+}
+
+.taskModal .main {
+  height: 37em;
+  display: flex;
+  flex-direction: column;
+}
+
+.taskModal .header p.float-right {
+  cursor: pointer;
+  float: right;
+}
+
+.taskModal .settings {
+  padding: 1em;
+  flex-grow: 4;
+}
+
+.taskModal .settings h1 {
+  line-height: 1em;
+  font-size: 2em;
+}
+
+.taskModal .settings input {
+  line-height: 1em;
+  font-size: 1.5em;
+  border: 0;
+}
+
+.taskModal .settings p {
+  width: 28em;
+  height: 20em;
+}
+
+.taskModal textarea {
+  height: 20em;
+  padding: 0.2em;
+}
+
+.taskModal .deadline {
+  padding: 1em;
+}
+
+.taskModal .deadline label {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  line-height: 1.5em;
+}
+
+.taskModal .deadline input {
+  margin-left: 0.5em;
+}
+
+.taskModal .timer {
+  padding: 1em;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.taskModal hr {
+  vertical-align: bottom;
+}
+
+.taskModal .timer button {
+  display: inline-block;
+  width: 98%;
+  height: 2em;
+  color: white;
+  border: 0;
+  font-weight: bolder;
+  background-color: RED;
+  margin-bottom: 0.5em;
+}
+
+.taskModal .timer button[name=endTask] {
+  background-color: GREEN;
+}
+
+.taskModal .timer .time {
+  display: inline-block;
+  width: 98%;
+  height: 2em;
+  line-height: 2em;
+  background-color: #555;
+  margin-bottom: 0.25em;
+  font-size: 2em;
+  color: white;
+}
+
+/* Extra small screen / smartphone / 280px to 479px */
+@media only screen and (max-width: 980px) {
+  .taskModal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin-left: 0;
+    margin-top: 0;
+  }
+}
