@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    color: white;
+    background-color: black;
+    width: 100vw;
+    font-size: 0.5em;
+}
+
+header {
+    font-size: 2em;
+    font-family: monospace;
+    background-color: #333;
+    height: 2em;
+    padding: 0 2.5em;
+    line-height: 2em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+header p {
+    display: inline-block;
+}
+
+section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5em;
+    font-size: 3em;
+}
+
+.categoryIndicator {
+    display: inline-block;
+    width: 0.5em;
+    margin-right: 5px;
+    height: 0.8em;
+    background-color: var(--color);
+    border-radius: 0.25em;
+  }

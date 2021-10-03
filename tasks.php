@@ -78,7 +78,14 @@ if(empty($day)) {
     $cat_sel = "AND category = $category";
   }
 }
-$sql = "SELECT tasks.ID, Name, time_spent, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, color FROM `tasks` JOIN category ON tasks.category = category.ID WHERE done IS NULL $cat_sel $day_sel ORDER BY due ASC, due_time ASC, priority DESC, category";
+$sql = "SELECT tasks.ID, Name, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, color, time_spent+IFNULL(time_spent_new, 0) as time_spent
+          FROM `tasks`
+          JOIN category ON tasks.category = category.ID
+          LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
+          WHERE done IS NULL $cat_sel $day_sel
+          ORDER BY due ASC, due_time ASC, priority DESC, category";
+
+#$sql = "SELECT tasks.ID, Name, time_spent, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, color FROM `tasks` JOIN category ON tasks.category = category.ID WHERE done IS NULL $cat_sel $day_sel ORDER BY due ASC, due_time ASC, priority DESC, category";
 $result = mysqli_query($db, $sql);
 
 ?>
@@ -88,6 +95,7 @@ $result = mysqli_query($db, $sql);
   <title>J_Tasks</title>
   <link rel="stylesheet" href="css/J_Tasks.css">
   <link rel="stylesheet" href="css/taskModal.css">
+  <link rel="stylesheet" href="css/header.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
   <script>
@@ -100,7 +108,8 @@ $result = mysqli_query($db, $sql);
     //console.log("Update Date's Duration Sum of",day,"to",sum)
     let prev_sum = document.getElementById(day)
     //console.log(prev_sum)
-    prev_sum.innerText = sum
+    if(prev_sum)
+      prev_sum.innerText = sum
   }
 
   function updateSpentTimeOfDay(day, sum) {
@@ -116,10 +125,25 @@ $result = mysqli_query($db, $sql);
     return s;
   }
   </script>
+  <script src="js/api.js" defer></script>
   <script src="js/taskModal.js" defer></script>
   <script src="js/Notification.js" defer></script>
+  <script src="js/timetable.js" defer></script>
+  <script src="js/header.js" defer></script>
 </head>
 <div id="sound" style="display: none"></div>
+
+<header>
+  <p class="title"></p>
+  <button type="button" name="startStop">START</button>
+  <div class="time">00:00:00</div>
+  <input class="time disabled" type="text" name="timer" value="" placeholder="Add/Substract Time in Seconds">
+  <button type="button" name="endTask">BEENDEN</button>
+  <div class="times">
+    <p class="startTime">start</p>
+    <p class="endTime">ende</p>
+  </div>
+</header>
 
 <div id="sidebar">
   <ul>
@@ -146,13 +170,21 @@ if(mysqli_num_rows($cats)>0) {
   </ul>
   <hr>
   <ul>
+    <a href="?timetable"><li>Timetable</li></a>
+  </ul>
+  <hr>
+  <ul>
     <a href="?today"><li>Heutige Aufgaben</li></a>
     <a href="?tomorrow"><li>Morgen</li></a>
   </ul>
 </div>
-
 <main>
 
+<?php if(isset($_GET['timetable'])) { ?>
+
+<canvas id="timetable"></canvas>
+
+<?php } else { ?>
 
 <center><h2>Open Tasks:</h2></center>
 <table>
@@ -209,7 +241,10 @@ if(mysqli_num_rows($result)>0) {
         //update duration sum of previous day
         echo "<script>updateDurationSumOfDay('daysum_".$day."', $duration_sum)</script>";
 
-        $time_spent_day_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks` WHERE (done IS NULL AND due = '$DueDate') OR DATE(done) = '$DueDate'";
+        // $time_spent_day_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks` WHERE (done IS NULL AND due = '$DueDate') OR DATE(done) = '$DueDate'";
+        $time_spent_day_sum_sql = "SELECT SUM(time_spent)+SUM(time_spent_new) as sum FROM `tasks`
+                                      JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIME))) as time_spent_new FROM `task_history` WHERE (DATE(start_time) = '$DueDate') GROUP BY taskID) as b ON tasks.ID = b.taskID
+                                      WHERE (done IS NULL AND due = '$DueDate') OR DATE(done) = '$DueDate'";
 
         $time_spent_day_sum_res = mysqli_query($db, $time_spent_day_sum_sql);
         $time_spent_day_sum_string = "";
@@ -266,9 +301,9 @@ if(mysqli_num_rows($result)>0) {
       $curSelDay = "tomorrow";
     }
 
-    if(!empty($DueTime) && $DaysLeft == 0) {
+    /*if(!empty($DueTime) && $DaysLeft == 0) {
       $DueTime = $DueTime."<script>addNotification(\"$DueDate\", \"$DueTime\", \"$name. ($ID)\");</script>";
-    }
+    }*/
 
     $time_spent_string = "";
     $time_spent = $row['time_spent'];
@@ -338,8 +373,21 @@ if(isset($_GET['tomorrow'])) {
   $day_sel = "AND DATE(done) = CURRENT_DATE+1";
 }
 
-$sql = "SELECT tasks.ID, Name, time_spent, description, done, duration, priority, IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due)) AS due, TIMESTAMPDIFF(DAY,(IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due))), done) as timeDiff, TIMESTAMPDIFF(DAY, done, NOW()) AS DaysAgo, color FROM `tasks` JOIN category ON category.ID = tasks.category WHERE done IS NOT NULL $cat_sel $day_sel ORDER BY done desc, priority desc";
-//echo $sql;
+$sql = "SELECT tasks.ID, Name, description, done, duration, priority, IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due)) AS due,
+          TIMESTAMPDIFF(DAY,(IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due))), done) as timeDiff, TIMESTAMPDIFF(DAY, done, NOW()) AS DaysAgo, color, time_spent+IFNULL(time_spent_new, 0) as time_spent
+          FROM `tasks`
+          JOIN category ON category.ID = tasks.category
+          LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
+          WHERE done IS NOT NULL $cat_sel $day_sel
+          ORDER BY done desc, priority desc";
+
+
+// $sql = "SELECT tasks.ID, Name, time_spent, description, done, duration, priority, IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due)) AS due, TIMESTAMPDIFF(DAY,(IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due))), done) as timeDiff, TIMESTAMPDIFF(DAY, done, NOW()) AS DaysAgo, color
+//           FROM `tasks`
+//           JOIN category ON category.ID = tasks.category
+//           WHERE done IS NOT NULL $cat_sel $day_sel
+//           ORDER BY done desc, priority desc";
+// echo $sql;
 $result = mysqli_query($db, $sql);
 
 if(mysqli_num_rows($result)>0) {
@@ -394,9 +442,9 @@ if(mysqli_num_rows($result)>0) {
 </table>
 </main>
 
-<div id="taskModal" class="taskModal">
+<div id="taskModal" class="taskModal disabled">
   <div class="header">
-    Aufgabe <p>ID</p> bearbeiten
+    Aufgabe <p id="taskmodal_id">ID</p> bearbeiten (<p id="taskmodal_created"></p>)
     <p class="float-right" onclick="closeTaskModal()">[X]</p>
   </div>
   <div class="main">
@@ -409,13 +457,15 @@ if(mysqli_num_rows($result)>0) {
     <hr>
     <div class="deadline">
       <label>Deadline: <input type="date" name="due-date"><input type="time" name="due-time"></label>
+      <label>Duration: <input type="time" name="duration"></label>
     </div>
     <hr>
     <div class="timer">
       <div class="time">00:00:00</div>
       <input class="time disabled" type="text" name="timer" value="" placeholder="Add/Substract Time in Seconds">
       <button type="button" name="startStop">START</button>
-      <button type="button" name="endTask">Aufgabe beendet</button>
+      <button type="button" name="endTask">Aufgabe beenden</button>
     </div>
   </div>
 </div>
+<?php } ?>

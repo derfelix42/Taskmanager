@@ -25,6 +25,10 @@ if(isset($_GET['ID'])) {
   if(isset($_GET['due_time'])){
     array_push($changes, "`due_time` = '".$_GET['due_time']."'");
   }
+  if(isset($_GET['duration'])){
+    array_push($changes, "`duration` = '".$_GET['duration']."'");
+  }
+
 
   $changes_string = implode(",", $changes);
 

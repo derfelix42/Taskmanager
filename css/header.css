@@ -1,0 +1,60 @@
+header {
+  grid-area: header;
+  background-color: #000;
+
+  display: grid;
+  grid-template-columns: 3fr 0.5fr 1.5fr 0.5fr 3fr;
+}
+
+header .title {
+  line-height: 1.5rem;
+  font-size: 1.2em;
+  padding: 0.5rem;
+}
+
+header .time {
+  text-align: center;
+  height: 1.2em;
+  line-height: 1.2em;
+  background-color: #555;
+  margin-bottom: 0.25em;
+  font-size: 2em;
+  color: white;
+  margin: 0.2em;
+}
+
+header button {
+  text-align: center;
+  line-height: 1.2em;
+  margin: 0.25em;
+  font-size: 1em;
+  color: white;
+  height: 2em;
+
+  border: 0;
+  font-weight: bolder;
+  background-color: RED;
+}
+
+header button[name="startStop"] {
+}
+
+header button[name="endTask"] {
+  background-color: GREEN;
+}
+
+header .times {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+header .startTime {
+  text-align: right;
+  padding-right: 0.5em;
+}
+
+header .endTime {
+  text-align: right;
+  padding-right: 0.5em;
+}

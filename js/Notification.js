@@ -1,5 +1,5 @@
 function checkNotifyStatus() {
-  console.log("Checking NotificationStatus!");
+  //console.log("Checking NotificationStatus!");
   if (!("Notification" in window)) {
     console.log("Notifications not supported!");
   }

@@ -7,10 +7,18 @@
 body {
   display: grid;
   grid-template-columns: 1fr 9fr;
+  grid-template-rows: 3em auto;
+  grid-template-areas:
+  "header header";
   background-color: #222;
   color: white;
-  min-height: 100vh;
+  height: 100vh;
   font-family: monospace;
+}
+
+canvas {
+  height: 100%;
+  width: 100%;
 }
 
 p {
@@ -26,7 +34,7 @@ p {
 }
 
 main {
-  height: 100vh;
+  height: 100%;
   overflow: auto;
 }
 
