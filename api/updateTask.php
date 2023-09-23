@@ -4,44 +4,52 @@ $globals["database_name"] = "j_tasks";
 require_once("../includes/db_connection.php");
 
 $db = $globals['db'];
+$new = json_decode(file_get_contents('php://input'));
 
 $sql = "";
 
 if(isset($_GET['ID'])) {
+
   $ID = $_GET['ID'];
+
+  $sql = "SELECT ID, Name, description, due, due_time, done, duration, priority, deleted, created, time_spent+IFNULL(time_spent_new, 0) as time_spent, category, location, difficulty
+            FROM `tasks` LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
+            WHERE tasks.ID = $ID";
+  $result = mysqli_query($db, $sql);
+  $old = mysqli_fetch_assoc($result);
+
+
   $changes = array();
-  if(isset($_GET['title'])){
-    array_push($changes, "`Name` = '".urldecode($_GET['title'])."'");
+  if(strcmp($new->Name, $old["Name"]) != 0){
+    // print("Name: ".$new->title." - ".$old["Name"]." => ".strcmp($new->title, $old["Name"]));
+    array_push($changes, "`Name` = '".$new->Name."'");
   }
-  if(isset($_GET['description'])){
-    array_push($changes, "`description` = '".urldecode($_GET['description'])."'");
+  if(strcmp($new->description, $old["description"]) != 0){
+    array_push($changes, "`description` = '".$new->description."'");
   }
-  if(isset($_GET['time_spent'])){
-    array_push($changes, "`time_spent` = '".$_GET['time_spent']."'");
+  if(strcmp($new->due, $old["due"]) != 0){
+    array_push($changes, "`due` = '".$new->due."'");
   }
-  if(isset($_GET['due'])){
-    array_push($changes, "`due` = '".$_GET['due']."'");
+  if(strcmp($new->due_time, $old["due_time"]) != 0){
+    array_push($changes, "`due_time` = '".$new->due_time."'");
   }
-  if(isset($_GET['due_time'])){
-    array_push($changes, "`due_time` = '".$_GET['due_time']."'");
+  if(strcmp($new->duration, $old["duration"]) != 0){
+    array_push($changes, "`duration` = '".$new->duration."'");
   }
-  if(isset($_GET['duration'])){
-    array_push($changes, "`duration` = '".$_GET['duration']."'");
+  if(strcmp($new->category, $old["category"]) != 0){
+    array_push($changes, "`category` = '".$new->category."'");
   }
-  if(isset($_GET['category'])){
-    array_push($changes, "`category` = '".$_GET['category']."'");
+  if(strcmp($new->priority, $old["priority"]) != 0){
+    array_push($changes, "`priority` = '".$new->priority."'");
   }
-  if(isset($_GET['priority'])){
-    array_push($changes, "`priority` = '".$_GET['priority']."'");
+  if(strcmp($new->location, $old["location"]) != 0){
+    array_push($changes, "`location` = '".$new->location."'");
   }
-  if(isset($_GET['location'])){
-    array_push($changes, "`location` = '".$_GET['location']."'");
+  if(strcmp($new->deleted, $old["deleted"]) != 0){
+    array_push($changes, "`deleted` = '".$new->deleted."'");
   }
-  if(isset($_GET['deleted'])){
-    array_push($changes, "`deleted` = '".$_GET['deleted']."'");
-  }
-  if(isset($_GET['difficulty'])){
-    array_push($changes, "`difficulty` = '".$_GET['difficulty']."'");
+  if(strcmp($new->difficulty, $old["difficulty"]) != 0){
+    array_push($changes, "`difficulty` = '".$new->difficulty."'");
   }
 
 
@@ -55,5 +63,5 @@ if(isset($_GET['ID'])) {
 
 header('Content-Type: application/json');
 
-print "{'status': 'done', 'sql': '$sql'}";
+print '{"status": "done", "sql": "'.$sql.'", "old": '.json_encode($old).'}';
 ?>

@@ -166,6 +166,7 @@ function updateModal(task) {
   taskModal.querySelector('.header').style.backgroundColor = "#"+categoryColors.filter(cat => cat.ID === task.category)[0].color
   title.innerHTML = task.Name
   description.innerText = task.description || "No further description given..."
+  description_textarea.value = task.description
   task_location.innerText = task.location || ""
   printTimer(parseInt(task.time_spent))
 
@@ -321,9 +322,9 @@ async function storeNewTitle() {
   if(new_title !== currentTask.Name) {
     console.log("Need to update TaskName to",new_title)
     let new_task = JSON.parse(JSON.stringify(currentTask))
-    new_task.title = new_title
+    new_task.Name = new_title
     await updateTaskData(new_task)
-    currentTask.title = new_title
+    currentTask.Name = new_title
   }
   title_input.classList.add('disabled')
   title.classList.remove('disabled')
