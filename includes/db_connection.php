@@ -1,7 +1,6 @@
 <?php
+include('credentials.php');
 $servername = "localhost";
-$username = "***REMOVED***";
-$password = "";
 $database = $globals["database_name"];
 
 $globals['db'] = mysqli_connect($servername, $username, $password, $database);
