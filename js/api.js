@@ -73,53 +73,34 @@ async function updateTask(new_task, old_task) {
 }
 
 async function createTask(task) {
-  let data = []
-  if(task.title) {
-    data.push("title="+task.title)
-  } else {
-    return "no title!"
-    console.log("no title!")
-  }
-  if(task.description) {
-    data.push("description="+task.description)
-  }
-  if(task.due_date) {
-    data.push("due="+task.due_date)
-  } else {
-    return "no due_date!"
-    console.log("no due_date!")
-  }
-  if(task.due_time) {
-    data.push("duetime="+task.due_time)
-  }
-  if(task.duration) {
-    data.push("duration="+task.duration)
-  }
-  if(task.priority) {
-    data.push("priority="+task.priority)
-  } else {
-    data.push("priority=5")
-  }
-  if(task.category) {
-    data.push("category="+task.category)
-  } else {
-    data.push("category=0")
-  }
-  if(task.location) {
-    data.push("location="+task.location)
+  if(!task.title || !task.due_date) {
+    return "no title or no due_date!"
   }
 
-  const data_string = data.join("&")
-
-  const url = encodeURI("api/createTask.php?"+data_string)
-  if(config.debug) {
-    console.log(url)
+  let body = {
+    title: task.title,
+    location: task.location,
+    description: task.description,
+    due: task.due_date,
+    priority: task.priority | 5,
+    category: task.category | 0,
+    duration: task.duration,
+    due_time: task.due_time,
   }
-  let res = await fetch(url)
+
+  const url = "api/createTask.php"
+  const methods = {
+    method: "POST",
+    body: JSON.stringify(body)
+  }
+
+  if(config.debug) console.log(url, methods)
+
+  let res = await fetch(url, methods)
   let text = await res.text()
-  if(config.debug) {
-    console.log(text)
-  }
+  
+  if(config.debug) console.log(text)
+  
   try {
     const json = JSON.parse(text);
     return json;
