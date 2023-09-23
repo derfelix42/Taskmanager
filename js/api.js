@@ -18,58 +18,17 @@ async function getCategoryPrefixes(category) {
 
 async function updateTask(new_task, old_task) {
   const ID = old_task.ID
-  let data = []
-  if(old_task.title !== new_task.title) {
-    data.push("title="+encodeURIComponent(new_task.title))
-  }
-  if(old_task.description !== new_task.description) {
-    data.push("description="+encodeURIComponent(new_task.description))
-  }
-  if(old_task.time_spent !== new_task.time_spent) {
-    //data.push("time_spent="+new_task.time_spent)
-    console.log("OH NO!")
-    alert("Depricated!")
-  }
-  if(old_task.due !== new_task.due) {
-    data.push("due="+new_task.due)
-  }
-  if(old_task.due_time !== new_task.due_time) {
-    data.push("due_time="+new_task.due_time)
-  }
-  if(old_task.duration !== new_task.duration) {
-    data.push("duration="+new_task.duration)
-  }
-  if(old_task.category !== new_task.category) {
-    data.push("category="+new_task.category)
-  }
-  if(old_task.priority !== new_task.priority) {
-    data.push("priority="+new_task.priority)
-  }
-  if(old_task.location !== new_task.location) {
-    data.push("location="+new_task.location)
-  }
-  if(old_task.deleted !== new_task.deleted) {
-    data.push("deleted="+new_task.deleted)
-  }
-  if(old_task.difficulty !== new_task.difficulty) {
-    data.push("difficulty="+new_task.difficulty)
-  }
+  const url = "api/updateTask.php?ID="+ID
 
-  if(data.length > 0 || old_task.description !== new_task.description) {
-    if(config.debug) {
-      console.log("Updating to", new_task)
-    }
-    const data_string = "&"+data.join("&")
+  if(config.debug) console.log(url)
 
-    const url = encodeURI("api/updateTask.php?ID="+ID+data_string)
-    if(config.debug) {
-      console.log(url)
-    }
-    let res = await fetch(url)
-    if(config.debug) {
-      console.log(await res.text())
-    }
-  }
+  let res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(new_task)
+  })
+
+  if(config.debug) console.log(await res.text())
+
 }
 
 async function createTask(task) {
@@ -100,7 +59,7 @@ async function createTask(task) {
   let text = await res.text()
   
   if(config.debug) console.log(text)
-  
+
   try {
     const json = JSON.parse(text);
     return json;
