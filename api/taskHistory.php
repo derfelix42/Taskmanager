@@ -55,6 +55,11 @@ if(isset($_GET['taskID'])) {
 
     $data = json_encode($row);
   }
+
+  if(isset($_GET['reset'])) {
+    $sql = "UPDATE `task_history` SET start_time = CURRENT_TIMESTAMP WHERE taskID = $ID AND stop_time IS NULL;";
+    mysqli_query($db, $sql);
+  }
 }
 
 if(isset($_GET['activeTask'])) {

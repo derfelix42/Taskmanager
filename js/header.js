@@ -16,6 +16,12 @@ class Header {
 
     this.currentTask = {}
 
+    this.title.addEventListener("click", () => {
+      if(this.currentTask !== {}) {
+        openModal(this.currentTask.ID)
+      }
+    })
+
     this.startStopBtn.addEventListener("click", this.startStopTimer)
     this.time.addEventListener("click", () => {
       this.time.classList.add('disabled')
@@ -76,7 +82,9 @@ class Header {
 
   updateHeader = async () => {
     this.title.innerText = this.currentTask.Name || "No active Task"
-    console.log("update Header")
+    if(config.debug) {
+      console.log("update Header")
+    }
     if(this.currentTask.due_date) {
       this.startTime.innerText = this.currentTask.due_time
     } else {

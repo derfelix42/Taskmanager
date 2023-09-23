@@ -5,6 +5,10 @@
   display: none !important;
 }
 
+.flex-one {
+  flex: 1;
+}
+
 .taskModal {
   position: absolute;
   top: 50%;
@@ -36,32 +40,79 @@
 .taskModal .header p.float-right {
   cursor: pointer;
   float: right;
+  margin-left: 0.5em;
 }
 
 .taskModal .settings {
   padding: 1em;
-  flex-grow: 4;
+  display: flex;
+  flex-direction: column;
 }
 
 .taskModal .settings h1 {
   line-height: 1em;
   font-size: 2em;
+  cursor: pointer;
+  transition: ease .2s;
+  padding: 0.2em;
+  width: 100%;
+  min-height: 1.4em;
 }
 
-.taskModal .settings input {
-  line-height: 1em;
-  font-size: 1.5em;
-  border: 0;
+.taskModal .settings h1:hover {
+  font-weight: 800;
+  background-color: #444;
 }
+
+.taskModal .settings input[type=text] {
+  line-height: 1em;
+  font-size: 2em;
+  font-family: monospace;
+  font-weight: 700;
+
+  height: 1.4em;
+  border: 0;
+  border-bottom: 1px solid black;
+  padding: 0.2em;
+  background-color: #555;
+  color: white;
+  outline: none;
+}
+
+.taskModal .settings input[type=text],textarea::placeholder {
+  color: white;
+  opacity: 0.8;
+}
+
 
 .taskModal .settings p {
   width: 28em;
   height: 20em;
 }
 
+.taskModal p.description {
+  display: inline-block;
+  margin-top: 0.5em;
+  width: 28em;
+  padding: 0.4em;
+  color: white;
+  overflow-y: auto;
+  cursor: pointer;
+  transition: ease .2s;
+}
+
+.taskModal p.description:hover {
+  font-weight: 700;
+  background-color: #444;
+}
+
 .taskModal textarea {
-  height: 20em;
-  padding: 0.2em;
+  margin-top: 0.5em;
+  padding: 0.4em;
+  background-color: #555;
+  color: white;
+  outline: none;
+  resize: none;
 }
 
 .taskModal .deadline {
@@ -74,13 +125,43 @@
   justify-content: space-between;
   line-height: 1.5em;
   margin-bottom: 0.2em;
+  width: 100%;
 }
 
 .taskModal .deadline input {
   margin-left: 0.5em;
 }
 
+.taskModal .deadline select {
+  width: 100%;
+  margin-left: 0.5em;
+}
+
+.taskModal .settings {
+  padding: 1em;
+}
+
+.taskModal .settings label {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  line-height: 1.5em;
+  margin-bottom: 0.2em;
+  width: 100%;
+}
+
+.taskModal .settings select {
+  margin-left: 0.5em;
+  width: 100%;
+}
+
 .taskModal .timer {
+  padding: 1em;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.taskModal .save {
   padding: 1em;
   text-align: center;
   vertical-align: bottom;
@@ -90,7 +171,7 @@
   vertical-align: bottom;
 }
 
-.taskModal .timer button {
+.taskModal button {
   display: inline-block;
   width: 98%;
   height: 2em;
@@ -99,10 +180,38 @@
   font-weight: bolder;
   background-color: RED;
   margin-bottom: 0.5em;
+  cursor: pointer;
 }
 
-.taskModal .timer button[name=endTask] {
+.taskModal button[name=startStop] {
+  margin-left: 0.25em;
+}
+
+.taskModal button[name=endTask] {
   background-color: GREEN;
+}
+
+.taskModal button[name=save] {
+  background-color: GREEN;
+}
+
+.taskModal button[name=save-and-start] {
+  background-color: GREY;
+}
+
+.taskModal button[name=resetTimer] {
+  background-color: GREY;
+  width: 3em;
+  transform: scale(-1, 1);
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+}
+
+.taskModal .buttonGroup {
+  /* width: 98%; */
+  display: flex;
+  align-items: center;
+  margin: 0;
 }
 
 .taskModal .timer .time {
@@ -116,6 +225,11 @@
   color: white;
 }
 
+.smallInput {
+  margin-top: 0.25em;
+  font-size: 1.4em !important;
+}
+
 /* Extra small screen / smartphone / 280px to 479px */
 @media only screen and (max-width: 980px) {
   .taskModal {
@@ -127,4 +241,22 @@
     margin-left: 0;
     margin-top: 0;
   }
+
+  .mobilBigInput {
+    font-size: 1.5em;
+    line-height: 1em;
+  }
+}
+
+.taskModal .bigInput {
+  font-size: 1.5em;
+  line-height: 1em;
+}
+
+.margin-left {
+  margin-left: 0.5em;
+}
+
+.padding {
+  padding: 1em;
 }

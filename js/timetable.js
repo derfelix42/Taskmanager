@@ -2,6 +2,12 @@ const canvas = document.getElementById('timetable');
 let ctx;
 let interval
 
+function decodeEntity(inputStr) {
+    var textarea = document.createElement("textarea");
+    textarea.innerHTML = inputStr;
+    return textarea.value;
+}
+
 let settings = {
   scale: 0.9,
   starttime: 4,
@@ -15,11 +21,23 @@ let settings = {
   overlap: 20,
   fontsize: 20,
   small_fontsize: 15,
+  printing: false,
 }
 
+// Variables for storing last known Mouse-Position
 let mouseX
 let mouseY
+let mouseHoverID
 
+// Variables for Selection for creating new Task
+let cursor_day
+let cursor_hour
+let cursor_select = {}
+
+// Define Font Family
+let fontfamily = "Arial"
+
+// Default Values for currentWeek-Dates
 let currentWeek = [
   {day: 0, date: "07.06.2021"},
   {day: 1, date: "08.06.2021"},
@@ -30,65 +48,89 @@ let currentWeek = [
   {day: 6, date: "13.06.2021"},
 ]
 
+// Default Values for WakeupTimes
+let wakeup_times = {}
+let sleep_hours = {}
+let bedtimes = {}
+
 let weekSelected = "current"
+let weekModifier = 0
 let dateOfMonday
 const daysOfWeek = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 
 let tasks = []
 async function setup() {
   if(canvas) {
+    // Get Canvas
     ctx = canvas.getContext('2d');
 
-
-    let d = new Date()
-    let diff = d.getDate()-d.getDay()+(d.getDay()==0?-6:1)
-
-
+    // Initial tasks
     calculateMonday()
-    // console.log(dateOfMonday, currentWeek)
-
-
-
     calculateScale()
-//    console.log(ctx)
-
     resizeCanvas(ctx)
+
+    // Register Eventlistener on Window-Resize to dynamicly update rendering-scale
     window.addEventListener('resize', () => {resizeCanvas(); drawTimetable()});
 
+    // get Data and Draw Timetable for first time
     await updateTasks()
     drawTimetable()
 
+    // Register function to update Timetable at 60FPS
     interval = setInterval(drawTimetable, 1/60*1000);
+
+    // Register function to update Data every 1s
     let taskupdater = setInterval(updateTasks, 1000);
 
+    // Register Mouse-Events
     canvas.addEventListener("mousemove", mousemovement, false);
-    canvas.addEventListener("click", mouseclick, false);
-
-
+    canvas.addEventListener("mousedown", mousedown, false);
+    canvas.addEventListener("mouseup", mouseup, false);
 
   }
 }
 
 setup()
 
-function calculateMonday() {
+function calculateMonday(reset=false) {
+  // Current Datetime
   let d = new Date()
+
+  if(reset) {
+    php_date = ""
+  }
+
+  if(php_date !== "" && (dateOfMonday === undefined || (dateOfMonday !== undefined && php_date !== dateOfMonday.toISOString().split("T")[0])))
+    d = new Date(php_date)
+
+  // Calculate Offset to this weeks Monday
   let diff = d.getDate()-d.getDay()+(d.getDay()==0?-6:1)
 
+  // Add/Substract one Week on Offset, depending on which week is selected
+  // if(weekSelected === "last") {
+  //   diff = diff-7
+  // } else if(weekSelected === "next") {
+  //   diff = diff+7
+  // }
 
-  if(weekSelected === "last") {
-    diff = diff-7
-  } else if(weekSelected === "next") {
-    diff = diff+7
-  }
+  // Calculate Offset depending on weekModifier (integer increments of weeks to future / past)
+  diff = diff+7*weekModifier
 
-  //console.log(day, diff, "test", new Date(d.setDate(diff)))
+  // Calculate Date for Monday of selected Week
+  // Needed for querying the
   dateOfMonday = new Date(d.setDate(diff))
+  if(config.debug)
+    console.log("calculateMonday", dateOfMonday)
 
+  // Fill 'currentWeek'-Array with date of each day
   for(let i = 0; i < 7; i++) {
-    let date = new Date(d.setDate(diff+i))
+    let date = new Date(dateOfMonday)
+    date.setDate(date.getDate()+i)
     currentWeek[i].date = String(date.getDate()).padStart(2, "0") + '.' + String(date.getMonth() + 1).padStart(2, "0") + '.' + date.getFullYear();
   }
+
+  php_date = dateOfMonday.toISOString().split("T")[0]
+
 }
 
 function calculateScale() {
@@ -97,6 +139,7 @@ function calculateScale() {
   const scale = ctx.canvas.clientWidth/max_width
   if(scale > 0.65) {
     settings.scale = scale
+    settings.x_start = 60+60*settings.scale
   }
   else {
     settings.scale = 1
@@ -104,23 +147,28 @@ function calculateScale() {
 }
 
 function getCurrentWeekNumber() {
-    let d = dateOfMonday
+  let d = dateOfMonday
 
-    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    // Set to nearest Thursday: current date + 4 - current day number
-    // Make Sunday's day number 7
-    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-    // Get first day of year
-    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
-    return "KW·"+padZero(weekNo)+"·"+d.getUTCFullYear()
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  // Set to nearest Thursday: current date + 4 - current day number
+  // Make Sunday's day number 7
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+  // Get first day of year
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+  return "KW·"+padZero(weekNo)+"·"+d.getUTCFullYear()
 }
 
 function drawTimetable() {
-  //console.time('drawTimetable')
+  // console.time('drawTimetable')
   resizeCanvas()
   calculateScale()
-  ctx.fillStyle = "#222"
+  if(settings.printing) {
+    ctx.fillStyle = "#fff"
+  } else {
+    ctx.fillStyle = "#222"
+  }
+
   ctx.fillRect(0,0,ctx.canvas.clientWidth,ctx.canvas.clientHeight)
 
 
@@ -138,39 +186,89 @@ function drawTimetable() {
   drawBlocking(6, 19,20)
   drawBlocking(6, 9,10)
 
-  drawWakeUpPattern(0,5)
-  drawWakeUpPattern(1,5)
-  drawWakeUpPattern(2,5)
-  drawWakeUpPattern(3,5)
-  drawWakeUpPattern(4,5)
-  drawWakeUpPattern(5,6.5)
-  drawWakeUpPattern(6,6.5)
-
-  drawWeek(ctx)
-  drawTasks()
-  drawCurrentTimeBar()
   for(let day = 0; day < 7; day++) {
-    printDayTasks(day, tasks.filter(task => {return (task.dayofweek === day && !task.due_time)}))
+    drawWakeUpPattern(day,wakeup_times[day])
+    drawSleepPattern(day,bedtimes[day])
+    printLastNightsSleep(day, sleep_hours[day])
+
   }
 
-  drawMouseLine()
+  
+  // drawWakeUpPattern(1,wakeup_times[1])
+  // drawWakeUpPattern(2,wakeup_times[2])
+  // drawWakeUpPattern(3,wakeup_times[3])
+  // drawWakeUpPattern(4,wakeup_times[4])
+  // drawWakeUpPattern(5,wakeup_times[5])
+  // drawWakeUpPattern(6,wakeup_times[6])
 
-  drawButtons()
+  // drawSleepPattern(1,bedtimes[1])
+  // drawSleepPattern(2,bedtimes[2])
+  // drawSleepPattern(3,bedtimes[3])
+  // drawSleepPattern(4,bedtimes[4])
+  // drawSleepPattern(5,bedtimes[5])
+  // drawSleepPattern(6,bedtimes[6])
 
-  ctx.fillStyle = "#fff"
-  ctx.font = "18px Arial"
+  
+  drawWeek(ctx)
+  drawTasks()
+
+  if(!settings.printing) {
+    drawCurrentTimeBar()
+    for(let day = 0; day < 7; day++) {
+      printDayTasks(day, tasks.filter(task => {return (task.dayofweek === day && !task.due_time)}))
+    }
+
+    drawMouseLine()
+
+    drawButtons()
+  }
+
+  if(settings.printing) {
+    ctx.fillStyle = '#000';
+  } else {
+    ctx.fillStyle = '#fff';
+  }
+
+  ctx.font = 18*settings.scale+"px "+fontfamily
   const text = getCurrentWeekNumber()
   ctx.fillText(text, settings.start_x+settings.spacings.day*7*settings.scale+settings.overlap*3*settings.scale-ctx.measureText(text).width, 14)
-  //console.timeEnd('drawTimetable')
+
+  if(mouseHoverID === -1) {
+    drawSelectionRect()
+
+  }
+
+  // console.timeEnd('drawTimetable')
 }
+
+document.addEventListener("keydown", async (e) => {
+  if(e.ctrlKey && e.key === "p") {
+    e.preventDefault()
+    print_canvas()
+  }
+});
+document.getElementById('printTimetableButton').addEventListener("click", () => {
+  print_canvas()
+})
+
+function print_canvas() {
+  console.log("print!")
+  settings.printing = true
+  drawTimetable()
+  let win = window.open('about:blank',"window", 'width=1350,height=750');
+  // win.document.write("<h1>Halloo Welt!</h1>")
+  win.document.write("<br><img src = '"+canvas.toDataURL()+"'/>");
+  settings.printing = false
+}
+
 
 function drawButtons() {
   let x_start = 100
   let y_start = 5
-  ctx.font = "12px Arial"
+  ctx.font = "12px "+fontfamily
   ctx.textAlign = "center"
 
-  let weeks = ["last Week", "current Week", "next Week"]
+  let weeks = ["<", "current Week", ">"]
 
   for(let index in weeks) {
     let title = weeks[index]
@@ -197,7 +295,7 @@ function checkButtonClick() {
   //console.log("checkButtonClick")
   let x_start = 100
   let y_start = 5
-  let weeks = ["last Week", "current Week", "next Week"]
+  let weeks = ["prev Week", "current Week", "next Week"]
 
   for(let index in weeks) {
     let title = weeks[index]
@@ -208,18 +306,31 @@ function checkButtonClick() {
 
     if(mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
       weekSelected = title.split(" ")[0]
+      if(title.split(" ")[0] === "next") {
+        weekModifier += 1
+      } else if(title.split(" ")[0] === "prev") {
+        weekModifier += -1
+      } else {
+        weekModifier = 0
+        calculateMonday(true)
+      }
+      console.log(weekModifier)
+
       calculateMonday()
       updateTasks()
       //console.log("Button",index, weekSelected)
+      window.history.pushState("Test", "Change of Week", "tasks.php?timetable&date="+dateOfMonday.toISOString().split('T')[0]);
     }
   }
 }
 
 async function getTasks(date) {
   date = date.toISOString().split('T')[0]
-  console.log("api/getWeeksTasks.php?date="+date)
   const res = await fetch("api/getWeeksTasks.php?date="+date);
   let json = await res.json()
+  if(config.debug) {
+    console.log("api/getWeeksTasks.php?date="+date, json)
+  }
 
   json.forEach(task => {
     //let time = task.due_time.split(":")[0]
@@ -260,21 +371,101 @@ async function getTasks(date) {
       task.color = "777"
     }
   })
-  console.log(json)
+  if(config.debug) {
+    console.log(json)
+  }
   return json
 }
 
 async function updateTasks() {
   tasks = await getTasks(dateOfMonday)
+  loadWakeupTimes()
 }
 
+async function loadWakeupTimes() {
+  data = await getWakeupTimes(dateOfMonday)
+  if(config.debug)
+    console.log(data)
+
+  if(data.data.length > 0) {
+    // Go through Days of Week
+    for(let i = 0; i < 7; i++) {
+      dow = i
+  
+      // Get Data from DB, if available
+      filtered = data.data.filter(x => (((x.DOW - 2 % 7) + 7 ) % 7) == i)
+      if (filtered.length === 1) {
+        waketime = filtered[0].wakeup_time
+        // console.log(waketime)
+        h = parseInt(waketime.split(":")[0])
+        m = parseInt(waketime.split(":")[1])
+        waketime = h+m/60
+
+        sleeptime = filtered[0].yesterday_sleep_time
+        // console.log(sleeptime)
+        h = parseInt(sleeptime.split(":")[0])
+        m = parseInt(sleeptime.split(":")[1])
+        sleeptime = h+m/60
+
+        hours_of_sleep = filtered[0].sleep_hours
+        // console.log(hours_of_sleep)
+        // h = parseInt(hours_of_sleep.split(":")[0])
+        // m = parseInt(hours_of_sleep.split(":")[1])
+        // hours_of_sleep = h+m/60
+
+      } else {
+        // Use Default-Values if no data in DB for DOW
+        waketime = 7
+        if (dow < 5) {
+          waketime = 6
+        }
+
+        sleeptime = 24
+        hours_of_sleep = ""
+      }
+  
+      // Set wakeup-time
+      wakeup_times[i] = waketime
+      bedtimes[(i-1)%7] = sleeptime
+      sleep_hours[i] = hours_of_sleep
+    }
+  } else {
+    for(let i = 0; i < 7; i++) {
+      dow = i
+  
+      // Get Data from DB, if available
+      filtered = data.data.filter(x => (((x.DOW - 2 % 7) + 7 ) % 7) == i)
+      if (filtered.length === 1) {
+        waketime = filtered[0].time
+        h = parseInt(waketime.split(":")[0])
+        m = parseInt(waketime.split(":")[1])
+        waketime = h+m/60
+      } else {
+        // Use Default-Values if no data in DB for DOW
+        waketime = 7
+        if (dow < 5) {
+          waketime = 6
+        }
+      }
+  
+      // Set wakeup-time
+      wakeup_times[i] = waketime
+      bedtimes[(i-1)%7] = 24
+      sleep_hours[i] = ""
+    }
+  }
+  if(config.debug)
+    console.log(bedtimes, sleep_hours)
+
+
+}
 
 function drawTasks() {
   tasks.forEach(task => {
     if(task.due && (task.time_spent >= 600 || parseInt(task.time_spent) === 0))  {
-      let ob = {name: task.Name, day: task.dayofweek, startTime: parseFloat(task.start), endTime: parseFloat(task.end), color: "#"+task.color, done: task.bool_done}
-      //console.log(ob)
-      drawTask(ob)
+      let ob = {name: task.Name, day: task.dayofweek, startTime: parseFloat(task.start), endTime: parseFloat(task.end), color: "#"+task.color, done: task.bool_done, location: task.location, priority: task.priority}
+      // console.log(ob)
+      drawTask(ob, task)
     }
   })
 }
@@ -284,13 +475,18 @@ function resizeCanvas() {
   const clientHeight = ctx.canvas.clientHeight
   const clientWidth = ctx.canvas.clientWidth
 
-  ctx.canvas.height = clientHeight
+  ctx.canvas.height = clientWidth / 1.8
   ctx.canvas.width = clientWidth
 }
 
 function drawWeek(ctx) {
-  ctx.strokeStyle = '#ffffff';
-  ctx.fillStyle = '#ffffff';
+  if(settings.printing) {
+    ctx.strokeStyle = '#000';
+    ctx.fillStyle = '#000';
+  } else {
+    ctx.strokeStyle = '#ffffff';
+    ctx.fillStyle = '#ffffff';
+  }
   ctx.lineWidth = 1;
 
   //console.log("drawing horizontal Lines")
@@ -317,8 +513,12 @@ function drawWeek(ctx) {
 
 
   //console.log("adding Weekdays")
-  ctx.font = (settings.fontsize*settings.scale)+"px Arial"
-  ctx.fillStyle = "#ffffff"
+  ctx.font = (settings.fontsize*settings.scale)+"px "+fontfamily
+  if(settings.printing) {
+    ctx.fillStyle = '#000';
+  } else {
+    ctx.fillStyle = '#ffffff';
+  }
   ctx.textAlign="center";
   ctx.textBaseline = "middle";
 
@@ -342,18 +542,29 @@ function drawWeek(ctx) {
   }
 }
 
-function drawTask(task) {
+function drawTask(task, orig_task) {
   const day = task.day;
   const startTime = task.startTime
   const endTime = task.endTime
-  const name = task.name
   const color = task.color
+  const location = task.location
+  let name = decodeEntity(task.name)
+  if(task.priority >= 10) {
+    // name += "❗"
+  }
 
   // TODO: Sollte später in dem task-Objekt mit übergeben werden, damit Box-Collisions erkannt werden können -> Hover-Menüs etc
   const x_start = settings.start_x+day*settings.spacings.day*settings.scale
   const x_end = settings.start_x+(day+1)*settings.spacings.day*settings.scale
   const y_start = settings.start_y+(startTime-settings.starttime)*settings.spacings.hour*settings.scale
   const y_end = settings.start_y+(endTime-settings.starttime)*settings.spacings.hour*settings.scale
+  if(!orig_task.position) {
+    orig_task.position = {}
+  }
+  orig_task.position.x_start = x_start
+  orig_task.position.x_end = x_end
+  orig_task.position.y_start = y_start
+  orig_task.position.y_end = y_end
 
   const height = y_end - y_start
   const width = x_end - x_start
@@ -364,18 +575,25 @@ function drawTask(task) {
   let margin = 2
 
   //Draw Rect with Border
-  //console.log(x_start+margin, y_start+margin, width-2*margin, height-2*margin)
-  ctx.fillStyle = color;
-  ctx.fillRect(x_start+margin, y_start+margin, width-2*margin, height-2*margin)
-  ctx.lineWidth = margin/2;
-  ctx.strokeStyle = "rgba(0,0,0,0.5)";
-  ctx.strokeRect(x_start+margin, y_start+margin, width-2*margin, height-2*margin)
+  if(settings.printing) {
+    ctx.fillStyle = "#ccc";
+    ctx.fillRect(x_start, y_start, width, height)
+    ctx.lineWidth = margin/2;
+    ctx.strokeStyle = "rgba(0,0,0,1)";
+    ctx.strokeRect(x_start, y_start, width, height)
+  } else {
+    ctx.fillStyle = color;
+    ctx.fillRect(x_start+margin, y_start+margin, width-2*margin, height-2*margin)
+    ctx.lineWidth = margin/2;
+    ctx.strokeStyle = "rgba(0,0,0,0.5)";
+    ctx.strokeRect(x_start+margin, y_start+margin, width-2*margin, height-2*margin)
+  }
 
   //Write Name of Task
   let lines = wrapText(name, settings.spacings.day*settings.scale-2*margin-5)
   const possibleLineCount = height / (settings.fontsize*2*settings.scale)
   //console.log(lines, height, settings.fontsize*2*settings.scale, possibleLineCount)
-  ctx.font = (settings.fontsize*settings.scale)+"px Arial"
+  ctx.font = (settings.fontsize*settings.scale)+"px "+fontfamily
 
   if(possibleLineCount < lines.length) {
     lines = lines.slice(0, possibleLineCount+1)
@@ -387,11 +605,24 @@ function drawTask(task) {
     text_start_y = y_center-(Math.floor(lines.length/2)*settings.fontsize)-(lines.length%2)*settings.fontsize+settings.fontsize/2
   //console.log(lines, text_start_y, y_center)
   lines.forEach((line, index) => {
-    ctx.fillText(line, x_center, text_start_y+settings.fontsize*index)
+    ctx.fillText(line, x_center, text_start_y+settings.fontsize*index*settings.scale)
   })
+
+  //Write Location if existing
+  if(location) {
+    //console.log(location)
+    ctx.font = (settings.fontsize*settings.scale*0.6)+"px "+fontfamily
+    ctx.textAlign = "left"
+    ctx.fillStyle = invertColor(color, true)
+    ctx.fillText(location, x_start+4,y_end-settings.fontsize*settings.scale*0.5*0.6-3)
+  }
 }
 
 function invertColor(hex, bw) {
+    if(settings.printing) {
+      return "#000"
+    }
+
     if (hex.indexOf('#') === 0) {
         hex = hex.slice(1);
     }
@@ -419,12 +650,6 @@ function invertColor(hex, bw) {
     return "#" + padZero(r) + padZero(g) + padZero(b);
 }
 
-function padZero(str, len) {
-    len = len || 2;
-    var zeros = new Array(len).join('0');
-    return (zeros + str).slice(-len);
-}
-
 
 function printDayTasks(day, list) {
   //console.log(list)
@@ -434,15 +659,22 @@ function printDayTasks(day, list) {
 
   let currY = y_start
 
-  ctx.font = (settings.small_fontsize*settings.scale)+"px Arial"
-  ctx.fillStyle = "#ffffff"
+  ctx.font = (settings.small_fontsize*settings.scale)+"px "+fontfamily
+  if(settings.printing) {
+    ctx.fillStyle = "#000"
+  } else {
+    ctx.fillStyle = "#fff"
+  }
   ctx.textAlign="left";
   ctx.textBaseline = "top";
 
   let radius = settings.small_fontsize/4
 
   list.forEach((task, index) => {
-    let text = task.Name//+(task.bool_done?" ✓":"")
+    let text = decodeEntity(task.Name)//+(task.bool_done?" ✓":"")
+    if(task.priority >= 10) {
+      text += " ❗"
+    }
     if(parseInt(task.time_spent) > 0)
       text += " ("+Math.floor(task.time_spent/3600)+":"+String(Math.floor(task.time_spent/60%60)).padStart(2,'0')+")"
     let lines = wrapText(text, settings.spacings.day*settings.scale-3*radius-5)
@@ -471,13 +703,131 @@ function printDayTasks(day, list) {
 }
 
 function mousemovement(e) {
-  mouseX = event.clientX - canvas.offsetLeft;
-  mouseY = event.clientY - canvas.offsetTop;
+  mouseX = e.clientX - canvas.offsetLeft;
+  mouseY = e.clientY - canvas.offsetTop;
+  // console.log(mouseX, mouseY)
+
+  cursor_day = Math.floor((mouseX - settings.start_x) / (settings.spacings.day*settings.scale))
+  cursor_hour = settings.starttime+((mouseY - settings.start_y) / (settings.spacings.hour*settings.scale))
+  if(cursor_hour > settings.endtime || cursor_hour < settings.starttime) {
+    cursor_hour = -1
+  }
+  // console.log(day, hour)
+
+  mouseHoverID = -1
+  // console.log(tasks)
+  for(let task of tasks.filter(t => (t.DOW-2+7)%7 === cursor_day)) {
+    if(task.position) {
+      if(task.position.x_start < mouseX && mouseX < task.position.x_end && task.position.y_start < mouseY && mouseY < task.position.y_end) {
+        mouseHoverID = task.ID
+      }
+    }
+  }
+
+  if(mouseHoverID !== -1) {
+    // console.log(mouseHoverID, tasks.filter(t=>t.ID === mouseHoverID)[0].Name)
+  }
 }
 
-function mouseclick(e) {
+function mousedown(e) {
   //console.log(e)
   checkButtonClick()
+
+  // Open TaskModal if task is clicked
+  if(mouseHoverID !== -1) {
+    console.log("Opening task with id", mouseHoverID)
+    openModal(mouseHoverID)
+  }
+
+  if(mouseHoverID === -1) {
+    cursor_select.day_start = cursor_day
+    cursor_select.hour_start = Math.floor(cursor_hour * 2) / 2
+  }
+}
+
+function mouseup(e) {
+  console.log("MouseUP!")
+  
+  if(mouseHoverID !== -1) {
+    return 
+  }
+
+    
+  let day_start = cursor_select.day_start
+  let day_end = cursor_day
+  let hour_start = Math.floor(cursor_select.hour_start * 2) / 2
+  let hour_end = Math.floor(cursor_hour * 2) / 2
+  if(hour_start > hour_end) {
+    hour_start = hour_end - 1
+    hour_end = Math.floor(cursor_select.hour_start * 2) / 2 + 0.5
+  } else {
+    hour_end += 0.5
+  }
+  
+  cursor_select.hour_end = hour_end
+  cursor_select.day_end = day_end
+  
+  cursor_select.duration = hour_end - hour_start
+  
+  console.log(cursor_select)
+  if(day_start >= 0 && day_end >= 0 && hour_start >= 0 && hour_end >= 0) {
+    console.log("From day",day_start,"at",hour_start,"to",day_end,"at",hour_end)
+  
+    openNewTaskModal()
+  }
+
+
+  cursor_select = {}
+}
+
+function openNewTaskModal() {
+  // let modal = new addNewTaskModal()
+  modal.open()
+
+  let sel_date = currentWeek[cursor_select.day_start].date
+  let due_date = sel_date.substring(6,10)+"-"+sel_date.substring(3,5)+"-"+sel_date.substring(0,2)
+  let due_time = Math.floor(settings.starttime+cursor_select.hour_start-settings.starttime).toString().padStart(2, '0')+":"+(((cursor_select.hour_start-settings.starttime)%1)*60).toString().padStart(2, '0')+":00"
+  let duration = Math.floor(cursor_select.duration).toString().padStart(2, '0')+":"+((cursor_select.duration%1)*60).toString().padStart(2, '0')+":00"
+
+  modal.due_date.value = due_date
+  modal.due_time.value = due_time
+  modal.duration.value = duration
+
+}
+
+function drawSelectionRect() {
+  if(cursor_select.hour_start === undefined) {
+    let h = Math.floor((cursor_hour-settings.starttime) * 2) / 2
+    let x_start = settings.start_x+cursor_day*settings.spacings.day*settings.scale
+    let y_start = settings.start_y+h*settings.spacings.hour*settings.scale
+    let width = settings.spacings.day*settings.scale
+    let height = settings.spacings.hour / 2 * settings.scale
+    let margin = 2
+  
+    ctx.fillStyle = "rgba(255,255,255,0.15)";
+    ctx.fillRect(x_start+margin, y_start+margin, width-2*margin, height-2*margin)
+  } else {
+    let hour_start = Math.floor(cursor_select.hour_start * 2) / 2 - settings.starttime
+    let hour_end = Math.floor(cursor_hour * 2) / 2 - settings.starttime
+    if(hour_start > hour_end) {
+      hour_start = hour_end
+      hour_end = Math.floor(cursor_select.hour_start * 2) / 2 + 0.5 - settings.starttime
+    } else {
+      hour_end += 0.5
+    }
+    let duration = hour_end - hour_start
+
+    // console.log(hour_start, hour_end, duration)
+
+    let x_start = settings.start_x+cursor_day*settings.spacings.day*settings.scale
+    let y_start = settings.start_y+hour_start*settings.spacings.hour*settings.scale
+    let width = settings.spacings.day*settings.scale
+    let height = duration * settings.spacings.hour * settings.scale
+    let margin = 2
+  
+    ctx.fillStyle = "rgba(255,255,255,0.3)";
+    ctx.fillRect(x_start+margin, y_start+margin, width-2*margin, height-2*margin)
+  }
 }
 
 function drawMouseLine() {
@@ -487,16 +837,16 @@ function drawMouseLine() {
     mouseX < settings.start_x+(settings.spacings.day*7*settings.scale)
   ){
     ctx.strokeStyle = "#f00"
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(settings.start_x-settings.overlap, mouseY);
-    ctx.lineTo(settings.start_x+(settings.spacings.day*7*settings.scale)+settings.overlap, mouseY);
+    ctx.moveTo(settings.start_x-settings.overlap/2, mouseY);
+    ctx.lineTo(settings.start_x, mouseY);
     ctx.stroke();
   }
 }
 
 function drawCurrentTimeBar() {
-  if(weekSelected === "current") {
+  if(weekModifier === 0) {
     let now = new Date()
 
     const currentDay = ((now.getDay()+6)%7)%7
@@ -531,6 +881,13 @@ function drawBlocking(day,start,end) {
 
   let counter = 0
 
+  ctx.lineWidth = 1.5;
+  if(settings.printing) {
+    ctx.strokeStyle = "#000"
+  } else {
+    ctx.strokeStyle = "#666"
+  }
+
   while(x2+margin <= x_end && counter < 1000) {
     x1 = x_start+(counter*margin)
     x2 = x1-height
@@ -548,9 +905,6 @@ function drawBlocking(day,start,end) {
     } else {
       y1 = y_start
     }
-
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = "#666"
     ctx.beginPath()
     ctx.moveTo(x1, y1)
     ctx.lineTo(x2, y2)
@@ -571,7 +925,11 @@ function drawWakeUpPattern(day, time) {
   const height = y_end - y_start
 
   ctx.lineWidth = 2;
-  ctx.strokeStyle = "#fff"
+  if(settings.printing) {
+    ctx.strokeStyle = "#000"
+  } else {
+    ctx.strokeStyle = "#fff"
+  }
 
   let x1 = x_start
   let x2 = x_end-height
@@ -612,6 +970,84 @@ function drawWakeUpPattern(day, time) {
   ctx.lineTo(x_end, y_end)
   ctx.stroke()
 
+}
+
+function drawSleepPattern(day, time) {
+  if(time === 24)
+    return
+  const margin = settings.spacings.day*settings.scale/12
+  const x_start = settings.start_x+day*settings.spacings.day*settings.scale
+  const x_end = settings.start_x+(day+1)*settings.spacings.day*settings.scale
+  const y_start = settings.start_y+(time-settings.starttime)*settings.spacings.hour*settings.scale
+  const y_end = settings.start_y+(time+0.5-settings.starttime)*settings.spacings.hour*settings.scale
+
+  const height = y_end - y_start
+
+  ctx.lineWidth = 2;
+  if(settings.printing) {
+    ctx.strokeStyle = "#000"
+  } else {
+    ctx.strokeStyle = "#fff"
+  }
+
+  let x1 = x_start
+  let x2 = x_end-height
+  let y1 = y_start
+  let y2 = y_end
+
+  let counter = 0
+
+  while(x2+margin <= x_end+1 && counter < 1000) {
+    x1 = x_start+(counter*margin)
+    x2 = x1-height
+
+    if(x2 < x_start) {
+      y2 = y_end - x_start + x2
+      x2 = x_start
+    } else {
+      y2 = y_end
+    }
+
+    if(x1 > x_end) {
+      y1 = y_start + (x1-x_end)
+      x1 = x_end
+    } else {
+      y1 = y_start
+    }
+
+    ctx.beginPath()
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(x2, y2)
+    ctx.stroke()
+
+    //console.log(x1,y1,x2,y2)
+    counter += 1
+  }
+
+  ctx.beginPath()
+  ctx.moveTo(x_start, y_start)
+  ctx.lineTo(x_end, y_start)
+  ctx.stroke()
+
+}
+
+function printLastNightsSleep(day, sleep) {
+
+  ctx.font = (0.7*settings.small_fontsize*settings.scale)+"px "+fontfamily
+  if(settings.printing) {
+    ctx.fillStyle = '#000';
+  } else {
+    ctx.fillStyle = '#ffffff';
+  }
+  ctx.textAlign="right";
+  ctx.textBaseline = "bottom";
+
+  let text = ""
+  if(sleep !== undefined && sleep !== "")
+    text = "("+sleep.split(":")[0]+":"+sleep.split(":")[1]+")"
+  let right_x = settings.start_x+settings.spacings.day*settings.scale*day+settings.spacings.day*settings.scale-settings.overlap*0.1
+  let bottom_y = settings.start_y//-settings.spacings.hour*settings.scale*2+8*settings.scale
+  ctx.fillText(text, right_x, bottom_y);
 }
 
 function wrapText(text, maxWidth) {

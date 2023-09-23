@@ -7,41 +7,41 @@
     <body>
         <header><p>Taskmanager</p><p id="time"></p></header>
         <main>
-            <section>
+            <section id="item-1">
                 <div>
-                    <p><div class='categoryIndicator' style='--color: #e6e200'></div>BA-MAC</p>
+                    <div class='categoryIndicator' style='--color: #777'></div><p class="title"></p>
                 </div>
-                <p id="ba-mac"></p>
+                <p class="timer"></p>
             </section>
-            <section>
+            <section id="item-2">
                 <div>
-                    <p><div class='categoryIndicator' style='--color: #e6e200'></div>Stochastik</p>
+                    <div class='categoryIndicator' style='--color: #777'></div><p class="title"></p>
                 </div>
-                <p id="stocha"></p>
+                <p class="timer"></p>
             </section>
-            <section>
+            <section id="item-3">
                 <div>
-                    <p><div class='categoryIndicator' style='--color: #e6e200'></div>AlgoII</p>
+                    <div class='categoryIndicator' style='--color: #777'></div><p class="title"></p>
                 </div>
-                <p id="algo"></p>
+                <p class="timer"></p>
             </section>
-            <section>
+            <section id="item-4">
                 <div>
-                    <p><div class='categoryIndicator' style='--color: #cf3a3a'></div>Webtech</p>
+                    <div class='categoryIndicator' style='--color: #777'></div><p class="title"></p>
                 </div>
-                <p id="webtech"></p>
+                <p class="timer"></p>
             </section>
             <hr>
             <section>
                 <div>
-                    <p><div class='categoryIndicator' style='--color: #f77925'></div>Klavier</p>
+                    <div class='categoryIndicator' style='--color: #f77925'></div><p>Klavier</p>
                 </div>
                 <p id="klavier"></p>
             </section>
             <hr>
             <section>
                 <div>
-                    <p><div class='categoryIndicator' style='--color: #777'></div>Summe</p>
+                    <div class='categoryIndicator' style='--color: #777'></div><p>Summe</p>
                 </div>
                 <p id="summe"></p>
             </section>

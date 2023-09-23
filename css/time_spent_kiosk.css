@@ -22,7 +22,7 @@ header {
     justify-content: space-between;
 }
 
-header p {
+p {
     display: inline-block;
 }
 
@@ -42,3 +42,7 @@ section {
     background-color: var(--color);
     border-radius: 0.25em;
   }
+
+p {
+
+}

@@ -46,3 +46,9 @@ function addNotification(date, time, name) {
 }
 
 checkNotifyStatus();
+
+// if(document.currentScript.getAttribute('playBell') === "true") {
+//   setTimeout(playSound("bell"), 5000);
+// }
+//
+// playSound("ding")
