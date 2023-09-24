@@ -11,8 +11,8 @@ if(isset($body->title)) {
   $name = $body->title;
   $desc = $body->description;
   $duedate  = $body->due;
-  $duetime  = $body->duetime == "" ? $body->duetime: "NULL";
-  $duration  = $body->duration == "" ? $body->duration: "NULL";
+  $duetime  = $body->due_time != "" ? $body->due_time: "NULL";
+  $duration  = $body->duration != "" ? $body->duration: "NULL";
   $priority  = $body->priority;
   $category  = $body->category;
   $location  = $body->location;
@@ -24,7 +24,7 @@ if(isset($body->title)) {
   $res = mysqli_query($db, "SELECT LAST_INSERT_ID() as ID;");
   $row = mysqli_fetch_assoc($res);
 
-  print_r(json_encode($row));
+  print('{"status": "unkown", "body": '.json_encode($body).' "sql": "'.$sql.'", "result": '.json_encode($row).'}');
 
 
 
