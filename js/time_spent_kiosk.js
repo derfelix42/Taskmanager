@@ -7,9 +7,10 @@
 
 const items = [
   {name: "Uni", category: 1, query: ""},
-  {name: "Wachmann", category: 13, query: ""},
+  {name: "Flavius", category: 14, query: ""},
   {name: "WebTech", category: 10, query: ""},
   {name: "Sport", category: 7, query: ""},
+  {name: "Wachmann", category: 13, query: ""},
 ]
 
 const time = document.getElementById("time");
