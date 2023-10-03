@@ -122,6 +122,7 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/taskModal.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/habits.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
   <script>
@@ -186,6 +187,7 @@ $result = mysqli_query($db, $sql);
   <script src="js/timetable.js" defer></script>
   <script src="js/calendar.js" defer></script>
   <script src="js/header.js" defer></script>
+  <script src="js/habits.js" defer></script>
   <script src="https://kit.fontawesome.com/06843879cb.js" crossorigin="anonymous"></script>
 
 
@@ -241,6 +243,7 @@ $result = mysqli_query($db, $sql);
   <hr>
   <ul>
     <a href="?timetable"><li>Timetable</li></a>
+    <a href="?habits"><li>Habit Tracker</li></a>
     <!-- <a href="?calendar"><li>Calendar</li></a> -->
   </ul>
   <hr>
@@ -274,6 +277,11 @@ require_once("./bahnapi.php")
 ?>
   </main>
 
+  <?php } else if(isset($_GET['habits'])) {
+require_once("./habits.php")
+?>
+  </main>
+  
   <?php } else if(isset($_GET['search'])) {
 require_once("./search.php")
 ?>

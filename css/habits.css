@@ -1,0 +1,22 @@
+div.habit-tracker {
+    padding: 1em;
+}
+
+div.habit-tracker h2 {
+    margin: 0;
+}
+
+div.habit-tracker h3 {
+    margin-top: 1.7em;
+    margin-bottom: 0.3em;
+}
+
+table.habits thead {
+    font-weight: 900;
+}
+
+
+table.habits td {
+    border: 1px solid white;
+}
+
