@@ -15,8 +15,14 @@ table.habits thead {
     font-weight: 900;
 }
 
+table.habits tr:hover {
+    background-color: rgba(255,255,255,0.2);
+}
 
 table.habits td {
     border: 1px solid white;
 }
 
+table.habits input[type=checkbox] {
+    cursor: pointer;
+}
