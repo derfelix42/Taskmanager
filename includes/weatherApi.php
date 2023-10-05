@@ -1,9 +1,8 @@
 <?php
+include_once("./credentials.php");
 
 function getForecast() {
-  $apiKey = "";
-  $samplesApiKey = "";
-  $cityId = "";
+  global $apiKey, $cityId;
   $WeatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?id=" . $cityId . "&units=metric&appid=" . $apiKey;
 
   $ch = curl_init();
@@ -50,9 +49,7 @@ function getForecast() {
 }
 
 function getCurrentTemp() {
-  $apiKey = "";
-  $samplesApiKey = "";
-  $cityId = "";
+  global $apiKey, $cityId;
   $WeatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?id=" . $cityId . "&units=metric&appid=" . $apiKey;
   $ch = curl_init();
 
