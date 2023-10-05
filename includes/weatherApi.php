@@ -1,9 +1,9 @@
 <?php
 
 function getForecast() {
-  $apiKey = "***REMOVED***";
-  $samplesApiKey = "***REMOVED***";
-  $cityId = "***REMOVED***";
+  $apiKey = "1b2a80868267112dc62276dd6182af35";
+  $samplesApiKey = "b6907d289e10d714a6e88b30761fae22";
+  $cityId = "2847666";
   $WeatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?id=" . $cityId . "&units=metric&appid=" . $apiKey;
 
   $ch = curl_init();
@@ -50,9 +50,9 @@ function getForecast() {
 }
 
 function getCurrentTemp() {
-  $apiKey = "***REMOVED***";
-  $samplesApiKey = "***REMOVED***";
-  $cityId = "***REMOVED***";
+  $apiKey = "1b2a80868267112dc62276dd6182af35";
+  $samplesApiKey = "b6907d289e10d714a6e88b30761fae22";
+  $cityId = "2847666";
   $WeatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?id=" . $cityId . "&units=metric&appid=" . $apiKey;
   $ch = curl_init();
 
