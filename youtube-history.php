@@ -1,3 +1,4 @@
+<?php include_once('includes/credentials.php'); ?>
 <form id="youtube-history" action="tasks.php?youtube">
   <input type="date" name="date" id="date">
   <input type="number" name="id" id="id">
@@ -8,7 +9,7 @@
 <div id="youtube-output"></div>
 
 <script defer>
-const key = ""
+const key = "<?php echo "$SF_uuid"; ?>"
 
 async function getDevices() {
   const resp = await fetch("https://api.stayfreeapps.com/v1/sync/devices?key="+key);
@@ -139,7 +140,7 @@ async function youtube_history() {
   }
 
 
-  let install_id = "wv5ptd0zc4qpr" //devices[0].install_id // MainPC
+  let install_id = "" //devices[0].install_id
   let sessions = await getSessions(install_id, jsDate)
   console.log(sessions.websites)
 
