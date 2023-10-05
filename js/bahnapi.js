@@ -1,5 +1,5 @@
-rhb_id = 8005057
-bonn_id = 8000044
+rhb_id = -1
+bonn_id = -1
 
 async function getDepartingTrains(id) {
   const url = "https://bahn.expert/api/iris/v2/abfahrten/"+id+"?lookahead=120"

@@ -8,7 +8,7 @@
 <div id="youtube-output"></div>
 
 <script defer>
-const key = "***REMOVED***"
+const key = ""
 
 async function getDevices() {
   const resp = await fetch("https://api.stayfreeapps.com/v1/sync/devices?key="+key);
