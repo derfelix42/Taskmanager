@@ -17,14 +17,13 @@ if(isset($body->title)) {
   $category  = $body->category;
   $location  = $body->location;
 
-  $sql = "INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `category`, `location`) 
-                      VALUES (NULL, '$name', '$desc', '$duedate', $duetime, NULL, $duration, '$priority', '$category', '$location');";
+  $sql = "INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `category`, `location`) VALUES (NULL, '$name', '$desc', '$duedate', $duetime, NULL, $duration, '$priority', '$category', '$location');";
   // echo $sql; exit();
   mysqli_query($db, $sql);
   $res = mysqli_query($db, "SELECT LAST_INSERT_ID() as ID;");
   $row = mysqli_fetch_assoc($res);
 
-  print('{"status": "unkown", "body": '.json_encode($body).' "sql": "'.$sql.'", "result": '.json_encode($row).'}');
+  print('{"status": "unkown", "body": '.json_encode($body).', "sql": "'.$sql.'", "result": '.json_encode($row).'}');
 
 
 
