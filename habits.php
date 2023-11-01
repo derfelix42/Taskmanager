@@ -27,8 +27,8 @@ function getEndWeekOfMonth($month, $year)
 
     <h3>Daily</h3>
     <?php
-    $days_in_month = cal_days_in_month(CAL_GREGORIAN, 10, 2023);
-    echo "There were {$days_in_month} days in this month";
+    $days_in_month = cal_days_in_month(CAL_GREGORIAN, $month, 2023);
+    echo "There are {$days_in_month} days in this month";
     ?>
 
     <table class="habits">
@@ -42,7 +42,18 @@ function getEndWeekOfMonth($month, $year)
         </thead>
         <tbody>
             <?php
-            $sql = 'SELECT habits.ID, habits.name, GROUP_CONCAT(DISTINCT DAYOFMONTH(done)) AS DOM FROM `habits` LEFT JOIN habits_tracker ON habits.ID = habits_tracker.habitID WHERE habits.type = "daily" AND habits.active = 1 GROUP BY habits.ID;';
+            $sql = "SELECT name FROM `habits` WHERE type = 'daily' ORDER BY ID;";
+            $res = mysqli_query($db, $sql);
+            $daily_habits = array();
+            if(mysqli_num_rows($res)>0) {
+                while($row = mysqli_fetch_assoc($res)) {
+                    array_push($daily_habits, $row["name"]);
+                }
+            }
+            print_r($daily_habits);
+
+
+            $sql = 'SELECT habits.ID, habits.name, GROUP_CONCAT(DISTINCT DAYOFMONTH(done)) AS DOM FROM `habits` LEFT JOIN habits_tracker ON habits.ID = habits_tracker.habitID WHERE habits.type = "daily" AND MONTH(habits_tracker.done) = 11 AND habits.active = 1 GROUP BY habits.ID;';
             $daily_habits =  mysqli_query($db, $sql);
 
                 
