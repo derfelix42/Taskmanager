@@ -125,7 +125,7 @@ class addNewTaskModal {
     const category = this.category.value
 
     const res = await createTask({title, description, due_date, due_time, duration, priority, category, location})
-    const new_id = res.ID
+    const new_id = res.result.ID
 
     if(autostart) {
       await startTimerOnTask(new_id)
