@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Erstellungszeit: 01. Nov 2023 um 08:27
+-- Erstellungszeit: 08. Dez 2023 um 21:35
 -- Server-Version: 8.0.31
 -- PHP-Version: 7.4.33
 
@@ -72,7 +72,8 @@ CREATE TABLE `habits` (
 
 CREATE TABLE `habits_tracker` (
   `habitID` int NOT NULL,
-  `done` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `done` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `entered` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
