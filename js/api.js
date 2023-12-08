@@ -1,6 +1,6 @@
 async function getTaskData(id) {
   // console.log("getTaskData()",id)
-  const res = await fetch("api/getTask.php?getTask="+id);
+  const res = await fetch("api/getTask.php?getTask=" + id);
   let json = await res.json()
   // console.log(json)
   return json
@@ -12,27 +12,27 @@ async function getCategoryColors() {
 }
 
 async function getCategoryPrefixes(category) {
-  const res = await fetch("api/prefixes.php?category="+category);
+  const res = await fetch("api/prefixes.php?category=" + category);
   return await res.json()
 }
 
 async function updateTask(new_task, old_task) {
   const ID = old_task.ID
-  const url = "api/updateTask.php?ID="+ID
+  const url = "api/updateTask.php?ID=" + ID
 
-  if(config.debug) console.log(url)
+  if (config.debug) console.log(url)
 
   let res = await fetch(url, {
     method: "POST",
     body: JSON.stringify(new_task)
   })
 
-  if(config.debug) console.log(await res.text())
+  if (config.debug) console.log(await res.text())
 
 }
 
 async function createTask(task) {
-  if(!task.title || !task.due_date) {
+  if (!task.title || !task.due_date) {
     return "no title or no due_date!"
   }
 
@@ -53,12 +53,12 @@ async function createTask(task) {
     body: JSON.stringify(body)
   }
 
-  if(config.debug) console.log(url, methods)
+  if (config.debug) console.log(url, methods)
 
   let res = await fetch(url, methods)
   let text = await res.text()
-  
-  if(config.debug) console.log(text)
+
+  if (config.debug) console.log(text)
 
   try {
     const json = JSON.parse(text);
@@ -70,17 +70,17 @@ async function createTask(task) {
 
 async function endTaskAPI(ID) {
   await stopTimerOnTask(ID);
-  const res = await fetch("api/endTask.php?doneID="+ID);
+  const res = await fetch("api/endTask.php?doneID=" + ID);
   let json = await res.json()
-  if(config.debug) {
+  if (config.debug) {
     console.log(json)
   }
   return json
 }
 
 async function startTimerOnTask(ID) {
-  const res = await fetch("api/taskHistory.php?start&taskID="+ID);
-  if(config.debug) {
+  const res = await fetch("api/taskHistory.php?start&taskID=" + ID);
+  if (config.debug) {
     console.log(await res.text())
   }
   // let json = await res.json()
@@ -89,8 +89,8 @@ async function startTimerOnTask(ID) {
 }
 
 async function stopTimerOnTask(ID) {
-  const res = await fetch("api/taskHistory.php?stop&taskID="+ID);
-  if(config.debug) {
+  const res = await fetch("api/taskHistory.php?stop&taskID=" + ID);
+  if (config.debug) {
     console.log(await res.text())
   }  // let json = await res.json()
   // console.log(json)
@@ -98,8 +98,8 @@ async function stopTimerOnTask(ID) {
 }
 
 async function timeSpentOnTaskID(ID) {
-  const res = await fetch("api/taskHistory.php?time&taskID="+ID);
-  if(config.debug) {
+  const res = await fetch("api/taskHistory.php?time&taskID=" + ID);
+  if (config.debug) {
     console.log(await res.text())
   }  // let json = await res.json()
   // console.log(json)
@@ -122,8 +122,8 @@ async function getCurrentDayTimeSpent() {
 
 async function getWakeupTimes(date) {
   date = date.toISOString().split('T')[0]
-  const url = "api/getWakeupTimes.php?date="+date
-  if(config.debug) {
+  const url = "api/getWakeupTimes.php?date=" + date
+  if (config.debug) {
     console.log(url)
   }
   const res = await fetch(url)
@@ -132,6 +132,22 @@ async function getWakeupTimes(date) {
 }
 
 async function resetTimerOnTask(ID) {
-  const url = "api/taskHistory.php?taskID="+ID+"&reset"
+  const url = "api/taskHistory.php?taskID=" + ID + "&reset"
+  await fetch(url)
+}
+
+/**
+ * HABITS
+ */
+async function fetchHabits() {
+  let url = "api/habits.php";
+  const res = await fetch(url)
+  const json = await res.json()
+  return json
+}
+
+async function toggleHabit(event, habitID, date) {
+  // console.log("toggleHabit",event, habitID, date)
+  let url = "api/habits.php?ID=" + habitID + "&date=" + date;
   await fetch(url)
 }

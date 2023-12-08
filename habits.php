@@ -22,61 +22,14 @@ function getEndWeekOfMonth($month, $year)
 
 <div class="habit-tracker">
     <h2>Habit Tracker 
-        (<?php echo $currentDate; ?>)
+        (<em id="habits_curr_date"></em>)
     </h2>
 
+    <a id="habits_prev_month">prev</a> <a id="habits_next_month">next</a>
+
     <h3>Daily</h3>
-    <?php
-    $days_in_month = cal_days_in_month(CAL_GREGORIAN, $month, 2023);
-    echo "There are {$days_in_month} days in this month";
-    ?>
 
-    <table class="habits">
-        <thead>
-            <td>Habit</td>
-            <?php
-            for ($i = 1; $i <= $days_in_month; $i++) {
-                echo "<td>".str_pad($i, 2, "0", STR_PAD_LEFT).".</td>";
-            }
-            ?>
-        </thead>
-        <tbody>
-            <?php
-            $sql = "SELECT name FROM `habits` WHERE type = 'daily' ORDER BY ID;";
-            $res = mysqli_query($db, $sql);
-            $daily_habits = array();
-            if(mysqli_num_rows($res)>0) {
-                while($row = mysqli_fetch_assoc($res)) {
-                    array_push($daily_habits, $row["name"]);
-                }
-            }
-            print_r($daily_habits);
-
-
-            $sql = 'SELECT habits.ID, habits.name, GROUP_CONCAT(DISTINCT DAYOFMONTH(done)) AS DOM FROM `habits` LEFT JOIN habits_tracker ON habits.ID = habits_tracker.habitID WHERE habits.type = "daily" AND MONTH(habits_tracker.done) = 11 AND habits.active = 1 GROUP BY habits.ID;';
-            $daily_habits =  mysqli_query($db, $sql);
-
-                
-            if(mysqli_num_rows($daily_habits)>0) {
-                while($row = mysqli_fetch_assoc($daily_habits)) {
-                    $id = $row['ID'];
-                    $name = $row['name'];
-                    $doms = explode(",", $row['DOM']);
-
-                    print("<tr><td>$name</td>");
-                    for ($i = 1; $i <= $days_in_month; $i++) {
-                        $checked = "";
-                        if(in_array($i, $doms)) {
-                            $checked = "checked";
-                        }
-                        print("<td><input type='checkbox' onclick='toggleHabit(event, $id, \"$year-$month-$i\")' $checked></td>");
-
-                    }
-                    print("</tr>");
-                }
-            }
-            ?>
-        </tbody>
+    <table id="habits_table_daily" class="habits">
     </table>
 
     <h3>Weekly</h3>
