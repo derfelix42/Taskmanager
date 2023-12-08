@@ -6,7 +6,7 @@ You will need:
 * MySQL Server like mariadb
 * phpmyadmin is a good idea
 
-Clone this repo into `/var/www/html/Taskmanager` and use `j_tasks.sql` to setup your database.
+Clone this repo into `/var/www/html/Taskmanager` and use `j_tasks.sql` to setup your database called `j_tasks`.
 
 To connect the _Taskmanager_ to your DB, create the file `includes/credentials.php` (based on the sample config in the same folder).
 
