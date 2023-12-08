@@ -1,5 +1,5 @@
 <?php
-include_once("./credentials.php");
+include_once("credentials.php");
 
 function getForecast() {
   global $apiKey, $cityId;
