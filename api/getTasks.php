@@ -11,6 +11,10 @@ if(isset($_GET['today'])) {
   $day_sel = "AND due = CURRENT_DATE";
 }
 
+if(isset($_GET['date'])) {
+  $day_sel = "AND due = '".$_GET['date']."'";
+}
+
 $cat_sel = "";
 if(empty($day)) {
   if(isset($_GET['category'])) {
