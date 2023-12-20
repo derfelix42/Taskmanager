@@ -10,10 +10,10 @@ if(isset($_GET['date'])) {
   $date = $_GET['date'];
 
 
-  $sql = "SELECT tasks.ID, Name, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if('$date'>due, 11, priority) as priority, color, DAYOFWEEK(due) as dayofweek, done, time_spent+IFNULL(time_spent_new, 0) as time_spent
+  $sql = "SELECT tasks.ID, Name, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if('$date'>due, 11, priority) as priority, color, DAYOFWEEK(due) as dayofweek, done, IFNULL(time_spent_new, 0) as time_spent
             FROM `tasks`
             JOIN category ON tasks.category = category.ID
-            LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
+            LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
             WHERE  WEEK(due,1) = WEEK('$date',1)
             ORDER BY due ASC, due_time ASC, priority DESC, category, Name";
 

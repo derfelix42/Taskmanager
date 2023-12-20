@@ -103,7 +103,7 @@ if(empty($day)) {
     $cat_sel = "AND category = $category";
   }
 }
-$sql = "SELECT tasks.ID, Name, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, (HOUR(duration) + (MINUTE(duration)/60)) as duration2, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, difficulty, color, time_spent+IFNULL(time_spent_new, 0) as time_spent, category, location
+$sql = "SELECT tasks.ID, Name, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, (HOUR(duration) + (MINUTE(duration)/60)) as duration2, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, difficulty, color, IFNULL(time_spent_new, 0) as time_spent, category, location
           FROM `tasks`
           JOIN category ON tasks.category = category.ID
           LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
@@ -360,8 +360,8 @@ if(mysqli_num_rows($result)>0) {
         echo "<script>updateDurationSumOfDay('daysum_".$day."', $duration_sum)</script>";
 
         // $time_spent_day_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks` WHERE (done IS NULL AND due = '$DueDate') OR DATE(done) = '$DueDate'";
-        $time_spent_day_sum_sql = "SELECT SUM(time_spent)+SUM(time_spent_new) as sum FROM `tasks`
-                                      JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIME))) as time_spent_new FROM `task_history` WHERE (DATE(start_time) = '$DueDate') GROUP BY taskID) as b ON tasks.ID = b.taskID
+        $time_spent_day_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks`
+                                      JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIME))) as time_spent FROM `task_history` WHERE (DATE(start_time) = '$DueDate') GROUP BY taskID) as b ON tasks.ID = b.taskID
                                       WHERE (done IS NULL AND due = '$DueDate') OR DATE(done) = '$DueDate'";
 
         $time_spent_day_sum_res = mysqli_query($db, $time_spent_day_sum_sql);
@@ -515,10 +515,10 @@ if(isset($_GET['date'])) {
 }
 
 $sql = "SELECT tasks.ID, Name, description, difficulty, done, duration, priority, IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due)) AS due,
-          TIMESTAMPDIFF(DAY,(IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due))), done) as timeDiff, TIMESTAMPDIFF(DAY, done, NOW()) AS DaysAgo, color, time_spent+IFNULL(time_spent_new, 0) as time_spent
+          TIMESTAMPDIFF(DAY,(IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due))), done) as timeDiff, TIMESTAMPDIFF(DAY, done, NOW()) AS DaysAgo, color, IFNULL(time_spent, 0) as time_spent
           FROM `tasks`
           JOIN category ON category.ID = tasks.category
-          LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
+          LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
           WHERE done IS NOT NULL $cat_sel $day_sel AND deleted = 0 AND Name LIKE '$prefix%'
           ORDER BY done desc, priority desc";
 
@@ -533,8 +533,8 @@ $result = mysqli_query($db, $sql);
 
 
 
-$past_tasks_spent_sum_sql = "SELECT SUM(time_spent)+SUM(time_spent_new) as sum FROM `tasks`
-                              JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIME))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
+$past_tasks_spent_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks`
+                              JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIME))) as time_spent FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
                               WHERE done IS NOT NULL $cat_sel $day_sel AND deleted = 0 AND Name LIKE '$prefix%'";
 
 // echo $past_tasks_spent_sum_sql;
