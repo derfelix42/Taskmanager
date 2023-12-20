@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Erstellungszeit: 08. Dez 2023 um 21:35
+-- Erstellungszeit: 20. Dez 2023 um 09:13
 -- Server-Version: 8.0.31
 -- PHP-Version: 7.4.33
 
@@ -157,12 +157,25 @@ CREATE TABLE `tasks` (
   `priority` int NOT NULL,
   `difficulty` int NOT NULL DEFAULT '1',
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `time_spent` int NOT NULL DEFAULT '0',
   `category` int NOT NULL,
   `location` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `autogen` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `task_associations`
+--
+
+CREATE TABLE `task_associations` (
+  `ID` int NOT NULL,
+  `taskID` int NOT NULL,
+  `type` enum('child_of','depends_on') NOT NULL,
+  `foreignID` int NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -176,6 +189,18 @@ CREATE TABLE `task_history` (
   `start_time` datetime NOT NULL,
   `stop_time` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `task_notes`
+--
+
+CREATE TABLE `task_notes` (
+  `taskID` int NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `note` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -252,11 +277,25 @@ ALTER TABLE `tasks`
   ADD KEY `category` (`category`);
 
 --
+-- Indizes für die Tabelle `task_associations`
+--
+ALTER TABLE `task_associations`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `taskID` (`taskID`),
+  ADD KEY `foreignID` (`foreignID`);
+
+--
 -- Indizes für die Tabelle `task_history`
 --
 ALTER TABLE `task_history`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `taskID` (`taskID`);
+
+--
+-- Indizes für die Tabelle `task_notes`
+--
+ALTER TABLE `task_notes`
+  ADD PRIMARY KEY (`taskID`,`created`);
 
 --
 -- Indizes für die Tabelle `wakeup_times`
@@ -317,6 +356,12 @@ ALTER TABLE `tasks`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT für Tabelle `task_associations`
+--
+ALTER TABLE `task_associations`
+  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT für Tabelle `task_history`
 --
 ALTER TABLE `task_history`
@@ -352,10 +397,23 @@ ALTER TABLE `tasks`
   ADD CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
+-- Constraints der Tabelle `task_associations`
+--
+ALTER TABLE `task_associations`
+  ADD CONSTRAINT `task_associations_ibfk_1` FOREIGN KEY (`taskID`) REFERENCES `tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `task_associations_ibfk_2` FOREIGN KEY (`foreignID`) REFERENCES `tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
 -- Constraints der Tabelle `task_history`
 --
 ALTER TABLE `task_history`
   ADD CONSTRAINT `task_history_ibfk_1` FOREIGN KEY (`taskID`) REFERENCES `tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints der Tabelle `task_notes`
+--
+ALTER TABLE `task_notes`
+  ADD CONSTRAINT `task_notes_ibfk_1` FOREIGN KEY (`taskID`) REFERENCES `tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
