@@ -28,8 +28,8 @@ disableModal()
 //console.log(categoryColors)
 
 document.body.addEventListener("keydown", (e) => {
-  if(e.key === "Escape") {
-    if(currentTask) {
+  if (e.key === "Escape") {
+    if (currentTask) {
       closeTaskModal()
     }
   }
@@ -59,7 +59,7 @@ async function openModal(id) {
   currentTask = task_data
   const runningTask = parseInt(await getCurrentlyActiveTask())
   console.log(id, runningTask)
-  if(id === runningTask) {
+  if (id === runningTask) {
     console.log("We are running right now!")
     startStopTimer()
 
@@ -80,21 +80,21 @@ function fillCategorySelectorAndSelect(selected) {
   //     category.removeChild(child)
   //   })
   // }
-  if(category.childNodes.length > 0) {
-    for(let opt of category.childNodes) {
-      if(opt.value === selected) {
+  if (category.childNodes.length > 0) {
+    for (let opt of category.childNodes) {
+      if (opt.value === selected) {
         opt.selected = true
       } else {
         opt.selected = false
       }
     }
   } else {
-    for(let cat of categoryColors) {
+    for (let cat of categoryColors) {
       let opt = document.createElement('option')
-      if(cat.ID === selected)
+      if (cat.ID === selected)
         opt.selected = true
       opt.value = cat.ID
-      opt.innerText = cat.ID+" - "+cat.Bezeichnung
+      opt.innerText = cat.ID + " - " + cat.Bezeichnung
       category.appendChild(opt)
     }
   }
@@ -103,27 +103,27 @@ function fillCategorySelectorAndSelect(selected) {
 
 
 function fillPrioritySelectorAndSelect(selected) {
-  console.log("priority:",selected)
-  if(priority.childNodes.length > 0) {
-    for(let opt of priority.childNodes) {
-      if(opt.value === selected) {
+  console.log("priority:", selected)
+  if (priority.childNodes.length > 0) {
+    for (let opt of priority.childNodes) {
+      if (opt.value === selected) {
         opt.selected = true
       } else {
         opt.selected = false
       }
     }
   } else {
-    for(let i = 10; i >= 1; i--) {
+    for (let i = 10; i >= 1; i--) {
       let opt = document.createElement('option')
       opt.value = i
       opt.innerText = i
-      if(i === parseInt(selected))
+      if (i === parseInt(selected))
         opt.selected = true
-      if(i === 1) {
+      if (i === 1) {
         opt.innerText = "1 - Niedrig"
-      } if(i === 5) {
+      } if (i === 5) {
         opt.innerText = "5 - Normal"
-      } if(i === 10) {
+      } if (i === 10) {
         opt.innerText = "10 - Hoch"
       }
       priority.appendChild(opt)
@@ -132,25 +132,25 @@ function fillPrioritySelectorAndSelect(selected) {
 }
 
 function fillDifficultySelectorAndSelect(selected) {
-  console.log("difficulty:",selected)
-  if(difficulty.childNodes.length > 0) {
-    for(let opt of difficulty.childNodes) {
-      if(opt.value === selected) {
+  console.log("difficulty:", selected)
+  if (difficulty.childNodes.length > 0) {
+    for (let opt of difficulty.childNodes) {
+      if (opt.value === selected) {
         opt.selected = true
       } else {
         opt.selected = false
       }
     }
   } else {
-    for(let i = 5; i >= 1; i--) {
+    for (let i = 5; i >= 1; i--) {
       let opt = document.createElement('option')
       opt.value = i
       opt.innerText = i
-      if(i === parseInt(selected))
+      if (i === parseInt(selected))
         opt.selected = true
-      if(i === 1) {
+      if (i === 1) {
         opt.innerText = "1 - Easy"
-      } if(i === 5) {
+      } if (i === 5) {
         opt.innerText = "5 - Hard"
       }
       difficulty.appendChild(opt)
@@ -162,8 +162,8 @@ function updateModal(task) {
   console.log(task)
   document.getElementById('taskmodal_id').innerText = task.ID
   const date = new Date(task.created)
-  document.getElementById('taskmodal_created').innerText = String(date.getDate()).padStart(2,"0") + '.' + String(date.getMonth() + 1).padStart(2, "0") + '.' + date.getFullYear()
-  taskModal.querySelector('.header').style.backgroundColor = "#"+categoryColors.filter(cat => cat.ID === task.category)[0].color
+  document.getElementById('taskmodal_created').innerText = String(date.getDate()).padStart(2, "0") + '.' + String(date.getMonth() + 1).padStart(2, "0") + '.' + date.getFullYear()
+  taskModal.querySelector('.header').style.backgroundColor = "#" + categoryColors.filter(cat => cat.ID === task.category)[0].color
   title.innerHTML = task.Name
   description.innerText = task.description || "No further description given..."
   description_textarea.value = task.description
@@ -196,7 +196,7 @@ function disableModal() {
 
 /* Timer */
 async function startStopTimer() {
-  if(!start_time){
+  if (!start_time) {
     start_time = new Date()
     timer_interval = setInterval(updateTimer, 1000)
     setButtonText("STOP")
@@ -237,14 +237,14 @@ function printTimer(seconds) {
   let min = Math.floor(seconds / 60 % 60)
   let hour = Math.floor(seconds / 60 / 60)
 
-  let timer_string = String(hour.toFixed(0)).padStart(2, "0")+":"
-              +String(min.toFixed(0)).padStart(2, "0")+":"
-              +String(secs.toFixed(0)).padStart(2, "0")
+  let timer_string = String(hour.toFixed(0)).padStart(2, "0") + ":"
+    + String(min.toFixed(0)).padStart(2, "0") + ":"
+    + String(secs.toFixed(0)).padStart(2, "0")
   timer.innerText = timer_string
 }
 
 async function storeTimer() {
-  if(start_time){
+  if (start_time) {
     console.log("storeTimer")
     let time_diff_secs = parseInt(currentTask.time_spent) + Math.floor(((new Date()).getTime() - start_time.getTime()) / 1000)
     let new_task = JSON.parse(JSON.stringify(currentTask))
@@ -264,18 +264,18 @@ timer.addEventListener("click", () => {
 })
 
 timer_input.addEventListener("keypress", async (e) => {
-  if(e.key === 'Enter') {
+  if (e.key === 'Enter') {
     const value = timer_input.value
     let new_task = JSON.parse(JSON.stringify(currentTask))
-    if(value.charAt(0) === "+") {
+    if (value.charAt(0) === "+") {
       let add = parseInt(value.substring(1))
-      new_task.time_spent = parseInt(new_task.time_spent) + add*60
-    } else if(value.charAt(0) === "-") {
+      new_task.time_spent = parseInt(new_task.time_spent) + add * 60
+    } else if (value.charAt(0) === "-") {
       let sub = parseInt(value.substring(1))
-      new_task.time_spent = parseInt(new_task.time_spent) - sub*60
+      new_task.time_spent = parseInt(new_task.time_spent) - sub * 60
     }
 
-    if(parseInt(new_task.time_spent) < 0)
+    if (parseInt(new_task.time_spent) < 0)
       new_task.timer_spent = 0
 
     await updateTaskData(new_task)
@@ -317,10 +317,10 @@ title.addEventListener("click", () => {
 })
 
 async function storeNewTitle() {
-  console.log("Title",currentTask, title_input.value)
+  console.log("Title", currentTask, title_input.value)
   const new_title = title_input.value
-  if(new_title !== currentTask.Name) {
-    console.log("Need to update TaskName to",new_title)
+  if (new_title !== currentTask.Name) {
+    console.log("Need to update TaskName to", new_title)
     let new_task = JSON.parse(JSON.stringify(currentTask))
     new_task.Name = new_title
     await updateTaskData(new_task)
@@ -331,7 +331,7 @@ async function storeNewTitle() {
 }
 
 title_input.addEventListener("keypress", (e) => {
-  if(e.key === 'Enter') {
+  if (e.key === 'Enter') {
     storeNewTitle()
   }
 })
@@ -346,10 +346,10 @@ description.addEventListener("click", () => {
 })
 
 async function storeNewDescription() {
-  console.log("Description",currentTask, description_textarea.value)
+  console.log("Description", currentTask, description_textarea.value)
   const new_description = description_textarea.value
-  if(new_description !== currentTask.description) {
-    console.log("Need to update Description to",new_description)
+  if (new_description !== currentTask.description) {
+    console.log("Need to update Description to", new_description)
     let new_task = JSON.parse(JSON.stringify(currentTask))
     new_task.description = new_description
     await updateTaskData(new_task)
@@ -360,14 +360,14 @@ async function storeNewDescription() {
 }
 
 description_textarea.addEventListener("keydown", (e) => {
-  if(e.key === "Enter" && e.ctrlKey) {
+  if (e.key === "Enter" && e.ctrlKey) {
     storeNewDescription()
   }
 })
 
 // Store new Location
 task_location.addEventListener("click", (e) => {
-  if(e.ctrlKey && task_location.innerText !== "") {
+  if (e.ctrlKey && task_location.innerText !== "") {
     window.open(task_location.innerText, '_blank')
   } else {
     task_location_input.classList.remove('disabled')
@@ -378,10 +378,10 @@ task_location.addEventListener("click", (e) => {
 })
 
 async function storeNewLocation() {
-  console.log("Location",currentTask, task_location_input.value)
+  console.log("Location", currentTask, task_location_input.value)
   const new_location = task_location_input.value
-  if(new_location !== currentTask.location) {
-    console.log("Need to update Task Location to",new_location)
+  if (new_location !== currentTask.location) {
+    console.log("Need to update Task Location to", new_location)
     let new_task = JSON.parse(JSON.stringify(currentTask))
     new_task.location = new_location
     await updateTaskData(new_task)
@@ -392,7 +392,7 @@ async function storeNewLocation() {
 }
 
 task_location_input.addEventListener("keydown", (e) => {
-  if(e.key === "Enter" && e.ctrlKey) {
+  if (e.key === "Enter" && e.ctrlKey) {
     storeNewLocation()
   }
 })

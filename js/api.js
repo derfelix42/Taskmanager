@@ -1,11 +1,7 @@
-async function getTaskData(id) {
-  // console.log("getTaskData()",id)
-  const res = await fetch("api/getTask.php?getTask=" + id);
-  let json = await res.json()
-  // console.log(json)
-  return json
-}
 
+/**
+ * Categories
+ */
 async function getCategoryColors() {
   const res = await fetch("api/getCategoryColors.php");
   return await res.json()
@@ -15,6 +11,19 @@ async function getCategoryPrefixes(category) {
   const res = await fetch("api/prefixes.php?category=" + category);
   return await res.json()
 }
+
+
+/**
+ * Tasks
+ */
+async function getTaskData(id) {
+  // console.log("getTaskData()",id)
+  const res = await fetch("api/getTask.php?getTask=" + id);
+  let json = await res.json()
+  // console.log(json)
+  return json
+}
+
 
 async function updateTask(new_task, old_task) {
   const ID = old_task.ID
