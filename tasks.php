@@ -687,7 +687,7 @@ $result = mysqli_query($db, $sql);
       Aufgabe <p id="taskmodal_id">ID</p> bearbeiten (<p id="taskmodal_created"></p>)
       <p class="float-right" onclick="closeTaskModal()">[X]</p>
       <p class="small float-right" onclick="toggleNotes()">
-      <i class="fas fa-book"></i>
+        <i class="fas fa-book"></i>
       </p>
     </div>
     <div class="main">
@@ -731,31 +731,33 @@ $result = mysqli_query($db, $sql);
 </div>
 
 <div id="addNewTaskModal" class="taskModal disabled">
-  <div class="header">
-    Neue Aufgabe erstellen
-    <p id="closeAddNewTaskModal" class="float-right">[X]</p>
-  </div>
-  <div class="main">
-    <div class="settings flex-one">
-      <input class="bigInput" type="text" name="title" placeholder="Title" required>
-      <textarea class="flex-one" name="description" rows="4" cols="80" placeholder="Description"></textarea>
-      <input class="smallInput" type="text" name="location" placeholder="Location">
+  <div class="container">
+    <div class="header">
+      Neue Aufgabe erstellen
+      <p id="closeAddNewTaskModal" class="float-right">[X]</p>
     </div>
-    <hr>
-    <div class="settings">
-      <label>Category: <select class="mobilBigInput" name="category"></select></label>
-      <label>Priority: <select class="mobilBigInput" name="priority"></select></label>
-    </div>
-    <hr>
-    <div class="settings">
-      <label>Deadline: <input class="margin-left" type="date" name="due-date"><input class="margin-left" type="time"
-          name="due-time"></label>
-      <label>Duration: <input class="margin-left" type="time" name="duration"></label>
-    </div>
-    <hr>
-    <div class="save">
-      <button type="button" name="save">Speichern</button>
-      <button type="button" name="save-and-start">Speichern und sofort starten [Strg+Enter]</button>
+    <div class="main">
+      <div class="settings flex-one">
+        <input class="bigInput" type="text" name="title" placeholder="Title" required>
+        <textarea class="flex-one" name="description" rows="4" cols="80" placeholder="Description"></textarea>
+        <input class="smallInput" type="text" name="location" placeholder="Location">
+      </div>
+      <hr>
+      <div class="settings">
+        <label>Category: <select class="mobilBigInput" name="category"></select></label>
+        <label>Priority: <select class="mobilBigInput" name="priority"></select></label>
+      </div>
+      <hr>
+      <div class="settings">
+        <label>Deadline: <input class="margin-left" type="date" name="due-date"><input class="margin-left" type="time"
+            name="due-time"></label>
+        <label>Duration: <input class="margin-left" type="time" name="duration"></label>
+      </div>
+      <hr>
+      <div class="save">
+        <button type="button" name="save">Speichern</button>
+        <button type="button" name="save-and-start">Speichern und sofort starten [Strg+Enter]</button>
+      </div>
     </div>
   </div>
 </div>
