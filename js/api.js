@@ -24,6 +24,23 @@ async function getTaskData(id) {
   return json
 }
 
+async function getTaskNotes(id) {
+  const res = await fetch("api/task_notes.php?taskID=" + id);
+  let json = await res.json()
+  return json
+}
+
+async function updateTaskNotes(taskID, text) {
+  const url = "api/task_notes.php?update&taskID=" + taskID
+  console.log(url, JSON.stringify({note: text}))
+
+  let res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({note: text})
+  })
+
+  if (config.debug) console.log(await res.text())
+}
 
 async function updateTask(new_task, old_task) {
   const ID = old_task.ID

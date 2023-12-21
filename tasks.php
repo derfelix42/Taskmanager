@@ -681,10 +681,14 @@ $result = mysqli_query($db, $sql);
 <?php } ?>
 
 <div id="taskModal" class="taskModal disabled">
+  <div class="container">
     <div class="header">
       <p class="small" onclick="deleteTask()"><i class="fas fa-trash"></i></p>
       Aufgabe <p id="taskmodal_id">ID</p> bearbeiten (<p id="taskmodal_created"></p>)
       <p class="float-right" onclick="closeTaskModal()">[X]</p>
+      <p class="small float-right" onclick="toggleNotes()">
+      <i class="fas fa-book"></i>
+      </p>
     </div>
     <div class="main">
       <div class="settings flex-one">
@@ -714,6 +718,16 @@ $result = mysqli_query($db, $sql);
         <button type="button" name="endTask">Aufgabe beenden</button>
       </div>
     </div>
+  </div>
+  <div class="side right notes disabled">
+    <h1 class="title"></h1>
+    <p class="content flex-one" onclick="taskNoteEdit()"></p>
+    <textarea class="content"></textarea>
+  </div>
+  <!-- <div class="side left notes">
+    <textarea id="task_notes"></textarea>
+  </div> -->
+
 </div>
 
 <div id="addNewTaskModal" class="taskModal disabled">

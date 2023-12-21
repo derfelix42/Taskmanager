@@ -54,6 +54,8 @@ async function updateTaskData(taskdata) {
 async function openModal(id) {
   id = parseInt(id)
   const task_data = await getTaskData(id)
+  const notes = await getTaskNotes(id)
+  task_data.notes = notes
   updateModal(task_data)
   enableModal()
   currentTask = task_data
@@ -170,6 +172,14 @@ function updateModal(task) {
   task_location.innerText = task.location || ""
   printTimer(parseInt(task.time_spent))
 
+  taskModal.querySelector('.notes').querySelector('.title').innerText = task.Name
+  if (task.notes) {
+    const converter = new showdown.Converter({ tasklists: true, simpleLineBreaks: true, strikethrough: true, noHeaderId: true, disableForced4SpacesIndentedSublists: true })
+    taskModal.querySelector('.notes').querySelector('.title').innerText = task.Name+" | "+task.notes.created.split(" ")[0]
+    taskModal.querySelector('.notes').querySelector('p').innerHTML = converter.makeHtml(task.notes.note);
+    taskModal.querySelector('.notes').querySelector('textarea').value = task.notes.note
+  }
+
   taskModal.querySelector('.deadline').querySelector('input[name=due-date]').value = task.due
   taskModal.querySelector('.deadline').querySelector('input[name=due-time]').value = task.due_time
   taskModal.querySelector('.deadline').querySelector('input[name=duration]').value = task.duration
@@ -192,6 +202,43 @@ function disableModal() {
   main.classList.remove('blur-out')
   sidebar.classList.remove('blur-out')
 }
+
+function openNotes() {
+  taskModal.querySelector('.notes').classList.remove("disabled")
+}
+
+function closeNotes() {
+  taskModal.querySelector('.notes').classList.add("disabled")
+}
+
+function toggleNotes() {
+  if(taskModal.querySelector('.notes').classList.contains("disabled")) {
+    openNotes()
+  } else {
+    closeNotes()
+  }
+}
+
+function taskNoteEdit() {
+  taskModal.querySelector('.notes').classList.add("edit")
+  taskModal.querySelector('.notes').querySelector("textarea").focus()
+}
+
+async function saveChangesToNotes() {
+  const text = taskModal.querySelector('.notes').querySelector('textarea').value
+  await updateTaskNotes(currentTask.ID, text)
+
+  currentTask.notes = await getTaskNotes(currentTask.ID)
+  updateModal(currentTask)
+
+  taskModal.querySelector('.notes').classList.remove("edit")
+}
+
+taskModal.querySelector('.notes').querySelector('textarea').addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && e.ctrlKey) {
+    saveChangesToNotes()
+  }
+})
 
 
 /* Timer */

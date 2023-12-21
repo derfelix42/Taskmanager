@@ -160,6 +160,7 @@ tr td p {
 
 .description {
   font-family: monospace;
+  white-space: pre-wrap;
 }
 
 .categoryIndicator {
