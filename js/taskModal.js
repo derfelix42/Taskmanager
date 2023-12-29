@@ -260,12 +260,14 @@ async function startStopTimer() {
 
 async function stopTimer() {
   clearInterval(timer_interval)
-  // storeTimer()
-  await stopTimerOnTask(currentTask.ID)
-  const task_data = await getTaskData(currentTask.ID)
-  currentTask = task_data
-  updateModal(task_data)
-  console.log(task_data)
+  throw new Error("taskModal.js: stopTimer() got called!")
+  if(currentTask?.ID) {
+    await stopTimerOnTask(currentTask.ID)
+    const task_data = await getTaskData(currentTask.ID)
+    currentTask = task_data
+    updateModal(task_data)
+    console.log(task_data)
+  }
   start_time = undefined
   setButtonText("START")
 }
@@ -275,8 +277,10 @@ function setButtonText(text) {
 }
 
 function updateTimer() {
-  let time_diff_secs = parseInt(currentTask.time_spent) + Math.floor(((new Date()).getTime() - start_time.getTime()) / 1000)
-  printTimer(time_diff_secs)
+  if(timer_interval && start_time) {
+    let time_diff_secs = parseInt(currentTask.time_spent) + Math.floor(((new Date()).getTime() - start_time.getTime()) / 1000)
+    printTimer(time_diff_secs)
+  }
 }
 
 function printTimer(seconds) {

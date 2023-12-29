@@ -189,7 +189,7 @@ $result = mysqli_query($db, $sql);
   <script src="js/Notification.js" playBell="<?php echo isset($_GET['bell']) ? "true" : "false"; ?>" defer></script>
   <script src="js/timetable.js" defer></script>
   <script src="js/calendar.js" defer></script>
-  <script src="js/header.js" defer></script>
+  <!-- <script src="js/header.js" defer></script> -->
   <script src="js/habits.js" defer></script>
 
   <!-- Fontawesome -->
@@ -209,22 +209,12 @@ $result = mysqli_query($db, $sql);
 
   <!-- <script src="https://unpkg.com/vue@next"></script> -->
   <!-- <script type="module" src="vue/main.js" defer></script> -->
-  <script src="https://unpkg.com/vue@next"></script>
-  <script src="vue/main.js" defer></script>
+  <script type="module" src="vue/header.js" defer></script>
 
 </head>
 <div id="sound" style="display: none"></div>
 
-<header>
-  <p class="title"></p>
-  <button type="button" name="startStop">START</button>
-  <div class="time">00:00:00</div>
-  <input class="time disabled" type="text" name="timer" value="" placeholder="Add/Substract Time in Seconds">
-  <button type="button" name="endTask">BEENDEN</button>
-  <div class="times">
-    <p class="startTime">start</p>
-    <p class="endTime">ende</p>
-  </div>
+<header id="header">
 </header>
 
 <div id="sidebar">

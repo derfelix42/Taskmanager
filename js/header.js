@@ -132,7 +132,8 @@ class Header {
 
   storeTimer = async () => {
     if(this.start_time){
-      await stopTimerOnTask(this.currentTask.ID)
+      // await stopTimerOnTask(this.currentTask.ID)
+      console.log("Header.js: stopTimer() got called!")
       // let time_diff_secs = parseInt(this.currentTask.time_spent) + Math.floor(((new Date()).getTime() - this.start_time.getTime()) / 1000)
       // let new_task = JSON.parse(JSON.stringify(this.currentTask))
       // new_task.time_spent = time_diff_secs
