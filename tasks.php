@@ -127,6 +127,12 @@ $result = mysqli_query($db, $sql);
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
   <script>
+    window.addEventListener('beforeunload', function (event) {
+      // console.log(event)
+      event.stopImmediatePropagation();
+    });
+
+
     let categoryColors = {}
     fetch("api/getCategoryColors.php")
       .then(response => response.json())
@@ -194,7 +200,7 @@ $result = mysqli_query($db, $sql);
 
   <!-- Fontawesome -->
   <script src="https://kit.fontawesome.com/06843879cb.js" crossorigin="anonymous"></script>
-  
+
   <!-- Markdown to HTML -->
   <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 
