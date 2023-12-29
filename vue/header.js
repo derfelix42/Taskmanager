@@ -41,6 +41,10 @@ const header = createApp({
       fetch_timer = setTimeout(getCurrentTask, 1000)
     }
 
+    async function openTaskModal() {
+      openModal(currentTask.value?.ID)
+    }
+
     async function apiStopTaskTimer() {
       await stopTimerOnTask(currentTask.value?.ID)
     }
@@ -58,11 +62,11 @@ const header = createApp({
     onBeforeUnmount(() => clearTimeout(fetch_timer))
 
     return {
-      currentTask, title, startStopBtn, timer, apiStopTaskTimer, apiEndTask
+      currentTask, title, startStopBtn, timer, apiStopTaskTimer, apiEndTask, openTaskModal
     }
   },
   template: `
-  <p class="title">{{ title }}</p>
+  <p class="title" @click="openTaskModal">{{ title }}</p>
   <button type="button" name="startStop" @click="apiStopTaskTimer">{{ startStopBtn }}</button>
   <div class="time">{{ timer }}</div>
   <button type="button" name="endTask" @click="apiEndTask">BEENDEN</button>
