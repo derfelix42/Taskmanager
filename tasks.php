@@ -199,6 +199,16 @@ $result = mysqli_query($db, $sql);
   <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 
   <!-- Vue.js -->
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
+
+  <!-- <script src="https://unpkg.com/vue@next"></script> -->
+  <!-- <script type="module" src="vue/main.js" defer></script> -->
   <script src="https://unpkg.com/vue@next"></script>
   <script src="vue/main.js" defer></script>
 
@@ -278,7 +288,7 @@ $result = mysqli_query($db, $sql);
     </a> -->
   </ul>
 </div>
-<main>
+<main id="main">
 
   <?php if (isset($_GET['timetable'])) { ?>
 
