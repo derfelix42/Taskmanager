@@ -1,9 +1,9 @@
 async function setCategorySidebar() {
     let ul = document.getElementById("categories")
-    console.log(ul)
+    // console.log(ul)
     let cats = await getCategoryColors()
     let f_cat = cats.filter(c => c.display === "1")
-    console.log(f_cat)
+    // console.log(f_cat)
 
     for(let c of f_cat) {
         if(c.color === null) {

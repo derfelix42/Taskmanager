@@ -20,7 +20,7 @@ function getPrevMonth(date) {
 }
 
 function createTable(table, month, habits) {
-    while (table.hasChildNodes()) {
+    while (table?.hasChildNodes()) {
         table.removeChild(table.lastChild);
     }
 
@@ -81,8 +81,8 @@ const habits_table_monthly = document.getElementById("habits_table_monthly")
 const habits_next_month = document.getElementById("habits_next_month")
 const habits_prev_month = document.getElementById("habits_prev_month")
 
-habits_next_month.addEventListener("click", () => { habits_month = getNextMonth(habits_month); createHabitTables() })
-habits_prev_month.addEventListener("click", () => { habits_month = getPrevMonth(habits_month); createHabitTables() })
+habits_next_month?.addEventListener("click", () => { habits_month = getNextMonth(habits_month); createHabitTables() })
+habits_prev_month?.addEventListener("click", () => { habits_month = getPrevMonth(habits_month); createHabitTables() })
 
 async function createHabitTables() {
     let habits = await fetchHabits()
@@ -98,4 +98,6 @@ async function createHabitTables() {
     document.getElementById("habits_curr_date").innerText = (habits_month.getMonth() + 1) + "-" + habits_month.getFullYear()
 }
 
-createHabitTables()
+if(habits_table_daily) {
+    createHabitTables()
+}

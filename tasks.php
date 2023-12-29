@@ -141,7 +141,7 @@ $result = mysqli_query($db, $sql);
     }
 
     function updateSpentTimeOfDay(day, sum) {
-      console.log("Udpating", day, "to", sum)
+      // console.log("Udpating", day, "to", sum)
       let prev_sum = document.getElementById(day)
       if (prev_sum)
         prev_sum.innerText = sum
@@ -480,7 +480,7 @@ $result = mysqli_query($db, $sql);
                   <h2>Finished Tasks:</h2>
                 </center>
                 <table>
-                  <tr>
+                  <!-- <tr>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Duration</th>
@@ -489,7 +489,7 @@ $result = mysqli_query($db, $sql);
                     <th>DaysAgo</th>
                     <th>Difficulty</th>
                     <th></th>
-                  </tr>
+                  </tr> -->
 
         <?php
         $day_sel = "AND TIMESTAMPDIFF(DAY, done, NOW()) < 7";
@@ -563,6 +563,7 @@ $result = mysqli_query($db, $sql);
         echo "
     <tr date>
       <td>$date_string $past_tasks_spent_sum_string $past_difficulty_score_of_day_string</td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>
@@ -723,9 +724,9 @@ $result = mysqli_query($db, $sql);
 
 <?php } ?>
 
-<div id="openMHealthModal" class="overlaybutton">
+<!-- <div id="openMHealthModal" class="overlaybutton">
   <i class="fas fa-traffic-light"></i>
-</div>
+</div> -->
 
 <div id="openNewTimerModal" class="overlaybutton">
   <i class="fas fa-stopwatch"></i>
