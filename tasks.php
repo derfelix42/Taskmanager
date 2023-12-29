@@ -191,9 +191,14 @@ $result = mysqli_query($db, $sql);
   <script src="js/calendar.js" defer></script>
   <script src="js/header.js" defer></script>
   <script src="js/habits.js" defer></script>
+
+  <!-- Fontawesome -->
   <script src="https://kit.fontawesome.com/06843879cb.js" crossorigin="anonymous"></script>
+  
+  <!-- Markdown to HTML -->
   <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 
+  <!-- Vue.js -->
   <script src="https://unpkg.com/vue@next"></script>
   <script src="vue/main.js" defer></script>
 
@@ -218,27 +223,9 @@ $result = mysqli_query($db, $sql);
       <li>All Tasks</li>
     </a>
     <hr>
-    <?php
-    // $sql = "SELECT * FROM `category` WHERE display = 1";
-// $cats = mysqli_query($db, $sql);
-    
-    // if(mysqli_num_rows($cats)>0) {
-//   while($row = mysqli_fetch_assoc($cats)) {
-//     $cat_id = $row['ID'];
-//     $cat_bez = $row['Bezeichnung'];
-//     $color = $row['color'];
-//     if(empty($color)) {
-//       $color = "777";
-//     }
-//     echo "<a href='?category=$cat_id'><li><div class='categoryIndicator' style='--color: #$color'></div>$cat_bez</li></a>";
-//   }
-// }
-    
-
-    ?>
   </ul>
   <hr>
-  <ul>
+  <!-- <ul>
     <li>Drucksachen</li>
     <a href="#" onclick="printPDF('../plans/DayTodoPlanII.pdf')">
       <li>> Pomodoro DayPlan</li>
@@ -253,7 +240,7 @@ $result = mysqli_query($db, $sql);
       <li>> Tages Todo Faltware</li>
     </a>
   </ul>
-  <hr>
+  <hr> -->
   <ul>
     <a href="?timetable">
       <li>Timetable</li>
@@ -280,15 +267,15 @@ $result = mysqli_query($db, $sql);
     <a href="?search">
       <li>Search <i class="fas fa-search small"></i></li>
     </a>
-    <a href="?bahnapi">
+    <!-- <a href="?bahnapi">
       <li>BahnAPI</li>
-    </a>
+    </a> -->
     <a href="?settings">
       <li>Settings</li>
     </a>
-    <a href="?youtube">
+    <!-- <a href="?youtube">
       <li>Youtube History</li>
-    </a>
+    </a> -->
   </ul>
 </div>
 <main>
@@ -335,15 +322,6 @@ $result = mysqli_query($db, $sql);
                   <h2>Open Tasks:</h2>
                 </center>
                 <table>
-                  <!-- <tr>
-    <th>Name</th>
-    <th>Description</th>
-    <th>DaysLeft</th>
-    <th>DueDate</th>
-    <th>DueTime</th>
-    <th>Duration</th>
-    <th></th>
-  </tr> -->
 
         <?php
         /**
@@ -452,19 +430,11 @@ $result = mysqli_query($db, $sql);
                 $duration_sum = 0;
                 $spent_time_daysum = 0;
               }
-              if ($DaysLeft == 0) {
-                // $setNewDate = " :: <a href='tasks.php?setNewDate=tomorrow&ID=$ID&$category&$day'>Auf morgen verschieben</a>";
-              }
             } else {
               if (!isset($category)) {
                 $category = "";
               }
-              // $setNewDate = " :: Auf <a href='tasks.php?setNewDate=today&ID=$ID&$category&$day'>heute</a> / <a href='tasks.php?setNewDate=tomorrow&ID=$ID&$category&$day'>morgen</a> verschieben";
             }
-
-            /*if(!empty($DueTime) && $DaysLeft == 0) {
-              $DueTime = $DueTime."<script>addNotification(\"$DueDate\", \"$DueTime\", \"$name. ($ID)\");</script>";
-            }*/
 
             $time_spent_string = "";
             $time_spent = $row['time_spent'];
@@ -499,23 +469,6 @@ $result = mysqli_query($db, $sql);
 
 
         ?>
-                  <!-- <tr>
-  <form method="get">
-    <td><input type="text" name="name" placeholder="Name" required <?php if (isset($_GET['activeInput'])) {
-      echo "autofocus";
-    } ?>/></td>
-    <td><textarea name="desc" placeholder="Description"></textarea></td>
-    <td><input tpye="number" min="0" max="10" name="priority" placeholder="priority (0-10)" required value="5"/></td>
-    <td><input type="date" name="duedate" required value="<?php echo (new Datetime('tomorrow'))->format('Y-m-d') ?>"/></td>
-    <td><input type="time" name="duetime"/></td>
-    <td><input type="time" name="duration"/></td>
-    <td><input type="submit" value="&#10148;"</td>
-    <input type="hidden" name="category" value="<?php if (isset($category)) {
-      echo $category;
-    } else
-      echo "0"; ?>">
-  </form>
-</tr> -->
 
                 </table>
 
