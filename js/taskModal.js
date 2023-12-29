@@ -260,7 +260,7 @@ async function startStopTimer() {
 
 async function stopTimer() {
   clearInterval(timer_interval)
-  throw new Error("taskModal.js: stopTimer() got called!")
+  // throw new Error("taskModal.js: stopTimer() got called!")
   if(currentTask?.ID) {
     await stopTimerOnTask(currentTask.ID)
     const task_data = await getTaskData(currentTask.ID)
