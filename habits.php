@@ -32,22 +32,22 @@ function getEndWeekOfMonth($month, $year)
     <table id="habits_table_daily" class="habits">
     </table>
 
-    <h3>Weekly</h3>
+    <!-- <h3>Weekly</h3> -->
     <?php
-    $start_week = getStartWeekOfMonth($month, $year);
-    $end_week = getEndWeekOfMonth($month, $year);
+    // $start_week = getStartWeekOfMonth($month, $year);
+    // $end_week = getEndWeekOfMonth($month, $year);
 
-    print("Month includes KW-$start_week until KW-$end_week");
+    // print("Month includes KW-$start_week until KW-$end_week");
     ?>
 
-    <table class="habits">
+    <!-- <table class="habits">
         <thead>
             <tr>
                 <td>Habit</td>
                 <?php 
-                for($kw = $start_week; $kw <= $end_week; $kw++) {
-                    print("<td>KW-".str_pad($kw, 2, "0", STR_PAD_LEFT)."</td>");
-                }
+                // for($kw = $start_week; $kw <= $end_week; $kw++) {
+                //     print("<td>KW-".str_pad($kw, 2, "0", STR_PAD_LEFT)."</td>");
+                // }
                 ?>
             </tr>
         </thead>
@@ -55,25 +55,25 @@ function getEndWeekOfMonth($month, $year)
             <tr>
                 <td>Hallo</td>
                 <?php 
-                for($kw = $start_week; $kw <= $end_week; $kw++) {
-                    print('<td><input type="checkbox" name="" id=""></td>');
-                }
+                // for($kw = $start_week; $kw <= $end_week; $kw++) {
+                //     print('<td><input type="checkbox" name="" id=""></td>');
+                // }
                 ?>
             </tr>
             <tr>
                 <td>Welt</td>
                 <?php 
-                for($kw = $start_week; $kw <= $end_week; $kw++) {
-                    print('<td><input type="checkbox" name="" id=""></td>');
-                }
+                // for($kw = $start_week; $kw <= $end_week; $kw++) {
+                //     print('<td><input type="checkbox" name="" id=""></td>');
+                // }
                 ?>
             </tr>
         </tbody>
 
-    </table>
+    </table> -->
 
 
-    <h3>Monthly</h3>
+    <!-- <h3>Monthly</h3>
     <table class="habits">
         <thead>
             <tr>
@@ -91,5 +91,5 @@ function getEndWeekOfMonth($month, $year)
                 <td><input type="checkbox" name="" id=""></td>
             </tr>
         </tbody>
-    </table>
+    </table> -->
 </div>
