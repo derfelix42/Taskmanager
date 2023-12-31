@@ -54,9 +54,7 @@ const header = createApp({
     }
 
     onMounted(async () => {
-      console.log("header is mounted!")
       await getCurrentTask()
-      console.log("Got current Task!", currentTask)
     })
 
     onBeforeUnmount(() => clearTimeout(fetch_timer))

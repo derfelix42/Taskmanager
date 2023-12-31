@@ -6,7 +6,6 @@ const sidebar = createApp({
 
         onMounted(async () => {
             categories.value = await getCategoryColors()
-            console.log(categories.value)
         })
 
         return {
