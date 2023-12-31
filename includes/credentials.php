@@ -10,6 +10,9 @@ $apiKey = getenv('WEATHER_API_KEY');
 $samplesApiKey = getenv('WEATHER_SAMPLE_API_KEY');
 $cityId = getenv('WEATHER_CITY_ID');
 
+$sunrise_latitude = getenv('SUNRISE_CORDS_LAT');
+$sunrise_longitude = getenv('SUNRISE_CORDS_LON');
+
 # Bahn API
 $first_station_id = getenv('BAHN_API_FROM_ID');
 $second_station_id = getenv('BAHN_API_TO_ID');

@@ -357,9 +357,9 @@ $result = mysqli_query($db, $sql);
                 }
 
 
-                $sunrise = date_sunrise(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 90, 1);
-                $sunset = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 90, 1);
-                $sunset_dark = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 102, 1);
+                $sunrise = date_sunrise(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 90, 1);
+                $sunset = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 90, 1);
+                $sunset_dark = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 102, 1);
 
                 $weatherInfo = "";
                 foreach ($weather as $wd) {
