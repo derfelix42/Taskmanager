@@ -10,10 +10,12 @@ function getCategorySuggestionByName(name) {
         "[WebTech]": 10,
         "[Uni]": 1,
         "[DnD]": 6,
+        "[D&D]": 6,
         "Joggen": 7,
         "Centr": 7,
         "[Taskmanager]": 2,
         "Mensa": 3,
+        "Frühstück": 3,
         "Abendessen": 3,
         "Mittagessen": 3,
         "[Wachmann]": 13,
@@ -25,7 +27,6 @@ function getCategorySuggestionByName(name) {
         // "[QC]": 1,
         // "[CV]": 1,
         // "[Seminar]": 1,
-        // "Taskmanager": 2,
     }
 
     for (const [key, value] of Object.entries(suggestions)) {
