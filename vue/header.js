@@ -6,7 +6,7 @@ const header = createApp({
     const currentTask = reactive({})
     const currentTime = ref(new Date())
 
-    const title = computed(() => currentTask.value?.Name || "No active Task")
+    const title = computed(() => currentTask.value?.Name || "")
     const startStopBtn = ref("")
     const timer = computed(() => {
       if (currentTask.value) {
