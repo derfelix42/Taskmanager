@@ -88,7 +88,6 @@ habits_prev_month?.addEventListener("click", () => { habits_month = getPrevMonth
 
 async function createHabitTables() {
     let habits = await fetchHabits()
-    console.log(habits)
 
     const daily = habits.filter(x => x.type === "daily")
     const weekly = habits.filter(x => x.type === "weekly")
