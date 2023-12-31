@@ -14,3 +14,12 @@ After that you should be able to use this project. Please keep in mind that this
 
 If you want more information, you can also contact me through the information you find on my github profile.
 If you find something to be missing here, please let me know or create a merge request ; )
+
+## Cron Jobs
+You can define Cron-Jobs that are stored in the DB and can be toggle from the frontend. The file `cron.php` in the document root should be executed once per minute. This does also handle backups!
+
+```
+* * * * * /usr/bin/php /var/www/html/Taskmanager/cron.php >> /var/www/html/Taskmanager/logs/cronlogs
+```
+
+You might need to change the `$_SERVER['DOCUMENT_ROOT']` in `cron.php` and the above command to fit your specific Server Locations.

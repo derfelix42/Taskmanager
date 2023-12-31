@@ -7,7 +7,7 @@ $db = $globals['db'];
 
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"]) ||
     (basename(__FILE__) != basename($_SERVER["SCRIPT_FILENAME"]) && 
-    count(glob("backups/taskmanager_export-".(new DateTime())->format('Y-m-d_')."*.json")) == 0)
+    count(glob($_SERVER['DOCUMENT_ROOT']."/Taskmanager/backups/taskmanager_export-".(new DateTime())->format('Y-m-d_')."*.json")) == 0)
 ) {
 
     // Get Categories
@@ -67,21 +67,25 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"]) ||
             print json_encode($data);
 
         } else {
-            $path = "backups/taskmanager_export-".$date_str.".json";
+            $path = $_SERVER['DOCUMENT_ROOT']."/Taskmanager/backups/taskmanager_export-".$date_str.".json";
             $backup = fopen($path, "w") or die("Unable to open file!");
             fwrite($backup, json_encode($data));
             fclose($backup);
     
             header('Content-Type: application/json');
-            print "{'msg': 'success!', 'file': " . "taskmanager_export-" . $date_str . ".json, 'path': '" . getcwd() . "/backups/taskmanager_export-" . $date_str . ".json" . "'}";
+            print "{'msg': 'success!', 'file': " . "taskmanager_export-" . $date_str . ".json, 'path': '" .$_SERVER['DOCUMENT_ROOT']."/Taskmanager/backups/taskmanager_export-" . $date_str . ".json" . "'}";
         }
 
     } else {
-        $path = "backups/taskmanager_export-".$date_str.".json";
+        $path = $_SERVER['DOCUMENT_ROOT']."/Taskmanager/backups/taskmanager_export-".$date_str.".json";
         $backup = fopen($path, "w") or die("Unable to open file!");
         fwrite($backup, json_encode($data));
         fclose($backup);
 
     }
+
+    echo "Created backup ".$path;
+} else {
+    echo "No new backup needed!";
 }
 ?>

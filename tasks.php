@@ -6,10 +6,10 @@ header("Pragma: no-cache");
 $globals["database_name"] = "j_tasks";
 require_once("includes/db_connection.php");
 include_once("includes/weatherApi.php");
-include_once('export.php');
+// include_once('export.php');
 
 $db = $globals['db'];
-include_once("./cronjobs.php");
+// include_once("./cronjobs.php");
 
 $day = "";
 $day_sel = "";
