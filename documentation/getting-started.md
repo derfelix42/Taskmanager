@@ -19,7 +19,7 @@ If you find something to be missing here, please let me know or create a merge r
 You can define Cron-Jobs that are stored in the DB and can be toggle from the frontend. The file `cron.php` in the document root should be executed once per minute. This does also handle backups!
 
 ```
-* * * * * /usr/bin/php /var/www/html/Taskmanager/cron.php >> /var/www/html/Taskmanager/logs/cronlogs
+1 * * * * /usr/bin/php /var/www/html/Taskmanager/cron.php >> /var/www/html/Taskmanager/logs/cronlogs
 ```
 
 You might need to change the `$_SERVER['DOCUMENT_ROOT']` in `cron.php` and the above command to fit your specific Server Locations.
