@@ -56,11 +56,13 @@ function createTable(table, month, habits) {
         for (let i = 1; i <= days_in_month; i += 1) {
             const date = habits_month.getFullYear() + "-" + (habits_month.getMonth() + 1) + "-" + i.toString().padStart(2, "0")
             const td = document.createElement("td")
-            const input = document.createElement("input")
-            input.type = "checkbox"
-            input.addEventListener("click", event => toggleHabit(event, habit.id, date))
-            input.checked = habit.dates.includes(date)
-            td.appendChild(input)
+            if((new Date(habit.created)) <= (new Date(date)) || habit.dates.includes(date)) {
+                const input = document.createElement("input")
+                input.type = "checkbox"
+                input.addEventListener("click", event => toggleHabit(event, habit.id, date))
+                input.checked = habit.dates.includes(date)
+                td.appendChild(input)
+            }
             tr.appendChild(td)
         }
 
@@ -86,6 +88,7 @@ habits_prev_month?.addEventListener("click", () => { habits_month = getPrevMonth
 
 async function createHabitTables() {
     let habits = await fetchHabits()
+    console.log(habits)
 
     const daily = habits.filter(x => x.type === "daily")
     const weekly = habits.filter(x => x.type === "weekly")
@@ -95,7 +98,7 @@ async function createHabitTables() {
     // createTable(habits_table_weekly, habits_month, weekly)
     // createTable(habits_table_monthly, habits_month, monthly)
 
-    document.getElementById("habits_curr_date").innerText = (habits_month.getMonth() + 1) + "-" + habits_month.getFullYear()
+    document.getElementById("habits_curr_date").innerText = (habits_month.getMonth() + 1).toString().padStart(2, "0") + "-" + habits_month.getFullYear()
 }
 
 if(habits_table_daily) {

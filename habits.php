@@ -25,7 +25,7 @@ function getEndWeekOfMonth($month, $year)
         (<em id="habits_curr_date"></em>)
     </h2>
 
-    <a id="habits_prev_month">prev</a> <a id="habits_next_month">next</a>
+    <a id="habits_prev_month" class="clickable">prev</a> <a id="habits_next_month" class="clickable">next</a>
 
     <h3>Daily</h3>
 
