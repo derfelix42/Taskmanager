@@ -143,7 +143,7 @@ $result = mysqli_query($db, $sql);
   <script src="js/config.js" defer></script>
   <script src="js/helpers.js" defer></script>
   <script src="js/api.js" defer></script>
-  <script src="js/categorySidebar.js" defer></script>
+  <!-- <script src="js/categorySidebar.js" defer></script> -->
   <script src="js/taskModal.js" defer></script>
   <script src="js/addNewTaskModal.js" defer></script>
   <script src="js/Notification.js" playBell="<?php echo isset($_GET['bell']) ? "true" : "false"; ?>" defer></script>
@@ -170,6 +170,7 @@ $result = mysqli_query($db, $sql);
   <!-- <script src="https://unpkg.com/vue@next"></script> -->
   <!-- <script type="module" src="vue/main.js" defer></script> -->
   <script type="module" src="vue/header.js" defer></script>
+  <script type="module" src="vue/sidebar.js" defer></script>
 
 </head>
 <div id="sound" style="display: none"></div>
@@ -178,65 +179,7 @@ $result = mysqli_query($db, $sql);
 </header>
 
 <div id="sidebar">
-  <ul id="categories">
-    <a href='?'>
-      <li>All Tasks</li>
-    </a>
-    <hr>
-  </ul>
-  <hr>
-  <!-- <ul>
-    <li>Drucksachen</li>
-    <a href="#" onclick="printPDF('../plans/DayTodoPlanII.pdf')">
-      <li>> Pomodoro DayPlan</li>
-    </a>
-    <a href="#" onclick="printPDF('../plans/WochenToDo.pdf')">
-      <li>> Wochenstatistik</li>
-    </a>
-    <a href="#" onclick="printPDF('../plans/Wochenplan2.pdf')">
-      <li>> Stundenplan</li>
-    </a>
-    <a href="#" onclick="printPDF('../plans/dayTodoWeekPlan2Printable.pdf')">
-      <li>> Tages Todo Faltware</li>
-    </a>
-  </ul>
-  <hr> -->
-  <ul>
-    <a href="?timetable">
-      <li>Timetable</li>
-    </a>
-    <a href="?habits">
-      <li>Habit Tracker</li>
-    </a>
-    <!-- <a href="?calendar"><li>Calendar</li></a> -->
-  </ul>
-  <hr>
-  <ul>
-    <a href="?yesterday">
-      <li>Gestern</li>
-    </a>
-    <a href="?today">
-      <li>Heutige Aufgaben</li>
-    </a>
-    <a href="?tomorrow">
-      <li>Morgen</li>
-    </a>
-  </ul>
-  <hr>
-  <ul>
-    <a href="?search">
-      <li>Search <i class="fas fa-search small"></i></li>
-    </a>
-    <!-- <a href="?bahnapi">
-      <li>BahnAPI</li>
-    </a> -->
-    <a href="?settings">
-      <li>Settings</li>
-    </a>
-    <!-- <a href="?youtube">
-      <li>Youtube History</li>
-    </a> -->
-  </ul>
+  
 </div>
 <main id="main">
 
@@ -357,9 +300,9 @@ $result = mysqli_query($db, $sql);
                 }
 
 
-                $sunrise = date_sunrise(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 90, 1);
-                $sunset = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 90, 1);
-                $sunset_dark = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 102, 1);
+                $sunrise = date_sunrise(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 90, 1);
+                $sunset = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 90, 1);
+                $sunset_dark = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 102, 1);
 
                 $weatherInfo = "";
                 foreach ($weather as $wd) {
