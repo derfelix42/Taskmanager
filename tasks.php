@@ -72,22 +72,24 @@ if (isset($_GET['setNewDate'])) {
   header("Location: tasks.php?today");
 }
 
-if (isset($_GET['name'])) {
-  $name = htmlentities($_GET['name']);
-  $desc = htmlentities($_GET['desc']);
-  $duedate = "'" . $_GET['duedate'] . "'";
-  $duetime = (!empty($_GET['duetime']) ? "'" . $_GET['duetime'] . "'" : "NULL");
-  $duration = (!empty($_GET['duration']) ? "'" . $_GET['duration'] . "'" : "NULL");
-  $priority = $_GET['priority'];
-  $category = $_GET['category'];
-  $sql = "INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `category`) VALUES (NULL, '$name', '$desc', $duedate, $duetime, NULL, $duration, '$priority', '$category');";
-  //echo $sql; exit();
-  mysqli_query($db, $sql);
+// Deprecated Way to insert new Tasks
+// if (isset($_GET['name'])) {
+//   $name = htmlentities($_GET['name']);
+//   $desc = htmlentities($_GET['desc']);
+//   $duedate = "'" . $_GET['duedate'] . "'";
+//   $duetime = (!empty($_GET['duetime']) ? "'" . $_GET['duetime'] . "'" : "NULL");
+//   $duration = (!empty($_GET['duration']) ? "'" . $_GET['duration'] . "'" : "NULL");
+//   $priority = $_GET['priority'];
+//   $category = $_GET['category'];
+//   $sql = "INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `category`) VALUES (NULL, '$name', '$desc', $duedate, $duetime, NULL, $duration, '$priority', '$category');";
+//   //echo $sql; exit();
+//   mysqli_query($db, $sql);
 
-  header("Location: tasks.php?activeInput&category=$category&$day&prefix=$prefix");
-  exit();
-}
+//   header("Location: tasks.php?activeInput&category=$category&$day&prefix=$prefix");
+//   exit();
+// }
 
+// Revive a task (uncheck task)
 if (isset($_GET['revive'])) {
   $ID = $_GET['revive'];
   $sql = "UPDATE `tasks` SET `done` = NULL WHERE `tasks`.`ID` = '$ID'";
@@ -103,11 +105,17 @@ if (empty($day)) {
     $cat_sel = "AND category = $category";
   }
 }
+
+$prefix_sel = "";
+if (isset($_GET['prefix'])) {
+  $prefix_sel = "AND Name LIKE '$prefix%'";
+}
+
 $sql = "SELECT tasks.ID, Name, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, (HOUR(duration) + (MINUTE(duration)/60)) as duration2, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, difficulty, color, IFNULL(time_spent_new, 0) as time_spent, category, location
           FROM `tasks`
           JOIN category ON tasks.category = category.ID
           LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
-          WHERE done IS NULL $cat_sel $day_sel AND deleted = 0 AND Name LIKE '$prefix%'
+          WHERE done IS NULL $cat_sel $day_sel AND deleted = 0 $prefix_sel
           ORDER BY due ASC, due_time ASC, priority DESC, category";
 
 #$sql = "SELECT tasks.ID, Name, time_spent, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, color FROM `tasks` JOIN category ON tasks.category = category.ID WHERE done IS NULL $cat_sel $day_sel ORDER BY due ASC, due_time ASC, priority DESC, category";
@@ -126,65 +134,11 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/habits.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
+  <script src="js/j_tasks.js"></script>
   <script>
-    window.addEventListener('beforeunload', function (event) {
-      // console.log(event)
-      event.stopImmediatePropagation();
-    });
-
-
-    let categoryColors = {}
-    fetch("api/getCategoryColors.php")
-      .then(response => response.json())
-      .then(json => categoryColors = json);
-
-    function updateDurationSumOfDay(day, sum) {
-      //console.log("Update Date's Duration Sum of",day,"to",sum)
-      let prev_sum = document.getElementById(day)
-      //console.log(prev_sum)
-      if (prev_sum)
-        prev_sum.innerText = sum
-    }
-
-    function updateSpentTimeOfDay(day, sum) {
-      // console.log("Udpating", day, "to", sum)
-      let prev_sum = document.getElementById(day)
-      if (prev_sum)
-        prev_sum.innerText = sum
-    }
-
-    Number.prototype.pad = function (size) {
-      let s = String(this);
-      while (s.length < (size || 2)) { s = "0" + s; }
-      return s;
-    }
-
-    function closePrint() {
-      document.body.removeChild(this.__container__)
-    }
-
-    function setPrint() {
-      this.contentWindow.__container__ = this;
-      this.contentWindow.onbeforeunload = closePrint;
-      this.contentWindow.onafterprint = closePrint;
-      this.contentWindow.focus(); // Required for IE
-      this.contentWindow.print();
-    }
-
-    function printPDF(pdf) {
-      let iframe = document.createElement("iframe");
-      iframe.onload = setPrint;
-      iframe.style.display = "none";
-      iframe.src = pdf;
-      document.body.appendChild(iframe);
-    }
-
     let php_date = "<?php if (isset($selectedDate)) {
       echo $selectedDate;
     } ?>";
-
-
-
   </script>
   <script src="js/config.js" defer></script>
   <script src="js/helpers.js" defer></script>
@@ -518,7 +472,7 @@ $result = mysqli_query($db, $sql);
           FROM `tasks`
           JOIN category ON category.ID = tasks.category
           LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
-          WHERE done IS NOT NULL $cat_sel $day_sel AND deleted = 0 AND Name LIKE '$prefix%'
+          WHERE done IS NOT NULL $cat_sel $day_sel $prefix_sel AND deleted = 0
           ORDER BY done desc, priority desc";
 
 
