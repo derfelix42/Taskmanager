@@ -54,7 +54,7 @@ function createTable(table, month, habits) {
         tr.appendChild(title)
 
         for (let i = 1; i <= days_in_month; i += 1) {
-            const date = habits_month.getFullYear() + "-" + (habits_month.getMonth() + 1) + "-" + i.toString().padStart(2, "0")
+            const date = habits_month.getFullYear() + "-" + (habits_month.getMonth() + 1).toString().padStart(2, "0") + "-" + i.toString().padStart(2, "0")
             const td = document.createElement("td")
             if((new Date(habit.created)) <= (new Date(date)) || habit.dates.includes(date)) {
                 const input = document.createElement("input")
@@ -90,8 +90,8 @@ async function createHabitTables() {
     let habits = await fetchHabits()
 
     const daily = habits.filter(x => x.type === "daily")
-    const weekly = habits.filter(x => x.type === "weekly")
-    const monthly = habits.filter(x => x.type === "monthly")
+    // const weekly = habits.filter(x => x.type === "weekly")
+    // const monthly = habits.filter(x => x.type === "monthly")
 
     createTable(habits_table_daily, habits_month, daily)
     // createTable(habits_table_weekly, habits_month, weekly)
