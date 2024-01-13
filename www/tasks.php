@@ -6,10 +6,10 @@ header("Pragma: no-cache");
 $globals["database_name"] = "j_tasks";
 require_once("includes/db_connection.php");
 include_once("includes/weatherApi.php");
-include_once('export.php');
+// include_once('export.php');
 
 $db = $globals['db'];
-include_once("./cronjobs.php");
+// include_once("./cronjobs.php");
 
 $day = "";
 $day_sel = "";
@@ -72,22 +72,24 @@ if (isset($_GET['setNewDate'])) {
   header("Location: tasks.php?today");
 }
 
-if (isset($_GET['name'])) {
-  $name = htmlentities($_GET['name']);
-  $desc = htmlentities($_GET['desc']);
-  $duedate = "'" . $_GET['duedate'] . "'";
-  $duetime = (!empty($_GET['duetime']) ? "'" . $_GET['duetime'] . "'" : "NULL");
-  $duration = (!empty($_GET['duration']) ? "'" . $_GET['duration'] . "'" : "NULL");
-  $priority = $_GET['priority'];
-  $category = $_GET['category'];
-  $sql = "INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `category`) VALUES (NULL, '$name', '$desc', $duedate, $duetime, NULL, $duration, '$priority', '$category');";
-  //echo $sql; exit();
-  mysqli_query($db, $sql);
+// Deprecated Way to insert new Tasks
+// if (isset($_GET['name'])) {
+//   $name = htmlentities($_GET['name']);
+//   $desc = htmlentities($_GET['desc']);
+//   $duedate = "'" . $_GET['duedate'] . "'";
+//   $duetime = (!empty($_GET['duetime']) ? "'" . $_GET['duetime'] . "'" : "NULL");
+//   $duration = (!empty($_GET['duration']) ? "'" . $_GET['duration'] . "'" : "NULL");
+//   $priority = $_GET['priority'];
+//   $category = $_GET['category'];
+//   $sql = "INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `category`) VALUES (NULL, '$name', '$desc', $duedate, $duetime, NULL, $duration, '$priority', '$category');";
+//   //echo $sql; exit();
+//   mysqli_query($db, $sql);
 
-  header("Location: tasks.php?activeInput&category=$category&$day&prefix=$prefix");
-  exit();
-}
+//   header("Location: tasks.php?activeInput&category=$category&$day&prefix=$prefix");
+//   exit();
+// }
 
+// Revive a task (uncheck task)
 if (isset($_GET['revive'])) {
   $ID = $_GET['revive'];
   $sql = "UPDATE `tasks` SET `done` = NULL WHERE `tasks`.`ID` = '$ID'";
@@ -103,11 +105,17 @@ if (empty($day)) {
     $cat_sel = "AND category = $category";
   }
 }
+
+$prefix_sel = "";
+if (isset($_GET['prefix'])) {
+  $prefix_sel = "AND Name LIKE '$prefix%'";
+}
+
 $sql = "SELECT tasks.ID, Name, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, (HOUR(duration) + (MINUTE(duration)/60)) as duration2, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, difficulty, color, IFNULL(time_spent_new, 0) as time_spent, category, location
           FROM `tasks`
           JOIN category ON tasks.category = category.ID
           LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent_new FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
-          WHERE done IS NULL $cat_sel $day_sel AND deleted = 0 AND Name LIKE '$prefix%'
+          WHERE done IS NULL $cat_sel $day_sel AND deleted = 0 $prefix_sel
           ORDER BY due ASC, due_time ASC, priority DESC, category";
 
 #$sql = "SELECT tasks.ID, Name, time_spent, description, due, due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if(CURRENT_DATE>due, 11, priority) as priority, color FROM `tasks` JOIN category ON tasks.category = category.ID WHERE done IS NULL $cat_sel $day_sel ORDER BY due ASC, due_time ASC, priority DESC, category";
@@ -126,172 +134,54 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/habits.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
+  <script src="js/j_tasks.js"></script>
   <script>
-    let categoryColors = {}
-    fetch("api/getCategoryColors.php")
-      .then(response => response.json())
-      .then(json => categoryColors = json);
-
-    function updateDurationSumOfDay(day, sum) {
-      //console.log("Update Date's Duration Sum of",day,"to",sum)
-      let prev_sum = document.getElementById(day)
-      //console.log(prev_sum)
-      if (prev_sum)
-        prev_sum.innerText = sum
-    }
-
-    function updateSpentTimeOfDay(day, sum) {
-      console.log("Udpating", day, "to", sum)
-      let prev_sum = document.getElementById(day)
-      if (prev_sum)
-        prev_sum.innerText = sum
-    }
-
-    Number.prototype.pad = function (size) {
-      let s = String(this);
-      while (s.length < (size || 2)) { s = "0" + s; }
-      return s;
-    }
-
-    function closePrint() {
-      document.body.removeChild(this.__container__)
-    }
-
-    function setPrint() {
-      this.contentWindow.__container__ = this;
-      this.contentWindow.onbeforeunload = closePrint;
-      this.contentWindow.onafterprint = closePrint;
-      this.contentWindow.focus(); // Required for IE
-      this.contentWindow.print();
-    }
-
-    function printPDF(pdf) {
-      let iframe = document.createElement("iframe");
-      iframe.onload = setPrint;
-      iframe.style.display = "none";
-      iframe.src = pdf;
-      document.body.appendChild(iframe);
-    }
-
     let php_date = "<?php if (isset($selectedDate)) {
       echo $selectedDate;
     } ?>";
-
-
-
   </script>
   <script src="js/config.js" defer></script>
   <script src="js/helpers.js" defer></script>
   <script src="js/api.js" defer></script>
-  <script src="js/categorySidebar.js" defer></script>
+  <!-- <script src="js/categorySidebar.js" defer></script> -->
   <script src="js/taskModal.js" defer></script>
   <script src="js/addNewTaskModal.js" defer></script>
   <script src="js/Notification.js" playBell="<?php echo isset($_GET['bell']) ? "true" : "false"; ?>" defer></script>
   <script src="js/timetable.js" defer></script>
   <script src="js/calendar.js" defer></script>
-  <script src="js/header.js" defer></script>
+  <!-- <script src="js/header.js" defer></script> -->
   <script src="js/habits.js" defer></script>
+
+  <!-- Fontawesome -->
   <script src="https://kit.fontawesome.com/06843879cb.js" crossorigin="anonymous"></script>
+
+  <!-- Markdown to HTML -->
   <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 
-  <script src="https://unpkg.com/vue@next"></script>
-  <script src="vue/main.js" defer></script>
+  <!-- Vue.js -->
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
+
+  <!-- <script src="https://unpkg.com/vue@next"></script> -->
+  <!-- <script type="module" src="vue/main.js" defer></script> -->
+  <script type="module" src="vue/header.js" defer></script>
+  <script type="module" src="vue/sidebar.js" defer></script>
 
 </head>
 <div id="sound" style="display: none"></div>
 
-<header>
-  <p class="title"></p>
-  <button type="button" name="startStop">START</button>
-  <div class="time">00:00:00</div>
-  <input class="time disabled" type="text" name="timer" value="" placeholder="Add/Substract Time in Seconds">
-  <button type="button" name="endTask">BEENDEN</button>
-  <div class="times">
-    <p class="startTime">start</p>
-    <p class="endTime">ende</p>
-  </div>
+<header id="header">
 </header>
 
 <div id="sidebar">
-  <ul id="categories">
-    <a href='?'>
-      <li>All Tasks</li>
-    </a>
-    <hr>
-    <?php
-    // $sql = "SELECT * FROM `category` WHERE display = 1";
-// $cats = mysqli_query($db, $sql);
-    
-    // if(mysqli_num_rows($cats)>0) {
-//   while($row = mysqli_fetch_assoc($cats)) {
-//     $cat_id = $row['ID'];
-//     $cat_bez = $row['Bezeichnung'];
-//     $color = $row['color'];
-//     if(empty($color)) {
-//       $color = "777";
-//     }
-//     echo "<a href='?category=$cat_id'><li><div class='categoryIndicator' style='--color: #$color'></div>$cat_bez</li></a>";
-//   }
-// }
-    
-
-    ?>
-  </ul>
-  <hr>
-  <ul>
-    <li>Drucksachen</li>
-    <a href="#" onclick="printPDF('../plans/DayTodoPlanII.pdf')">
-      <li>> Pomodoro DayPlan</li>
-    </a>
-    <a href="#" onclick="printPDF('../plans/WochenToDo.pdf')">
-      <li>> Wochenstatistik</li>
-    </a>
-    <a href="#" onclick="printPDF('../plans/Wochenplan2.pdf')">
-      <li>> Stundenplan</li>
-    </a>
-    <a href="#" onclick="printPDF('../plans/dayTodoWeekPlan2Printable.pdf')">
-      <li>> Tages Todo Faltware</li>
-    </a>
-  </ul>
-  <hr>
-  <ul>
-    <a href="?timetable">
-      <li>Timetable</li>
-    </a>
-    <a href="?habits">
-      <li>Habit Tracker</li>
-    </a>
-    <!-- <a href="?calendar"><li>Calendar</li></a> -->
-  </ul>
-  <hr>
-  <ul>
-    <a href="?yesterday">
-      <li>Gestern</li>
-    </a>
-    <a href="?today">
-      <li>Heutige Aufgaben</li>
-    </a>
-    <a href="?tomorrow">
-      <li>Morgen</li>
-    </a>
-  </ul>
-  <hr>
-  <ul>
-    <a href="?search">
-      <li>Search <i class="fas fa-search small"></i></li>
-    </a>
-    <a href="?bahnapi">
-      <li>BahnAPI</li>
-    </a>
-    <a href="?settings">
-      <li>Settings</li>
-    </a>
-    <a href="?youtube">
-      <li>Youtube History</li>
-    </a>
-  </ul>
+  
 </div>
-<main>
+<main id="main">
 
   <?php if (isset($_GET['timetable'])) { ?>
 
@@ -335,15 +225,6 @@ $result = mysqli_query($db, $sql);
                   <h2>Open Tasks:</h2>
                 </center>
                 <table>
-                  <!-- <tr>
-    <th>Name</th>
-    <th>Description</th>
-    <th>DaysLeft</th>
-    <th>DueDate</th>
-    <th>DueTime</th>
-    <th>Duration</th>
-    <th></th>
-  </tr> -->
 
         <?php
         /**
@@ -419,9 +300,9 @@ $result = mysqli_query($db, $sql);
                 }
 
 
-                $sunrise = date_sunrise(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 90, 1);
-                $sunset = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 90, 1);
-                $sunset_dark = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, 50.620721, 6.960079, 102, 1);
+                $sunrise = date_sunrise(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 90, 1);
+                $sunset = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 90, 1);
+                $sunset_dark = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 102, 1);
 
                 $weatherInfo = "";
                 foreach ($weather as $wd) {
@@ -452,19 +333,11 @@ $result = mysqli_query($db, $sql);
                 $duration_sum = 0;
                 $spent_time_daysum = 0;
               }
-              if ($DaysLeft == 0) {
-                // $setNewDate = " :: <a href='tasks.php?setNewDate=tomorrow&ID=$ID&$category&$day'>Auf morgen verschieben</a>";
-              }
             } else {
               if (!isset($category)) {
                 $category = "";
               }
-              // $setNewDate = " :: Auf <a href='tasks.php?setNewDate=today&ID=$ID&$category&$day'>heute</a> / <a href='tasks.php?setNewDate=tomorrow&ID=$ID&$category&$day'>morgen</a> verschieben";
             }
-
-            /*if(!empty($DueTime) && $DaysLeft == 0) {
-              $DueTime = $DueTime."<script>addNotification(\"$DueDate\", \"$DueTime\", \"$name. ($ID)\");</script>";
-            }*/
 
             $time_spent_string = "";
             $time_spent = $row['time_spent'];
@@ -499,23 +372,6 @@ $result = mysqli_query($db, $sql);
 
 
         ?>
-                  <!-- <tr>
-  <form method="get">
-    <td><input type="text" name="name" placeholder="Name" required <?php if (isset($_GET['activeInput'])) {
-      echo "autofocus";
-    } ?>/></td>
-    <td><textarea name="desc" placeholder="Description"></textarea></td>
-    <td><input tpye="number" min="0" max="10" name="priority" placeholder="priority (0-10)" required value="5"/></td>
-    <td><input type="date" name="duedate" required value="<?php echo (new Datetime('tomorrow'))->format('Y-m-d') ?>"/></td>
-    <td><input type="time" name="duetime"/></td>
-    <td><input type="time" name="duration"/></td>
-    <td><input type="submit" value="&#10148;"</td>
-    <input type="hidden" name="category" value="<?php if (isset($category)) {
-      echo $category;
-    } else
-      echo "0"; ?>">
-  </form>
-</tr> -->
 
                 </table>
 
@@ -527,7 +383,7 @@ $result = mysqli_query($db, $sql);
                   <h2>Finished Tasks:</h2>
                 </center>
                 <table>
-                  <tr>
+                  <!-- <tr>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Duration</th>
@@ -536,7 +392,7 @@ $result = mysqli_query($db, $sql);
                     <th>DaysAgo</th>
                     <th>Difficulty</th>
                     <th></th>
-                  </tr>
+                  </tr> -->
 
         <?php
         $day_sel = "AND TIMESTAMPDIFF(DAY, done, NOW()) < 7";
@@ -559,7 +415,7 @@ $result = mysqli_query($db, $sql);
           FROM `tasks`
           JOIN category ON category.ID = tasks.category
           LEFT JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as time_spent FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
-          WHERE done IS NOT NULL $cat_sel $day_sel AND deleted = 0 AND Name LIKE '$prefix%'
+          WHERE done IS NOT NULL $cat_sel $day_sel $prefix_sel AND deleted = 0
           ORDER BY done desc, priority desc";
 
 
@@ -610,6 +466,7 @@ $result = mysqli_query($db, $sql);
         echo "
     <tr date>
       <td>$date_string $past_tasks_spent_sum_string $past_difficulty_score_of_day_string</td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>
@@ -770,9 +627,9 @@ $result = mysqli_query($db, $sql);
 
 <?php } ?>
 
-<div id="openMHealthModal" class="overlaybutton">
+<!-- <div id="openMHealthModal" class="overlaybutton">
   <i class="fas fa-traffic-light"></i>
-</div>
+</div> -->
 
 <div id="openNewTimerModal" class="overlaybutton">
   <i class="fas fa-stopwatch"></i>

@@ -247,7 +247,7 @@ document.addEventListener("keydown", async (e) => {
     print_canvas()
   }
 });
-document.getElementById('printTimetableButton').addEventListener("click", () => {
+document.getElementById('printTimetableButton')?.addEventListener("click", () => {
   print_canvas()
 })
 
