@@ -2,3 +2,4 @@ backups/*
 logs/*
 .env
 .vscode
+database/
