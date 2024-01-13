@@ -1,0 +1,135 @@
+version: "3.1"
+
+services:
+  webserver:
+    image: my_php_apache:latest
+    build:
+      context: ./
+      dockerfile: php.Dockerfile
+    container_name: webserver
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./www/:/var/www/html/
+      - ./.env:/var/www/html/.env
+      - ./logs/apache2:/var/log/apache2
+      - ./logs/cron:/var/log/cron
+      - ./logs/taskmanager:/var/log/taskmanager
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webserver.entrypoints=web"
+      - "traefik.http.routers.webserver.rule=PathPrefix(`/`)"
+      - "traefik.http.services.webserver.loadbalancer.server.port=80"
+      # || PathPrefix(`/static`) || Path(`/login`) || Path(`/redirectafterlogin`) || Path(`/logout`)"
+
+    depends_on:
+      - mariadb
+
+
+  # lamp-backup:
+  #   image: tiredofit/db-backup
+  #   container_name: lamp-backup
+  #   restart: unless-stopped
+  #   environment:
+  #     - DB_TYPE=mariadb
+  #     - DB_HOST=lamp-db
+  #     - DB_NAME=database_name
+  #     - DB_USER=db_user
+  #     - DB_PASS=db_user_pw
+  #     - DB_DUMP_FREQ=1440
+  #     - DB_DUMP_BEGIN=0300
+  #     - DB_CLEANUP_TIME=8640
+  #     - COMPRESSION=GZ
+  #     - CONTAINER_ENABLE_MONITORING=FALSE
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - ./backups:/backup
+  #   depends_on:
+  #     - lamp-db
+  #   networks:
+  #     - default
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MARIADB_DATABASE=j_tasks
+      - MARIADB_USER=${MYSQL_USERNAME}
+      - MARIADB_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./database:/var/lib/mysql
+      - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p$$MARIADB_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
+      interval: 2s
+      retries: 120
+    # networks:
+    #   - default
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    # container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: ${MYSQL_USERNAME}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+      PMA_ABSOLUTE_URI: "http://localhost/phpmyadmin"
+      UPLOAD_LIMIT: 10M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.entrypoints=web"
+      - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin{regex:$$|/.*}`)"
+      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
+
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
+      # - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+      # - "traefik.http.routers.lamp-pma.entrypoints=websecure"
+      # - "traefik.http.routers.lamp-pma.rule=Host(`pma.euredomain.de`)"
+      # - "traefik.http.routers.lamp-pma.tls=true"
+      # - "traefik.http.routers.lamp-pma.tls.certresolver=http_resolver"
+      # - "traefik.http.routers.lamp-pma.middlewares=default@file"
+      # - "traefik.http.routers.lamp-pma.service=lamp-pma"
+      # - "traefik.http.services.lamp-pma.loadbalancer.server.port=80"
+      # - "traefik.docker.network=proxy"
+    # ports:
+    #   - "8234:80"
+    healthcheck:
+      test: ["CMD", "curl", "-Ss", "http://localhost/robots.txt"]
+      start_period: 5s
+      interval: 3s
+      timeout: 60s
+      retries: 10
+    depends_on:
+      - mariadb
+    # networks:
+    #   - proxy
+    #   - default
+
+  traefik:
+    image: traefik
+    environment:
+      - TRAEFIK_ENTRYPOINTS_WEB_ADDRESS=:80
+    command: "--providers.docker --providers.docker.exposedbydefault=false --entrypoints.web.address=:80 --api.insecure=true"
+    ports:
+      - "80:80"
+      - "8234:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+
+
+
+networks:
+  proxy:
+    # external: true
