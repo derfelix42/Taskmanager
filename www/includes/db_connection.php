@@ -1,5 +1,9 @@
 <?php
 // include('credentials.php');
+// $servername = "localhost";
+// $database = $globals["database_name"];
+
+// include('credentials.php');
 $servername = "mariadb";
 $username = "user";
 $password = "pass";

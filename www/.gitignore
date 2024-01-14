@@ -1,2 +1,4 @@
 backups/*
-credentials.php
+logs/*
+.env
+.vscode
