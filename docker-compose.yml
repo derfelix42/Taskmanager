@@ -80,16 +80,16 @@ services:
     restart: always
     environment:
       PMA_HOST: mariadb
-      PMA_USER: ${MYSQL_USERNAME}
+      PMA_USER: root #${MYSQL_USERNAME}
       PMA_PASSWORD: ${MYSQL_PASSWORD}
-      PMA_ABSOLUTE_URI: "http://localhost/phpmyadmin"
+      # PMA_ABSOLUTE_URI: "http://localhost/phpmyadmin"
       UPLOAD_LIMIT: 10M
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.phpmyadmin.entrypoints=web"
-      - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin{regex:$$|/.*}`)"
-      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
-      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.phpmyadmin.entrypoints=web"
+    #   - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin{regex:$$|/.*}`)"
+    #   - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+    #   - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
 
       # - "traefik.enable=true"
       # - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
@@ -102,8 +102,8 @@ services:
       # - "traefik.http.routers.lamp-pma.service=lamp-pma"
       # - "traefik.http.services.lamp-pma.loadbalancer.server.port=80"
       # - "traefik.docker.network=proxy"
-    # ports:
-    #   - "8234:80"
+    ports:
+      - "8235:80"
     healthcheck:
       test: ["CMD", "curl", "-Ss", "http://localhost/robots.txt"]
       start_period: 5s
