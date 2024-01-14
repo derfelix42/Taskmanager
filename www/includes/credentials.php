@@ -1,6 +1,6 @@
 <?php
-// include_once($_SERVER['DOCUMENT_ROOT']."/Taskmanager/includes/dotenv.php");
-// (new DotEnv($_SERVER['DOCUMENT_ROOT']."/Taskmanager/.env"))->load();
+include_once($_SERVER['DOCUMENT_ROOT']."/includes/dotenv.php");
+(new DotEnv($_SERVER['DOCUMENT_ROOT']."/.env"))->load();
 
 $username = getenv('MYSQL_USERNAME');
 $password = getenv('MYSQL_PASSWORD');
