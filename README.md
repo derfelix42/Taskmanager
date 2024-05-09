@@ -2,7 +2,17 @@
 
 In our modern digital and fast-paced world, we are constantly inundated with information and tasks. This can lead to overwhelm and loss of productivity, as it becomes difficult to maintain an overview and focus on what is important. This project aims to help overcome this challenge. For this purpose, a smart todo list with time management features shall be provided, helping users to organize their tasks, set priorities and process them efficiently. Thus, it helps to cope with the challenges of digital acceleration and enables people to stay in control of their lives in the digital world.
 
-[Getting started](documentation/getting-started.md)
+## Getting started
+
+Clone this repo onto your machine of choice running docker and docker compose:
+
+`git clone https://github.com/derfelix42/Taskmanager.git`
+
+Then go into the newly created folder `Taskmanager` and simply run:
+
+`docker compose up`
+
+Get more information in the dedicated [Getting started](documentation/getting-started.md) guide.
 
 ## Features
 Here is a list of currently working feature of this Project. 

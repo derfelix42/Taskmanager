@@ -1,4 +1,17 @@
 # Getting started
+
+Clone this repo onto your machine of choice running docker and docker compose:
+
+`git clone https://github.com/derfelix42/Taskmanager.git`
+
+Then go into the newly created folder `Taskmanager` and simply run:
+
+`docker compose up`
+
+The first startup will take more time.
+
+
+
 > Disclaimer: This project is currently a "It works on my system". This page is a first draft for a getting started with no guarantees to be complete or anything.
 
 You will need:
