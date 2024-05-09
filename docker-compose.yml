@@ -31,7 +31,10 @@ services:
       - mariadb
 
   mariadb:
-    image: mariadb:latest
+    # image: mariadb:latest
+    build:
+      context: ./
+      dockerfile: mariadb.Dockerfile
     container_name: mariadb
     restart: unless-stopped
     environment:
@@ -40,7 +43,6 @@ services:
       - MARIADB_USER=${MYSQL_USERNAME}
       - MARIADB_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - ./database:/var/lib/mysql
       - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
     healthcheck:
@@ -85,10 +87,10 @@ services:
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
-      - "--api.insecure=true"
+      # - "--api.insecure=true"
     ports:
       - "80:80"
-      - "8234:8080"
+      # - "8234:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ./.htpasswd:/etc/traefik/htpasswd/.htpasswd
