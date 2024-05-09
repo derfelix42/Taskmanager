@@ -25,6 +25,8 @@ services:
       - "traefik.http.routers.webserver.entrypoints=web"
       - "traefik.http.routers.webserver.rule=PathPrefix(`/`)"
       - "traefik.http.services.webserver.loadbalancer.server.port=80"
+      - "traefik.http.routers.webserver.middlewares=test-auth"
+      - "traefik.http.middlewares.test-auth.basicauth.usersfile=/etc/traefik/htpasswd/.htpasswd"
     depends_on:
       - mariadb
 
@@ -71,15 +73,17 @@ services:
     image: traefik
     environment:
       - TRAEFIK_ENTRYPOINTS_WEB_ADDRESS=:80
-    command: "--providers.docker --providers.docker.exposedbydefault=false --entrypoints.web.address=:80 --api.insecure=true"
+    command: 
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--api.insecure=true"
     ports:
       - "80:80"
       - "8234:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-
-
-
+      - ./.htpasswd:/etc/traefik/htpasswd/.htpasswd
 
 networks:
   proxy:
