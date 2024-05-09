@@ -51,15 +51,23 @@ services:
     #   - default
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: linuxserver/phpmyadmin
+    build:
+      context: ./
+      dockerfile: phpmyadmin.Dockerfile
     restart: always
     environment:
       PMA_HOST: mariadb
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 10M
-    ports:
-      - "8235:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.entrypoints=web"
+      - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
+      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+      - "traefik.http.routers.phpmyadmin.middlewares=test-auth"
+      - "traefik.http.middlewares.test-auth.basicauth.usersfile=/etc/traefik/htpasswd/.htpasswd"
     healthcheck:
       test: ["CMD", "curl", "-Ss", "http://localhost/robots.txt"]
       start_period: 5s
