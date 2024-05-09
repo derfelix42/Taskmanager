@@ -75,18 +75,21 @@ const sidebar = createApp({
 </ul>
 <hr>
 <ul>
-  <a href="?search">
-    <li>Search <i class="fas fa-search small"></i></li>
-  </a>
-  <!-- <a href="?bahnapi">
-    <li>BahnAPI</li>
-  </a> -->
-  <a href="?settings">
-    <li>Settings</li>
-  </a>
-  <!-- <a href="?youtube">
-    <li>Youtube History</li>
-  </a> -->
+<!--a href="?search">
+<li>Search <i class="fas fa-search small"></i></li>
+</a-->
+<!-- <a href="?bahnapi">
+<li>BahnAPI</li>
+</a> -->
+<a href="?settings">
+<li>Settings</li>
+</a>
+<!-- <a href="?youtube">
+<li>Youtube History</li>
+</a> -->
+<a href="/phpmyadmin" target="_blank">
+  <li>phpMyAdmin <i class="fas fa-up-right-from-square small"></i></li>
+</a>
 </ul>  `
 })
 
