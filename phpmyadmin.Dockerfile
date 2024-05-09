@@ -1,5 +1,4 @@
 FROM linuxserver/phpmyadmin
 
 WORKDIR "/app/www/public"
-RUN mkdir phpmyadmin
-RUN mv * phpmyadmin; exit 0
+RUN if [ ! -d "phpmyadmin" ]; then mkdir phpmyadmin; mv * phpmyadmin; fi; exit 0
