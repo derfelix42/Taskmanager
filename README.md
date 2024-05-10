@@ -12,6 +12,8 @@ Then go into the newly created folder `Taskmanager` and simply run:
 
 `docker compose up`
 
+Change your password by updating the `.htpasswd` file!
+
 Get more information in the dedicated [Getting started](documentation/getting-started.md) guide.
 
 ## Features
