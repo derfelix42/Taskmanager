@@ -1,7 +1,5 @@
 FROM mariadb:latest
 
-ENV TZ="Europe/Berlin"
-# RUN date
-
-# RUN echo "Europe/Berlin" > /etc/timezone
-# RUN dpkg-reconfigure -f noninteractive tzdata
+# Set the timezone for mariadb to Europe/Berlin
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

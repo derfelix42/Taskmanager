@@ -31,7 +31,6 @@ services:
       - mariadb
 
   mariadb:
-    # image: mariadb:latest
     build:
       context: ./
       dockerfile: mariadb.Dockerfile
@@ -40,17 +39,13 @@ services:
     environment:
       - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
       - MARIADB_DATABASE=j_tasks
-      - MARIADB_USER=${MYSQL_USERNAME}
-      - MARIADB_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - ./database:/var/lib/mysql
-      - ./j_tasks.sql:/config/initdb.d/j_tasks.sql
+      - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p$$MARIADB_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
       interval: 2s
       retries: 120
-    # networks:
-    #   - default
 
   phpmyadmin:
     image: linuxserver/phpmyadmin
