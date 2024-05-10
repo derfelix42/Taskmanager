@@ -299,10 +299,10 @@ $result = mysqli_query($db, $sql);
                   $difficulty_score_of_day_string = "[" . round((float) mysqli_fetch_assoc($difficulty_score_of_day_res)['score'], 1) . "]";
                 }
 
-
-                $sunrise = date_sunrise(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 90, 1);
-                $sunset = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 90, 1);
-                $sunset_dark = date_sunset(strtotime($DueDate), SUNFUNCS_RET_STRING, $sunrise_latitude, $sunrise_longitude, 102, 1);
+                $sunrise_data = date_sun_info(strtotime($DueDate), $sunrise_latitude, $sunrise_longitude);
+                $sunrise = date("H:i", $sunrise_data['sunrise']);
+                $sunset = date("H:i", $sunrise_data['sunset']);
+                $sunset_dark = date("H:i", $sunrise_data['civil_twilight_end']);
 
                 $weatherInfo = "";
                 foreach ($weather as $wd) {
