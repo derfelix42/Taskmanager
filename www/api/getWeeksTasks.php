@@ -18,7 +18,7 @@ if(isset($_GET['date'])) {
             ORDER BY due ASC, due_time ASC, priority DESC, category, Name";
 
             /* History + Future */
-  $sql = "(SELECT tasks.ID, location, Name, category, description, DAY(start_time) as due, TIME(start_time) as due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if('$date'>due, 11, priority) as priority, color, DAYOFWEEK(due) as dayofweek, done, TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP)) as time_spent
+  $sql = "(SELECT tasks.ID, location, Name, category, description, DATE(start_time) as due, TIME(start_time) as due_time, DAYOFWEEK(due) AS DOW, duration, TIMESTAMPDIFF(DAY, NOW(), due) AS daysLeft, if('$date'>due, 11, priority) as priority, color, DAYOFWEEK(due) as dayofweek, done, TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP)) as time_spent
             FROM `task_history`
             JOIN tasks on taskID = tasks.ID
             JOIN category ON tasks.category = category.ID

@@ -17,7 +17,7 @@ function getForecast() {
 
   curl_close($ch);
   $data = json_decode($response);
-  echo "<script>console.log(".json_encode($data)."); console.log(JSON.parse('".json_encode($data)."').list[0].main.temp)</script>";
+  // echo "<script>console.log(".json_encode($data)."); console.log(JSON.parse('".json_encode($data)."').list[0].main.temp)</script>";
 
   $days = array();
   $date = date('Y-m-d', $data->list[0]->dt);
