@@ -489,6 +489,6 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
-INSERT INTO `category` (`ID`, `Bezeichnung`, `color`, `display`) VALUES (NULL, 'null', NULL, '1');
-INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `difficulty`, `created`, `category`, `location`, `deleted`, `autogen`) VALUES (NULL, 'Setup Task', 'This is a hidden task for you to see, when this system was initially started as it gets created on the first startup :)', CURRENT_DATE(), NULL, NULL, NULL, '5', '1', current_timestamp(), '1', '', '1', '1');
-INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `difficulty`, `created`, `category`, `location`, `deleted`, `autogen`) VALUES (NULL, 'First Task', '', CURRENT_DATE(), NULL, NULL, NULL, '5', '1', current_timestamp(), '1', '', '0', '0');
+INSERT INTO `category` (`ID`, `Bezeichnung`, `color`, `display`) VALUES ('0', 'null', NULL, '1');
+INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `difficulty`, `created`, `category`, `location`, `deleted`, `autogen`) VALUES (NULL, 'Setup Task', 'This is a hidden task for you to see, when this system was initially started as it gets created on the first startup :)', CURRENT_DATE(), NULL, NULL, NULL, '5', '1', current_timestamp(), '0', '', '1', '1');
+INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `difficulty`, `created`, `category`, `location`, `deleted`, `autogen`) VALUES (NULL, 'First Task', '', CURRENT_DATE(), NULL, NULL, NULL, '5', '1', current_timestamp(), '0', '', '0', '0');
