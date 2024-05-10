@@ -299,7 +299,7 @@ $result = mysqli_query($db, $sql);
                   $difficulty_score_of_day_string = "[" . round((float) mysqli_fetch_assoc($difficulty_score_of_day_res)['score'], 1) . "]";
                 }
 
-                $sunrise_data = date_sun_info(strtotime($DueDate), $sunrise_latitude, $sunrise_longitude);
+                $sunrise_data = date_sun_info(strtotime($DueDate), floatval($sunrise_latitude), floatval($sunrise_longitude));
                 $sunrise = date("H:i", $sunrise_data['sunrise']);
                 $sunset = date("H:i", $sunrise_data['sunset']);
                 $sunset_dark = date("H:i", $sunrise_data['civil_twilight_end']);
