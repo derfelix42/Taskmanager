@@ -24,7 +24,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.webserver.entrypoints=web"
       - "traefik.http.routers.webserver.rule=PathPrefix(`/`)"
-      - "traefik.http.services.webserver.loadbalancer.server.port=9000"
+      - "traefik.http.services.webserver.loadbalancer.server.port=80"
+      - "traefik.http.routers.webserver.middlewares=test-auth"
+      - "traefik.http.middlewares.test-auth.basicauth.usersfile=/etc/traefik/htpasswd/.htpasswd"
     depends_on:
       - mariadb
     networks:
@@ -32,16 +34,15 @@ services:
 
 
   mariadb:
-    image: mariadb:latest
-    container_name: mariadb-1
+    build:
+      context: ./
+      dockerfile: mariadb.Dockerfile
+    container_name: mariadb
     restart: unless-stopped
     environment:
       - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
       - MARIADB_DATABASE=j_tasks
-      - MARIADB_USER=${MYSQL_USERNAME}
-      - MARIADB_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - ./database:/var/lib/mysql
       - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
     healthcheck:
@@ -55,13 +56,23 @@ services:
     #   - default
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: linuxserver/phpmyadmin
+    build:
+      context: ./
+      dockerfile: phpmyadmin.Dockerfile
     restart: always
     environment:
       PMA_HOST: mariadb
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 10M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.entrypoints=web"
+      - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
+      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+      - "traefik.http.routers.phpmyadmin.middlewares=test-auth"
+      - "traefik.http.middlewares.test-auth.basicauth.usersfile=/etc/traefik/htpasswd/.htpasswd"
     # ports:
     #   - "8235:80"
     healthcheck:
@@ -87,7 +98,7 @@ services:
     #   - "8234:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-
+      - ./.htpasswd:/etc/traefik/htpasswd/.htpasswd
     labels:
       - "traefik.frontend.rule=test.docker1.felixviola.de"
     networks:
