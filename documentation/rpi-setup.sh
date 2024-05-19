@@ -1,7 +1,15 @@
 #!/bin/bash
 
 # Show welcome message
-echo "Welcome to the Auto Install Script for My Software Repository"
+
+echo " _____          _                                                ";
+echo "/__   \__ _ ___| | ___ __ ___   __ _ _ __   __ _  __ _  ___ _ __ ";
+echo "  / /\/ _\` / __| |/ / '_ \` _ \ / _\` | '_ \ / _\` |/ _\` |/ _ \ '__|";
+echo " / / | (_| \__ \   <| | | | | | (_| | | | | (_| | (_| |  __/ |   ";
+echo " \/   \__,_|___/_|\_\_| |_| |_|\__,_|_| |_|\__,_|\__, |\___|_|   ";
+echo "                                                 |___/           ";
+echo
+echo "Starting install script..."
 
 # Update system
 echo "Updating system..."
@@ -10,7 +18,7 @@ sudo apt-get update -y && sudo apt-get upgrade -y
 # Install dependencies
 echo "Installing dependencies..."
 # Add any other dependencies you need here
-sudo apt-get install -y docker docker-compose git
+sudo apt-get install -y docker docker-compose git apache2-utils vim
 
 # Clone git repo and switch to a special branch
 echo "Cloning repository..."
