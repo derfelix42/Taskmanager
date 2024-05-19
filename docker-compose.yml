@@ -79,8 +79,6 @@ services:
   traefik:
     image: traefik
     restart: always
-    environment:
-      - TRAEFIK_ENTRYPOINTS_WEB_ADDRESS=:80
     command: 
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
