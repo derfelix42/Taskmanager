@@ -36,3 +36,10 @@ You can define Cron-Jobs that are stored in the DB and can be toggle from the fr
 ```
 
 You might need to change the `$_SERVER['DOCUMENT_ROOT']` in `cron.php` and the above command to fit your specific Server Locations.
+
+## Certificates
+By default TLS keys will be generated on startup by traefik.
+
+But you can also add your own `.key` and `.cert` file in `./certs` you got from lets encrypt or as from cloudflare as origin server certificate.
+
+You can name them `certificate.key` and `certificate.cert`.
