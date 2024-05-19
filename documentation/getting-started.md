@@ -28,6 +28,15 @@ After that you should be able to use this project. Please keep in mind that this
 If you want more information, you can also contact me through the information you find on my github profile.
 If you find something to be missing here, please let me know or create a merge request ; )
 
+## Set Website Password
+The Taskmanager uses simple http auth to authenticate users. The default username/password is `test/test`.
+You need to update this to something more secure.
+
+Execute the following command in this projects root folder to overwrite the existing `.htpasswd` file. You will be prompted for the new password.
+```
+sudo htpasswd -c .htpasswd username
+```
+
 ## Cron Jobs
 You can define Cron-Jobs that are stored in the DB and can be toggle from the frontend. The file `cron.php` in the document root should be executed once per minute. This does also handle backups!
 
