@@ -197,7 +197,7 @@ CREATE TABLE `tasks` (
   `difficulty` int NOT NULL DEFAULT '1',
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `category` int NOT NULL,
-  `location` text NOT NULL,
+  `location` text NOT NULL DEFAULT '',
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `autogen` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
