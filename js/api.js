@@ -16,6 +16,15 @@ async function getCategoryPrefixes(category) {
 /**
  * Tasks
  */
+async function getTasksForDate(date) {
+  const res = await fetch("api/getTasks.php?date=" + date);
+  let json = await res.json()
+  console.log("getTasks for date", date, json)
+  return json
+
+}
+
+
 async function getTaskData(id) {
   // console.log("getTaskData()",id)
   const res = await fetch("api/getTask.php?getTask=" + id);
