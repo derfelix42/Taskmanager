@@ -52,3 +52,23 @@ By default TLS keys will be generated on startup by traefik.
 But you can also add your own `.key` and `.cert` file in `./certs` you got from lets encrypt or as from cloudflare as origin server certificate.
 
 You can name them `certificate.key` and `certificate.cert`.
+
+## DynDNS
+If you host your own instance at home, you might want to get DynDNS to automagically update your home IP whenever it changes.
+
+As I use cloudflare as my DNS for the domain I am using, I use the docker image [`cloudflare-ddns`](https://hub.docker.com/r/oznu/cloudflare-ddns/). I created the following `docker-compose.yml` in another folder called `cloudflare-ddns`:
+
+```yml
+version: '2'
+services:
+  cloudflare-ddns:
+    image: oznu/cloudflare-ddns:latest
+    restart: always
+    environment:
+      - API_KEY=REPLACE_ME
+      - ZONE=example.com
+      - SUBDOMAIN=subdomain
+      - PROXIED=true
+```
+
+(I am using a proxied entry to hide my real home IP)
