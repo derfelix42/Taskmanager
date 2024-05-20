@@ -1,0 +1,53 @@
+#day_view header {
+    margin: 1em;
+    border-radius: 0.5em;
+    display: grid;
+    grid-template-columns: 5em auto 5em;
+    grid-template-rows: 1fr 2fr 1fr;
+
+    background-color: #060606;
+
+}
+
+#day_view .left-arrow {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    text-align: left;
+}
+
+#day_view .right-arrow {
+    grid-column: 3;
+    grid-row: 1 / 4;
+    text-align: right;
+}
+
+#day_view .top-row {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#day_view .main-row {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 2em;
+}
+
+#day_view .bottom-row {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+#day_view .arrow {
+    font-size: 2em;
+    margin: auto;
+    cursor: pointer;
+}
+
+#day_view .row {
+    text-align: center;
+    padding: 0.25em;
+}
+
+#day_view main input {
+    width: auto;
+}

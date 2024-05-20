@@ -132,6 +132,7 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/settings.css">
   <link rel="stylesheet" href="css/habits.css">
+  <link rel="stylesheet" href="css/day_view.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
   <script src="js/j_tasks.js"></script>
@@ -171,6 +172,7 @@ $result = mysqli_query($db, $sql);
   <!-- <script type="module" src="vue/main.js" defer></script> -->
   <script type="module" src="vue/header.js" defer></script>
   <script type="module" src="vue/sidebar.js" defer></script>
+  <script type="module" src="vue/day_view.js" defer></script>
 
 </head>
 <div id="sound" style="display: none"></div>
@@ -187,6 +189,10 @@ $result = mysqli_query($db, $sql);
 
     <canvas id="timetable"></canvas>
   </main>
+
+<?php } else if (isset($_GET['day_view'])) { ?>
+  <div id="day_view"></div>  
+</main>
 
 <?php } else if (isset($_GET['settings'])) {
     require_once("./settings.php")

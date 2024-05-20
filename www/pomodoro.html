@@ -143,8 +143,16 @@
           audio: undefined,
           gong: undefined,
           click_sound: undefined,
+          noise: undefined,
+          start_time: undefined,
         }
       },
+      // computed: {
+      //   time_remaining: () => {
+      //     const diff_s = ((new Date()) - this.start_time) / 1000
+
+      //   }
+      // },
       methods: {
         timeToString(seconds) {
           let m = Math.floor(seconds / 60 % 60)
@@ -171,10 +179,15 @@
           // start repeating timer
           this.currentTaskID = id
           this.intervalTimer = setInterval(this.updateTimer, 1000)
+          // this.start_time = new Date()
           this.updateTimer()
           this.playClickSound()
         },
         updateTimer() {
+          if(this.noise.paused || this.noise.ended) {
+            this.noise.play()
+            this.noise.pause()
+          }
           let id = this.currentTaskID
           let task = this.pause
           if(id === "break") {
@@ -233,6 +246,9 @@
         this.audio = new Audio("assets/sounds/ding.mp3")
         this.gong = new Audio("assets/sounds/gong.wav")
         this.click_sound = new Audio("assets/sounds/clock-tick.wav")
+        this.noise = new Audio("assets/sounds/empty_loop_for_js_performance.wav")
+        this.noise.play()
+        this.noise.volume = 0
       }
     }
 
