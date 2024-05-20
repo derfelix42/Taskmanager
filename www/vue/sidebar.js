@@ -87,7 +87,7 @@ const sidebar = createApp({
 <!-- <a href="?youtube">
 <li>Youtube History</li>
 </a> -->
-<a href="/phpmyadmin" target="_blank">
+<a href="/phpmyadmin/index.php?route=/sql&pos=0&db=j_tasks&table=tasks" target="_blank">
   <li>phpMyAdmin <i class="fas fa-up-right-from-square small"></i></li>
 </a>
 </ul>  `
