@@ -7,7 +7,7 @@ $db = $globals['db'];
 
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"]) ||
     (basename(__FILE__) != basename($_SERVER["SCRIPT_FILENAME"]) && 
-    count(glob($_SERVER['DOCUMENT_ROOT']."/Taskmanager/backups/taskmanager_export-".(new DateTime())->format('Y-m-d_')."*.json")) == 0)
+    count(glob($_SERVER['DOCUMENT_ROOT']."/backups/taskmanager_export-".(new DateTime())->format('Y-m-d_')."*.json")) == 0)
 ) {
 
     // Get Categories
@@ -67,7 +67,7 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"]) ||
             print json_encode($data);
 
         } else {
-            $path = $_SERVER['DOCUMENT_ROOT']."/Taskmanager/backups/taskmanager_export-".$date_str.".json";
+            $path = $_SERVER['DOCUMENT_ROOT']."/backups/taskmanager_export-".$date_str.".json";
             $backup = fopen($path, "w") or die("Unable to open file!");
             fwrite($backup, json_encode($data));
             fclose($backup);
@@ -77,7 +77,7 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"]) ||
         }
 
     } else {
-        $path = $_SERVER['DOCUMENT_ROOT']."/Taskmanager/backups/taskmanager_export-".$date_str.".json";
+        $path = $_SERVER['DOCUMENT_ROOT']."/backups/taskmanager_export-".$date_str.".json";
         $backup = fopen($path, "w") or die("Unable to open file!");
         fwrite($backup, json_encode($data));
         fclose($backup);

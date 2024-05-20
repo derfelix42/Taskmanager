@@ -20,6 +20,7 @@ services:
       - ./logs/apache2:/var/log/apache2
       - ./logs/cron:/var/log/cron
       - ./logs/taskmanager:/var/log/taskmanager
+      - ./backups/:/var/www/html/backups/
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.webserver.entrypoints=websecure"
