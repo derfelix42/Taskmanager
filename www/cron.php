@@ -9,13 +9,13 @@ $globals["database_name"] = "j_tasks";
 
 require_once("includes/db_connection.php");
 $db = $globals['db'];
-include_once($_SERVER['DOCUMENT_ROOT']."/Taskmanager/cronjobs.php");
+include_once($_SERVER['DOCUMENT_ROOT']."/cronjobs.php");
 
 echo $cronlog;
 
 echo "\n###\n\nBackups:\n";
 
-include_once($_SERVER['DOCUMENT_ROOT']."/Taskmanager/export.php");
+include_once($_SERVER['DOCUMENT_ROOT']."/export.php");
 
 
 
