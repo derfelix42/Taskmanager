@@ -17,9 +17,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./www/:/var/www/html/
       - ./.env:/var/www/html/.env
-      - ./logs/apache2:/var/log/apache2
-      - ./logs/cron:/var/log/cron
-      - ./logs/taskmanager:/var/log/taskmanager
+      - ./logs/:/var/log/
       - ./backups/:/var/www/html/backups/
     labels:
       - "traefik.enable=true"
