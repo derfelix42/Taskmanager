@@ -51,12 +51,35 @@ const habit_tracker = createApp({
             await getHabits()
         }
 
-        
+        async function createNewHabit() {
+            await createHabit()
+            await getHabits()
+        }
+
+        async function deleteHabitByID(habitID) {
+            await deleteHabit(habitID)
+            await getHabits()
+        }
+
+        async function dragStart(event, habitID) {
+            event.dataTransfer.setData("text/plain", habitID)
+        }
+
+        async function dragOver(event) {
+            event.preventDefault()
+        }
+
+        async function drop(event, groupID) {
+            event.preventDefault()
+            const habitID = event.dataTransfer.getData("text/plain")
+            console.log(habitID, groupID)
+            await moveHabitToGroup(habitID, groupID)
+            await getHabits()
+        }
+
         onMounted(async () => {
             await currentMonth()
         })
-
-
 
         return {
             habits,
@@ -65,14 +88,19 @@ const habit_tracker = createApp({
             days_in_month,
             clickedHabit,
             renameHabit,
+            createNewHabit,
+            deleteHabitByID,
             nextMonth,
-            prevMonth
+            prevMonth,
+            dragStart,
+            dragOver,
+            drop
         }
 
     },
     template: `
         <h2>Habit Tracker 
-            (<em>{{ habits_curr_date }}</em>)
+            (<span>{{ habits_curr_date }}</span>)
         </h2>
 
         <button @click="prevMonth()">prev</button>
@@ -80,43 +108,65 @@ const habit_tracker = createApp({
         
         <table class="habits" v-for="group in habits.groups">
             <thead>
-                <tr>
+            <tr @dragover="dragOver($event)" @drop="drop($event, group.ID)">
                 <td>{{group.name}}</td>
-                <td v-for="i in days_in_month">{{ i.toString().padStart(2, "0") }}.</td>
-                </tr>
+                <td v-for="i in days_in_month" :key="group.ID + '-' + i">
+                    {{ i.toString().padStart(2, "0") }}.
+                </td>
+            </tr>
             </thead>
             <tbody>
-                <tr v-for="habit in habits.habits?.filter(x => x.groupID === group.ID)">
-                    <td>{{ habit.name }}</td>
-                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i">
-                        <input type="checkbox" @click="clickedHabit(habit.ID, i)"
-                            :checked="habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString())">
+                <tr v-for="habit in habits.habits?.filter(x => x.groupID === group.ID)" :key="group.ID+'-'+habit.ID" draggable="true" @dragstart="dragStart($event, habit.ID)" @dragover="dragOver($event)" @drop="drop($event, group.ID)">
+                    
+                    <td v-if="!habit.editMode" @click="habit.editMode = true">
+                        {{ habit.name }}
+                        <span @click.stop="deleteHabitByID(habit.ID)" class="clickable right">🗑️</span>
                     </td>
+                    <td v-else>
+                        <input type="text" @change="renameHabit(habit.ID, $event.target.value)" :value="habit.name" v-on:keyup.enter="habit.editMode = false">
+                    </td>
+                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i + '-' + habits_curr_date">
+                        <input type="checkbox" @click="clickedHabit(habit.ID, i)"
+                        :checked="habits.entries ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false">
+                        </td>
                 </tr>
             </tbody>
         </table>
 
         <table class="habits">
-            <thead>
-                <tr>
+            <thead v-if="habits.habits?.filter(x => x.groupID === null).length > 0">
+                <tr @dragover="dragOver($event)" @drop="drop($event, 'null')">
                     <td></td>
-                    <td v-for="i in days_in_month">{{ i.toString().padStart(2, "0") }}.</td>
+                    <td v-for="i in days_in_month" :key="'null-' + i" >
+                        {{ i.toString().padStart(2, "0") }}.
+                    </td>
                 </tr>
+
             </thead>
             <tbody>
-                <tr v-for="habit in habits.habits?.filter(x => x.groupID === null)">
-                    <td>{{ habit.name }} ({{habit.ID}})</td>
-                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i">
+                <tr v-for="habit in habits.habits?.filter(x => x.groupID === null)" :key="'null-'+habit.ID" draggable="true" @dragstart="dragStart($event, habit.ID)" @dragover="dragOver($event)" @drop="drop($event, null)">
+                    <!-- show trash icon on hover to delete habit -->
+                    <td v-if="!habit.editMode" @click="habit.editMode = true">
+                        {{ habit.name }}
+                        <span @click.stop="deleteHabitByID(habit.ID)" class="clickable right">🗑️</span>
+                    </td>
+                    <td v-else>
+                        <input type="text" @change="renameHabit(habit.ID, $event.target.value)" :value="habit.name" v-on:keyup.enter="habit.editMode = false">
+                    </td>
+
+                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i + '-' + habits_curr_date">
                         <input type="checkbox" @click="clickedHabit(habit.ID, i)"
-                            :checked="habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString())">
+                            :checked="habits.entries ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false">
+                    </td>
+                </tr>
+                <!-- extra row to add new habit - being a full row just showing a plus in the middle -->
+                <tr>
+                    <td colspan="32" style="text-align: center;" @click="createNewHabit()" @dragover="dragOver($event)" @drop="drop($event, 'null')">
+                        +
                     </td>
                 </tr>
             </tbody>
         </table>
-
-        <button @click="renameHabit(7, 'test')">
-            rename habit
-        </button>
     `
 })
 

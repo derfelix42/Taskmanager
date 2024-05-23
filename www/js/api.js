@@ -190,6 +190,12 @@ async function toggleHabit(event, habitID, date) {
   await fetch(url)
 }
 
+// create new habit without name
+async function createHabit() {
+  const res = await fetch("api/habits.php?create")
+  return await res.json()
+}
+
 // Update habit name based on habitID
 async function updateHabitName(habitID, name) {
   const url = "api/habits.php?updateName=" + habitID
@@ -197,5 +203,18 @@ async function updateHabitName(habitID, name) {
     method: "POST",
     body: JSON.stringify({name: name})
   })
-  return await res.text()
+  return await res.json()
+}
+
+// delete habit based on habitID
+async function deleteHabit(habitID) {
+  const url = "api/habits.php?delete=" + habitID
+  const res = await fetch(url)
+  return await res.json()
+}
+
+async function moveHabitToGroup(habitID, groupID) {
+  const url = "api/habits.php?move=" + habitID + "&group=" + groupID
+  const res = await fetch(url)
+  return await res.json()
 }

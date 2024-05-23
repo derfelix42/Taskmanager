@@ -281,3 +281,7 @@ code {
 #timetable {
   max-width: 2000px;
 }
+
+.right {
+  float: right;
+}

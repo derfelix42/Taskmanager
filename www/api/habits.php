@@ -7,8 +7,44 @@ $body = json_decode(file_get_contents('php://input'));
 
 $db = $globals['db'];
 $sql = "";
+if (isset($_GET['create'])) {
+  $sql = "INSERT INTO `habits` (`ID`, `name`, `type`, `created`, `active`) VALUES (NULL, '', 'daily', current_timestamp(), '1');";
+  mysqli_query($db, $sql);
+  $res = mysqli_query($db, "SELECT LAST_INSERT_ID() as ID;");
+  $row = mysqli_fetch_assoc($res);
+  header('Content-Type: application/json');
+  print '{"status": "done", "sql": "' . $sql . '", "ID": ' . $row['ID'] . '}';
 
-if (isset($_GET['ID'])) {
+} else if (isset($_GET['delete'])) {
+  $ID = $_GET["delete"];
+  $sql = "UPDATE `habits` SET `active` = 0 WHERE ID = $ID";
+  mysqli_query($db, $sql);
+  header('Content-Type: application/json');
+  print '{"status": "done", "sql": "' . $sql . '"}';
+  
+} else if (isset($_GET['move'])) {
+  $ID = $_GET["move"];
+  $groupID = $_GET["group"];
+  // first delete all associations
+  $sql = "UPDATE `habit_group_members` SET `deleted` = current_timestamp() WHERE habitID = '$ID' AND deleted IS NULL";
+  mysqli_query($db, $sql);
+  
+  header('Content-Type: application/json');
+
+  if($groupID != "null") {
+    // then insert new association
+    $sql = "INSERT INTO `habit_group_members` (`groupID`, `habitID`, `added`, `deleted`) VALUES ('$groupID', '$ID', CURRENT_TIMESTAMP(), NULL);";
+    mysqli_query($db, $sql);
+    print '{"status": "done", "sql": "' . $sql . '"}';
+  } else {
+    print '{"status": "done"}';
+  
+  }
+
+
+  
+  
+} else if (isset($_GET['ID'])) {
 
   $ID = $_GET['ID'];
   $date = $_GET['date'];
@@ -40,7 +76,7 @@ if (isset($_GET['ID'])) {
   // result array with list of habits and list of associations
   $habits = array();
 
-  $sql = "SELECT ID, name, created, groupID FROM `habits` LEFT JOIN `habit_group_members` ON habits.ID = habit_group_members.habitID WHERE active = 1 and type = 'daily' and habit_group_members.deleted IS NULL;  ";
+  $sql = "SELECT ID, name, created, groupID FROM `habits` LEFT JOIN (SELECT * FROM `habit_group_members` WHERE habit_group_members.deleted IS NULL) as b ON habits.ID = b.habitID WHERE active = 1 and type = 'daily';";
   $result = mysqli_query($db, $sql);
 
   while ($row = mysqli_fetch_assoc($result)) {
