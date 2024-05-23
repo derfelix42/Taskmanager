@@ -3,6 +3,8 @@
 $globals["database_name"] = "j_tasks";
 require_once("../includes/db_connection.php");
 
+$body = json_decode(file_get_contents('php://input'));
+
 $db = $globals['db'];
 $sql = "";
 
@@ -25,6 +27,15 @@ if (isset($_GET['ID'])) {
   header('Content-Type: application/json');
   
   print '{"status": "done", "sql": "' . $sql . '"}';
+} else if (isset($_GET['updateName'])) {
+  $habitID = $_GET['updateName'];
+  $name = $body->name;
+
+  $sql = "UPDATE `habits` SET `name`='$name' WHERE ID = $habitID";
+  mysqli_query($db, $sql);
+  header('Content-Type: application/json');
+  print '{"status": "done", "sql": "' . $sql . '"}';
+
 } else {
   // result array with list of habits and list of associations
   $habits = array();

@@ -46,6 +46,11 @@ const habit_tracker = createApp({
             await getHabits()
         }
 
+        async function renameHabit(habitID, name) {
+            await updateHabitName(habitID, name)
+            await getHabits()
+        }
+
         
         onMounted(async () => {
             await currentMonth()
@@ -59,6 +64,7 @@ const habit_tracker = createApp({
             habits_curr_date,
             days_in_month,
             clickedHabit,
+            renameHabit,
             nextMonth,
             prevMonth
         }
@@ -107,6 +113,10 @@ const habit_tracker = createApp({
                 </tr>
             </tbody>
         </table>
+
+        <button @click="renameHabit(7, 'test')">
+            rename habit
+        </button>
     `
 })
 

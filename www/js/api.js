@@ -189,3 +189,13 @@ async function toggleHabit(event, habitID, date) {
   let url = "api/habits.php?ID=" + habitID + "&date=" + date;
   await fetch(url)
 }
+
+// Update habit name based on habitID
+async function updateHabitName(habitID, name) {
+  const url = "api/habits.php?updateName=" + habitID
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({name: name})
+  })
+  return await res.text()
+}
