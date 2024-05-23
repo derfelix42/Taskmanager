@@ -71,18 +71,35 @@ const habit_tracker = createApp({
 
         <button @click="prevMonth()">prev</button>
         <button @click="nextMonth()">next</button>
-
-
-        <table id="habits_table_daily" class="habits">
+        
+        <table class="habits" v-for="group in habits.groups">
             <thead>
                 <tr>
-                    <td>Habit</td>
+                <td>{{group.name}}</td>
+                <td v-for="i in days_in_month">{{ i.toString().padStart(2, "0") }}.</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="habit in habits.habits?.filter(x => x.groupID === group.ID)">
+                    <td>{{ habit.name }}</td>
+                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i">
+                        <input type="checkbox" @click="clickedHabit(habit.ID, i)"
+                            :checked="habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString())">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="habits">
+            <thead>
+                <tr>
+                    <td></td>
                     <td v-for="i in days_in_month">{{ i.toString().padStart(2, "0") }}.</td>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="habit in habits.habits">
-                    <td>{{ habit.name }}</td>
+                <tr v-for="habit in habits.habits?.filter(x => x.groupID === null)">
+                    <td>{{ habit.name }} ({{habit.ID}})</td>
                     <td v-for="i in days_in_month" :key="habit.ID + '-' + i">
                         <input type="checkbox" @click="clickedHabit(habit.ID, i)"
                             :checked="habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString())">
