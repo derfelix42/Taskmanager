@@ -26,22 +26,46 @@ if (isset($_GET['ID'])) {
   
   print '{"status": "done", "sql": "' . $sql . '"}';
 } else {
-  $sql = "SELECT habits.ID, habits.name, DATE(habits.created) as created, habits.type, GROUP_CONCAT(DATE(done)) AS dates FROM `habits` LEFT JOIN habits_tracker ON habits.ID = habits_tracker.habitID WHERE habits.active = 1 GROUP BY habits.ID;";
+  // result array with list of habits and list of associations
+  $habits = array();
+
+  $sql = "SELECT ID, name, created FROM `habits` WHERE active = 1 and type = 'daily';";
   $result = mysqli_query($db, $sql);
 
-  $rows = array();
   while ($row = mysqli_fetch_assoc($result)) {
     $id = $row['ID'];
     $name = $row['name'];
     $created = $row['created'];
-    $type = $row['type'];
-    $dates = explode(",", $row['dates']);
-    $rows[] = ["id" => $id, "name" => $name, "created" => $created, "type" => $type, "dates" => $dates];
+    $habits["habits"][] = array("ID" => $id, "name" => $name, "created" => $created);
   }
+
+  $current_month = date('m');
+  $current_year = date('Y');
+
+  // update current month and year based on GET
+  if (isset($_GET['month'])) {
+    $current_month = $_GET['month'];
+  }
+  if (isset($_GET['year'])) {
+    $current_year = $_GET['year'];
+  }
+
+  $sql = "SELECT habitID, done, DAY(done) as dom, entered FROM `habits_tracker` WHERE MONTH(done) = $current_month AND YEAR(done) = $current_year;";
+  $result = mysqli_query($db, $sql);
+
+  while ($row = mysqli_fetch_assoc($result)) {
+    $habitID = $row['habitID'];
+    $done = $row['done'];
+    $dom = $row['dom'];
+    $entered = $row['entered'];
+    $habits["entries"][] = array("habitID" => $habitID, "done" => $done, "dom" => $dom, "entered" => $entered);
+  }
+
+
 
   header('Content-Type: application/json');
 
-  print json_encode($rows);
+  print json_encode($habits);
 
 }
 

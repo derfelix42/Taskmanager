@@ -174,8 +174,11 @@ async function resetTimerOnTask(ID) {
 /**
  * HABITS
  */
-async function fetchHabits() {
+async function fetchHabits(month, year) {
   let url = "api/habits.php";
+  if (month && year) {
+    url += "?month=" + month + "&year=" + year
+  }
   const res = await fetch(url)
   const json = await res.json()
   return json
