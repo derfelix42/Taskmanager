@@ -29,14 +29,15 @@ if (isset($_GET['ID'])) {
   // result array with list of habits and list of associations
   $habits = array();
 
-  $sql = "SELECT ID, name, created FROM `habits` WHERE active = 1 and type = 'daily';";
+  $sql = "SELECT ID, name, created, groupID FROM `habits` LEFT JOIN `habit_group_members` ON habits.ID = habit_group_members.habitID WHERE active = 1 and type = 'daily' and habit_group_members.deleted IS NULL;  ";
   $result = mysqli_query($db, $sql);
 
   while ($row = mysqli_fetch_assoc($result)) {
     $id = $row['ID'];
     $name = $row['name'];
     $created = $row['created'];
-    $habits["habits"][] = array("ID" => $id, "name" => $name, "created" => $created);
+    $groupID = $row['groupID'];
+    $habits["habits"][] = array("ID" => $id, "name" => $name, "created" => $created, "groupID" => $groupID);
   }
 
   $current_month = date('m');
@@ -61,6 +62,16 @@ if (isset($_GET['ID'])) {
     $habits["entries"][] = array("habitID" => $habitID, "done" => $done, "dom" => $dom, "entered" => $entered);
   }
 
+
+  $sql = "SELECT ID, name, created FROM `habit_groups` WHERE deleted = 0";
+  $result = mysqli_query($db, $sql);
+
+  while ($row = mysqli_fetch_assoc($result)) {
+    $id = $row['ID'];
+    $name = $row['name'];
+    $created = $row['created'];
+    $habits["groups"][] = array("ID" => $id, "name" => $name, "created" => $created);
+  }
 
 
   header('Content-Type: application/json');
