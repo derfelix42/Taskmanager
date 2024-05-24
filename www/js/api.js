@@ -174,8 +174,11 @@ async function resetTimerOnTask(ID) {
 /**
  * HABITS
  */
-async function fetchHabits() {
+async function fetchHabits(month, year) {
   let url = "api/habits.php";
+  if (month && year) {
+    url += "?month=" + month + "&year=" + year
+  }
   const res = await fetch(url)
   const json = await res.json()
   return json
@@ -185,4 +188,33 @@ async function toggleHabit(event, habitID, date) {
   // console.log("toggleHabit",event, habitID, date)
   let url = "api/habits.php?ID=" + habitID + "&date=" + date;
   await fetch(url)
+}
+
+// create new habit without name
+async function createHabit() {
+  const res = await fetch("api/habits.php?create")
+  return await res.json()
+}
+
+// Update habit name based on habitID
+async function updateHabitName(habitID, name) {
+  const url = "api/habits.php?updateName=" + habitID
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({name: name})
+  })
+  return await res.json()
+}
+
+// delete habit based on habitID
+async function deleteHabit(habitID) {
+  const url = "api/habits.php?delete=" + habitID
+  const res = await fetch(url)
+  return await res.json()
+}
+
+async function moveHabitToGroup(habitID, groupID) {
+  const url = "api/habits.php?move=" + habitID + "&group=" + groupID
+  const res = await fetch(url)
+  return await res.json()
 }

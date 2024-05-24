@@ -151,7 +151,6 @@ $result = mysqli_query($db, $sql);
   <script src="js/timetable.js" defer></script>
   <script src="js/calendar.js" defer></script>
   <!-- <script src="js/header.js" defer></script> -->
-  <script src="js/habits.js" defer></script>
 
   <!-- Fontawesome -->
   <script src="https://kit.fontawesome.com/06843879cb.js" crossorigin="anonymous"></script>
@@ -173,6 +172,7 @@ $result = mysqli_query($db, $sql);
   <script type="module" src="vue/header.js" defer></script>
   <script type="module" src="vue/sidebar.js" defer></script>
   <script type="module" src="vue/day_view.js" defer></script>
+  <script type="module" src="vue/habits.js" defer></script>
 
 </head>
 <div id="sound" style="display: none"></div>
@@ -205,8 +205,9 @@ $result = mysqli_query($db, $sql);
       </main>
 
 <?php } else if (isset($_GET['habits'])) {
-    require_once("./habits.php")
+    // require_once("./habits.php")
       ?>
+          <div id="habit_tracker" class="habit-tracker"></div>
         </main>
 
 <?php } else if (isset($_GET['search'])) {
