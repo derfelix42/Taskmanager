@@ -88,4 +88,4 @@ const day_view = createApp({
   `
 })
 
-day_view.mount("#day_view")
+// day_view.mount("#day_view")
