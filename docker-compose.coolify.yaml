@@ -21,8 +21,8 @@ services:
       - ./backups/:/var/www/html/backups/
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webserver.entrypoints=websecure"
-      - "traefik.http.routers.webserver.tls=true"
+      - "traefik.http.routers.webserver.entrypoints=web"
+      # - "traefik.http.routers.webserver.tls=true"
       - "traefik.http.routers.webserver.rule=PathPrefix(`/`)"
       - "traefik.http.services.webserver.loadbalancer.server.port=80"
       - "traefik.http.routers.webserver.middlewares=test-auth"
@@ -60,8 +60,8 @@ services:
       UPLOAD_LIMIT: 10M
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.phpmyadmin.entrypoints=websecure"
-      - "traefik.http.routers.phpmyadmin.tls=true"
+      - "traefik.http.routers.phpmyadmin.entrypoints=web"
+      # - "traefik.http.routers.phpmyadmin.tls=true"
       - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
       - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
       - "traefik.http.routers.phpmyadmin.middlewares=test-auth"
@@ -81,9 +81,9 @@ services:
     command: 
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.file.directory=/etc/traefik/dynamic"
-      # - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      # - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--entrypoints.web.address=:80"
+      # - "--entrypoints.websecure.address=:443"
       # - "--api.insecure=true"
     # ports:
       # - "80:80"
