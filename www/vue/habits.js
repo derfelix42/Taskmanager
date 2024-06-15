@@ -2,7 +2,7 @@ import { createApp, ref, reactive, computed, onMounted, onBeforeUnmount } from '
 
 const habit_tracker = createApp({
     setup() {
-        const habits = reactive([])
+        const habits = reactive({habits: [], groups: [], entries: []})
         const habits_month = ref(new Date())
         const habits_curr_date = computed(() => (habits_month.value.getMonth() + 1).toString().padStart(2, "0") + "-" + habits_month.value.getFullYear())
         const days_in_month = computed(() => new Date(habits_month.value.getFullYear(), habits_month.value.getMonth() + 1, 0).getDate())
@@ -37,7 +37,12 @@ const habit_tracker = createApp({
             // fetch habits based on habits_month
             const new_habits = await fetchHabits(habits_month.value.getMonth() + 1, habits_month.value.getFullYear())
             console.log(new_habits)
-            Object.assign(habits, new_habits)
+            habits.habits.splice(0)
+            Object.assign(habits.habits, new_habits.habits)
+            habits.groups.splice(0)
+            Object.assign(habits.groups, new_habits.groups)
+            habits.entries.splice(0)
+            Object.assign(habits.entries, new_habits.entries)
         }
 
         async function clickedHabit(habitID, i) {
@@ -125,9 +130,7 @@ const habit_tracker = createApp({
                     <td v-else>
                         <input type="text" @change="renameHabit(habit.ID, $event.target.value)" :value="habit.name" v-on:keyup.enter="habit.editMode = false">
                     </td>
-                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i + '-' + habits_curr_date">
-                        <input type="checkbox" @click="clickedHabit(habit.ID, i)"
-                        :checked="habits.entries ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false">
+                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i + '-' + habits_curr_date" :class="{checked: (habits.entries !== undefined ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false)}">
                         </td>
                 </tr>
             </tbody>
@@ -145,7 +148,6 @@ const habit_tracker = createApp({
             </thead>
             <tbody>
                 <tr v-for="habit in habits.habits?.filter(x => x.groupID === null)" :key="'null-'+habit.ID" draggable="true" @dragstart="dragStart($event, habit.ID)" @dragover="dragOver($event)" @drop="drop($event, null)">
-                    <!-- show trash icon on hover to delete habit -->
                     <td v-if="!habit.editMode" @click="habit.editMode = true">
                         {{ habit.name }}
                         <span @click.stop="deleteHabitByID(habit.ID)" class="clickable right">🗑️</span>
@@ -154,12 +156,9 @@ const habit_tracker = createApp({
                         <input type="text" @change="renameHabit(habit.ID, $event.target.value)" :value="habit.name" v-on:keyup.enter="habit.editMode = false">
                     </td>
 
-                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i + '-' + habits_curr_date">
-                        <input type="checkbox" @click="clickedHabit(habit.ID, i)"
-                            :checked="habits.entries ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false">
-                    </td>
+                    <td v-for="i in days_in_month" @click="clickedHabit(habit.ID, i)" :key="habit.ID + '-' + i + '-' + habits_curr_date" :class="{checked: (habits.entries !== undefined ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false)}">
+                        </td>
                 </tr>
-                <!-- extra row to add new habit - being a full row just showing a plus in the middle -->
                 <tr>
                     <td colspan="32" style="text-align: center;" @click="createNewHabit()" @dragover="dragOver($event)" @drop="drop($event, 'null')">
                         +
