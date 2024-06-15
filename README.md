@@ -1,11 +1,17 @@
 ![Taskmanager](https://img.shields.io/badge/in_development_since-2019--08--10-purple)
-![Taskmanager](https://img.shields.io/badge/time_spent-103h%2030mins-green) 
+![Taskmanager](https://img.shields.io/badge/time_spent-115h%2030mins-green) 
 
 # Taskmanager
 
 In our modern digital and fast-paced world, we are constantly inundated with information and tasks. This can lead to overwhelm and loss of productivity, as it becomes difficult to maintain an overview and focus on what is important. This project aims to help overcome this challenge. For this purpose, a smart todo list with time management features shall be provided, helping users to organize their tasks, set priorities and process them efficiently. Thus, it helps to cope with the challenges of digital acceleration and enables people to stay in control of their lives in the digital world.
 
 ## Getting started
+
+```shell
+curl -sSL https://raw.githubusercontent.com/derfelix42/Taskmanager/master/documentation/rpi-setup.sh | sudo bash
+```
+
+### Most important steps for a manual install:
 
 Clone this repo onto your machine of choice running docker and docker compose:
 
@@ -48,7 +54,7 @@ The timetable displays a week overview of all tasks that have a due date, start 
 - Smarthome integration (start/stop/get current/set Tasks from Smarthome)
 
 - Automated Backups - once per day the entire database is dumped into a json file and stored on disk. (In future versions this might be automatically uploaded into some cloud storage)
-- Cron Automations - currently executing MySQL statements to create default Tasks for next day, mark worked on tasks as done in the night, auto transfer high priority tasks to next day and anything you can write with MySQL.
+- Cron Automations - currently executing MySQL statements to create default Tasks for next day, mark worked on tasks as done in the night, auto transfer high priority tasks to next day and anything else you can write with MySQL.
 
 
 ## Future Features
@@ -59,3 +65,11 @@ Here is a small overview of ideas as future features. Some are actively worked o
 - Notifications
 - Import Backups to migrate easily to another host machine
 - Search Feature to find past and/or future tasks / categories / priorities
+- Statistics
+- Better Login / Authentication methods
+- Sharing Calendars with others
+- More Automations
+- Project Management (Task associations / dependencies)
+- Module architecture to support 3rd party plugins to add in more data
+- Location tracking for devices to automatically start/stop tasks based on location
+- Rework / Add in new Views for Days, Weeks, Months, Quaters, Years, Custom
