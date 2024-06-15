@@ -1,0 +1,287 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 1fr 9fr;
+  grid-template-rows: 3em auto;
+  grid-template-areas:
+  "header header"
+  "sidebar main";
+  background-color: #222;
+  color: white;
+  height: 100vh;
+  font-family: monospace;
+}
+
+.small {
+  font-size: 0.7em;
+}
+
+canvas {
+  width: 100%;
+}
+
+p {
+  display:inline
+}
+
+.disabled {
+  display: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+main {
+  grid-area: main;
+  height: 100%;
+  overflow: auto;
+}
+
+#day_timetable {
+  display: none;
+}
+
+#sidebar {
+  grid-area: sidebar;
+  background-color: #111;
+  color: white;
+  position: sticky;
+}
+
+#sidebar a {
+  color: white;
+}
+
+#sidebar ul li{
+  text-decoration: none;
+  list-style-type: none;
+  padding: 5px;
+  cursor: pointer;
+  transition: 0.1s linear;
+}
+
+#sidebar ul li:hover{
+  background-color: rgba(255,255,255,0.25);
+  font-weight: 700;
+  text-shadow: 0 0 #fff;
+}
+
+#openSidebar {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    grid-template-areas:
+    "header header"
+    "main main";
+  }
+
+  #sidebar {
+    display: none;
+  }
+
+  #openSidebar {
+    display: block;
+  }
+}
+
+h2 {
+  margin: 15px;
+  text-decoration: underline;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+table {
+  margin: 5px;
+  width: 99%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: white;
+}
+
+th, td {
+  border-collapse: collapse;
+  border: solid #222;
+  border-style: solid none;
+  padding: 5px;
+  vertical-align: top;
+}
+
+th {
+  color: white;
+}
+
+tr[date]{
+  background-color: #000000;
+  color: white;
+  padding: 2px;
+}
+
+tr[priority]{
+  background-color: #444;
+  color: white;
+  margin-bottom: 2px;
+}
+tr[priority]:hover{
+  background-color: #666;
+}
+tr[priority='11']{
+  background-color: #9e0909;
+  color: #ffffff;
+}
+tr[priority='11']:hover{
+  background-color: #ce0c0c;
+}
+
+tr td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+tr td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+tr td p {
+  cursor: pointer;
+}
+
+.description {
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.categoryIndicator {
+  display: inline-block;
+  width: 7px;
+  margin-right: 5px;
+  height: 1em;
+  background-color: var(--color);
+  border-radius: 2px;
+}
+
+li .categoryIndicator {
+  margin-right: 5px;
+}
+
+input {
+  width: 100%;
+  border: 0;
+  color: #666;
+}
+textarea {
+  width: 100%;
+  max-width: 100%;
+  height: 1.5em;
+  border: 0;
+  color: #666;
+}
+
+b {
+  color: red;
+  text-shadow: 0 0 3px black;
+}
+
+.overlaybutton {
+  cursor: pointer;
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+  background-color: white;
+  color: black;
+  width: 3em;
+  height: 3em;
+  line-height: 3em;
+  text-align: center;
+  border-radius: 1.5em;
+  font-weight: bold;
+
+  font-size: 1.4em;
+  animation: linear 0.2s;
+}
+
+.left {
+  left: 1em;
+}
+
+.open {
+  display: block !important;
+  position: absolute !important;
+  width: 100%;
+  height: 100%;
+}
+
+#printTimetableButton {
+  background-color: GREY;
+  color: WHITE;
+  right: 7.7em;
+}
+
+#openNewTaskModal {
+  background-color: GREEN;
+  color: WHITE;
+}
+
+#openNewTimerModal {
+  background-color: GREY;
+  color: WHITE;
+  right: 4.3em;
+}
+
+#openMHealthModal {
+  background-color: GREY;
+  color: WHITE;
+  right: 7.6em;
+}
+
+div.overlaybutton:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+
+code {
+  padding: 0.3em;
+  margin: 0.2em;
+  background: #777;
+  border: 1px solid #aaa;
+  border-radius: 0.3em;
+  color: #fff;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+#youtube-history {
+  padding: 1em;
+  color: white;
+}
+
+#youtube-history input{
+  width: auto;
+}
+
+#youtube-output {
+  padding: 1em;
+}
+
+#youtube-output p{
+  display: block;
+}
+
+#timetable {
+  max-width: 2000px;
+}
+
+.right {
+  float: right;
+}

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 13, 2024 at 06:26 PM
--- Server version: 8.0.31
--- PHP Version: 7.4.33
+-- Erstellungszeit: 20. Dez 2023 um 09:13
+-- Server-Version: 8.0.31
+-- PHP-Version: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -15,21 +15,18 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `j_tasks`
+-- Datenbank: `j_tasks`
 --
-CREATE DATABASE IF NOT EXISTS `j_tasks` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `j_tasks`;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `category`
+-- Tabellenstruktur für Tabelle `category`
 --
 
-DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
   `ID` int NOT NULL,
   `Bezeichnung` text NOT NULL,
@@ -40,10 +37,9 @@ CREATE TABLE `category` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cron-jobs`
+-- Tabellenstruktur für Tabelle `cron-jobs`
 --
 
-DROP TABLE IF EXISTS `cron-jobs`;
 CREATE TABLE `cron-jobs` (
   `ID` int NOT NULL,
   `enabled` tinyint(1) NOT NULL,
@@ -57,80 +53,48 @@ CREATE TABLE `cron-jobs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `habits`
+-- Tabellenstruktur für Tabelle `habits`
 --
 
-DROP TABLE IF EXISTS `habits`;
 CREATE TABLE `habits` (
   `ID` int NOT NULL,
   `name` text NOT NULL,
   `type` enum('daily','weekly','monthly') NOT NULL DEFAULT 'daily',
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `active` tinyint(1) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `habits_tracker`
+-- Tabellenstruktur für Tabelle `habits_tracker`
 --
 
-DROP TABLE IF EXISTS `habits_tracker`;
 CREATE TABLE `habits_tracker` (
   `habitID` int NOT NULL,
   `done` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `entered` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `habit_groups`
+-- Tabellenstruktur für Tabelle `m_health`
 --
 
-DROP TABLE IF EXISTS `habit_groups`;
-CREATE TABLE `habit_groups` (
-  `ID` int NOT NULL,
-  `name` text NOT NULL,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `deleted` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `habit_group_members`
---
-
-DROP TABLE IF EXISTS `habit_group_members`;
-CREATE TABLE `habit_group_members` (
-  `groupID` int NOT NULL,
-  `habitID` int NOT NULL,
-  `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `deleted` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `m_health`
---
-
-DROP TABLE IF EXISTS `m_health`;
 CREATE TABLE `m_health` (
   `ID` int NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ampel` tinyint NOT NULL,
   `note` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nfcLocations`
+-- Tabellenstruktur für Tabelle `nfcLocations`
 --
 
-DROP TABLE IF EXISTS `nfcLocations`;
 CREATE TABLE `nfcLocations` (
   `ID` int NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -143,10 +107,9 @@ CREATE TABLE `nfcLocations` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_tasks`
+-- Tabellenstruktur für Tabelle `project_tasks`
 --
 
-DROP TABLE IF EXISTS `project_tasks`;
 CREATE TABLE `project_tasks` (
   `ID` int NOT NULL,
   `name` varchar(128) NOT NULL,
@@ -156,15 +119,14 @@ CREATE TABLE `project_tasks` (
   `time_estimate` int DEFAULT NULL,
   `child_of` int DEFAULT NULL,
   `depends_on` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `repeatingTasks`
+-- Tabellenstruktur für Tabelle `repeatingTasks`
 --
 
-DROP TABLE IF EXISTS `repeatingTasks`;
 CREATE TABLE `repeatingTasks` (
   `ID` int NOT NULL,
   `Name` text NOT NULL,
@@ -181,10 +143,9 @@ CREATE TABLE `repeatingTasks` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tasks`
+-- Tabellenstruktur für Tabelle `tasks`
 --
 
-DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE `tasks` (
   `ID` int NOT NULL,
   `Name` text NOT NULL,
@@ -197,7 +158,7 @@ CREATE TABLE `tasks` (
   `difficulty` int NOT NULL DEFAULT '1',
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `category` int NOT NULL,
-  `location` text NOT NULL DEFAULT '',
+  `location` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `autogen` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -205,25 +166,23 @@ CREATE TABLE `tasks` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `task_associations`
+-- Tabellenstruktur für Tabelle `task_associations`
 --
 
-DROP TABLE IF EXISTS `task_associations`;
 CREATE TABLE `task_associations` (
   `ID` int NOT NULL,
   `taskID` int NOT NULL,
   `type` enum('child_of','depends_on') NOT NULL,
   `foreignID` int NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `task_history`
+-- Tabellenstruktur für Tabelle `task_history`
 --
 
-DROP TABLE IF EXISTS `task_history`;
 CREATE TABLE `task_history` (
   `ID` int NOT NULL,
   `taskID` int NOT NULL,
@@ -234,23 +193,21 @@ CREATE TABLE `task_history` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `task_notes`
+-- Tabellenstruktur für Tabelle `task_notes`
 --
 
-DROP TABLE IF EXISTS `task_notes`;
 CREATE TABLE `task_notes` (
   `taskID` int NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `note` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `wakeup_times`
+-- Tabellenstruktur für Tabelle `wakeup_times`
 --
 
-DROP TABLE IF EXISTS `wakeup_times`;
 CREATE TABLE `wakeup_times` (
   `ID` int NOT NULL,
   `date` date NOT NULL,
@@ -259,60 +216,47 @@ CREATE TABLE `wakeup_times` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Indexes for dumped tables
+-- Indizes der exportierten Tabellen
 --
 
 --
--- Indexes for table `category`
+-- Indizes für die Tabelle `category`
 --
 ALTER TABLE `category`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indexes for table `cron-jobs`
+-- Indizes für die Tabelle `cron-jobs`
 --
 ALTER TABLE `cron-jobs`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indexes for table `habits`
+-- Indizes für die Tabelle `habits`
 --
 ALTER TABLE `habits`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indexes for table `habits_tracker`
+-- Indizes für die Tabelle `habits_tracker`
 --
 ALTER TABLE `habits_tracker`
   ADD PRIMARY KEY (`habitID`,`done`);
 
 --
--- Indexes for table `habit_groups`
---
-ALTER TABLE `habit_groups`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indexes for table `habit_group_members`
---
-ALTER TABLE `habit_group_members`
-  ADD PRIMARY KEY (`groupID`,`habitID`),
-  ADD KEY `habitID` (`habitID`);
-
---
--- Indexes for table `m_health`
+-- Indizes für die Tabelle `m_health`
 --
 ALTER TABLE `m_health`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indexes for table `nfcLocations`
+-- Indizes für die Tabelle `nfcLocations`
 --
 ALTER TABLE `nfcLocations`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indexes for table `project_tasks`
+-- Indizes für die Tabelle `project_tasks`
 --
 ALTER TABLE `project_tasks`
   ADD PRIMARY KEY (`ID`),
@@ -320,20 +264,20 @@ ALTER TABLE `project_tasks`
   ADD KEY `depends_on` (`depends_on`);
 
 --
--- Indexes for table `repeatingTasks`
+-- Indizes für die Tabelle `repeatingTasks`
 --
 ALTER TABLE `repeatingTasks`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indexes for table `tasks`
+-- Indizes für die Tabelle `tasks`
 --
 ALTER TABLE `tasks`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `category` (`category`);
 
 --
--- Indexes for table `task_associations`
+-- Indizes für die Tabelle `task_associations`
 --
 ALTER TABLE `task_associations`
   ADD PRIMARY KEY (`ID`),
@@ -341,145 +285,132 @@ ALTER TABLE `task_associations`
   ADD KEY `foreignID` (`foreignID`);
 
 --
--- Indexes for table `task_history`
+-- Indizes für die Tabelle `task_history`
 --
 ALTER TABLE `task_history`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `taskID` (`taskID`);
 
 --
--- Indexes for table `task_notes`
+-- Indizes für die Tabelle `task_notes`
 --
 ALTER TABLE `task_notes`
   ADD PRIMARY KEY (`taskID`,`created`);
 
 --
--- Indexes for table `wakeup_times`
+-- Indizes für die Tabelle `wakeup_times`
 --
 ALTER TABLE `wakeup_times`
   ADD PRIMARY KEY (`ID`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT für exportierte Tabellen
 --
 
 --
--- AUTO_INCREMENT for table `category`
+-- AUTO_INCREMENT für Tabelle `category`
 --
 ALTER TABLE `category`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `cron-jobs`
+-- AUTO_INCREMENT für Tabelle `cron-jobs`
 --
 ALTER TABLE `cron-jobs`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `habits`
+-- AUTO_INCREMENT für Tabelle `habits`
 --
 ALTER TABLE `habits`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `habit_groups`
---
-ALTER TABLE `habit_groups`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `m_health`
+-- AUTO_INCREMENT für Tabelle `m_health`
 --
 ALTER TABLE `m_health`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `nfcLocations`
+-- AUTO_INCREMENT für Tabelle `nfcLocations`
 --
 ALTER TABLE `nfcLocations`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `project_tasks`
+-- AUTO_INCREMENT für Tabelle `project_tasks`
 --
 ALTER TABLE `project_tasks`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `repeatingTasks`
+-- AUTO_INCREMENT für Tabelle `repeatingTasks`
 --
 ALTER TABLE `repeatingTasks`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tasks`
+-- AUTO_INCREMENT für Tabelle `tasks`
 --
 ALTER TABLE `tasks`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `task_associations`
+-- AUTO_INCREMENT für Tabelle `task_associations`
 --
 ALTER TABLE `task_associations`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `task_history`
+-- AUTO_INCREMENT für Tabelle `task_history`
 --
 ALTER TABLE `task_history`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `wakeup_times`
+-- AUTO_INCREMENT für Tabelle `wakeup_times`
 --
 ALTER TABLE `wakeup_times`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- Constraints der exportierten Tabellen
 --
 
 --
--- Constraints for table `habits_tracker`
+-- Constraints der Tabelle `habits_tracker`
 --
 ALTER TABLE `habits_tracker`
   ADD CONSTRAINT `habits_tracker_ibfk_1` FOREIGN KEY (`habitID`) REFERENCES `habits` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
--- Constraints for table `habit_group_members`
---
-ALTER TABLE `habit_group_members`
-  ADD CONSTRAINT `habit_group_members_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `habit_groups` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `habit_group_members_ibfk_2` FOREIGN KEY (`habitID`) REFERENCES `habits` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Constraints for table `project_tasks`
+-- Constraints der Tabelle `project_tasks`
 --
 ALTER TABLE `project_tasks`
   ADD CONSTRAINT `project_tasks_ibfk_1` FOREIGN KEY (`child_of`) REFERENCES `project_tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `project_tasks_ibfk_2` FOREIGN KEY (`depends_on`) REFERENCES `project_tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
--- Constraints for table `tasks`
+-- Constraints der Tabelle `tasks`
 --
 ALTER TABLE `tasks`
   ADD CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`category`) REFERENCES `category` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
--- Constraints for table `task_associations`
+-- Constraints der Tabelle `task_associations`
 --
 ALTER TABLE `task_associations`
   ADD CONSTRAINT `task_associations_ibfk_1` FOREIGN KEY (`taskID`) REFERENCES `tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `task_associations_ibfk_2` FOREIGN KEY (`foreignID`) REFERENCES `tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
--- Constraints for table `task_history`
+-- Constraints der Tabelle `task_history`
 --
 ALTER TABLE `task_history`
   ADD CONSTRAINT `task_history_ibfk_1` FOREIGN KEY (`taskID`) REFERENCES `tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
--- Constraints for table `task_notes`
+-- Constraints der Tabelle `task_notes`
 --
 ALTER TABLE `task_notes`
   ADD CONSTRAINT `task_notes_ibfk_1` FOREIGN KEY (`taskID`) REFERENCES `tasks` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -488,7 +419,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-INSERT INTO `category` (`ID`, `Bezeichnung`, `color`, `display`) VALUES ('0', 'null', NULL, '1');
-INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `difficulty`, `created`, `category`, `location`, `deleted`, `autogen`) VALUES (NULL, 'Setup Task', 'This is a hidden task for you to see, when this system was initially started as it gets created on the first startup :)', CURRENT_DATE(), NULL, NULL, NULL, '5', '1', current_timestamp(), '0', '', '1', '1');
-INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `difficulty`, `created`, `category`, `location`, `deleted`, `autogen`) VALUES (NULL, 'First Task', '', CURRENT_DATE(), NULL, NULL, NULL, '5', '1', current_timestamp(), '0', '', '0', '0');
