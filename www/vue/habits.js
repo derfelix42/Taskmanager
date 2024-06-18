@@ -38,7 +38,7 @@ const habit_tracker = createApp({
         async function getHabits() {
             // fetch habits based on habits_month
             const new_habits = await fetchHabits(habits_month.value.getMonth() + 1, habits_month.value.getFullYear())
-            console.log(new_habits)
+            // console.log(new_habits)
             habits.habits.splice(0)
             Object.assign(habits.habits, new_habits.habits)
             habits.groups.splice(0)
@@ -85,7 +85,7 @@ const habit_tracker = createApp({
         async function drop(event, groupID) {
             event.preventDefault()
             const habitID = event.dataTransfer.getData("text/plain")
-            console.log(habitID, groupID)
+            // console.log(habitID, groupID)
             await moveHabitToGroup(habitID, groupID)
             await getHabits()
         }
@@ -150,7 +150,7 @@ const habit_tracker = createApp({
                     <td v-else>
                         <input type="text" @change="renameHabit(habit.ID, $event.target.value)" :value="habit.name" v-on:keyup.enter="habit.editMode = false">
                     </td>
-                    <td v-for="i in days_in_month" :key="habit.ID + '-' + i + '-' + habits_curr_date" :class="{checked: (habits.entries !== undefined ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false)}">
+                    <td v-for="i in days_in_month" @click="clickedHabit(habit.ID, i)" :key="habit.ID + '-' + i + '-' + habits_curr_date" :class="{checked: (habits.entries !== undefined ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false)}">
                         </td>
                 </tr>
             </tbody>
