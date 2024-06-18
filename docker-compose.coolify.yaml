@@ -106,7 +106,7 @@ services:
 
 networks:
   taskmanager:
-    driver: bridge
+    driver: custom
 
   proxy:
-    driver: bridge
+    external: true
