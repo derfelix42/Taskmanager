@@ -1,6 +1,21 @@
 <?php
 include_once("credentials.php");
 
+function getValueFromSettingsTable($key) {
+  require_once("includes/db_connection.php");
+  $local_mysqli_db = $globals['db'];
+
+  $local_mysqli_sql = "SELECT `value` FROM `settings` WHERE `key` LIKE '$key' AND `access` LIKE 'system'";
+  $local_mysqli_result = mysqli_query($local_mysqli_db, $local_mysqli_sql);
+
+  if(mysqli_num_rows($local_mysqli_result) > 0) {
+    $row = mysqli_fetch_assoc($local_mysqli_result);
+    return $row['value'];
+  } else {
+    return null;
+  }
+}
+
 function getForecast() {
   global $apiKey, $cityId;
   $WeatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?id=" . $cityId . "&units=metric&appid=" . $apiKey;
@@ -49,7 +64,8 @@ function getForecast() {
 }
 
 function getCurrentTemp() {
-  global $apiKey, $cityId;
+  $apiKey = getValueFromSettingsTable("OPENWEATHER_API_KEY");
+  $cityId = getValueFromSettingsTable("OPENWEATHER_API_CITY_ID");
   $WeatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?id=" . $cityId . "&units=metric&appid=" . $apiKey;
   $ch = curl_init();
 
