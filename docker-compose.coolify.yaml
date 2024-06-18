@@ -21,14 +21,16 @@ services:
       - ./backups/:/var/www/html/backups/
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webserver.entrypoints=web"
-      # - "traefik.http.routers.webserver.tls=true"
+      - "traefik.http.routers.webserver.entrypoints=websecure"
+      - "traefik.http.routers.webserver.tls=true"
       - "traefik.http.routers.webserver.rule=PathPrefix(`/`)"
       - "traefik.http.services.webserver.loadbalancer.server.port=80"
       - "traefik.http.routers.webserver.middlewares=test-auth"
       - "traefik.http.middlewares.test-auth.basicauth.usersfile=/etc/traefik/htpasswd/.htpasswd"
     depends_on:
       - mariadb
+    networks:
+      - taskmanager
 
   mariadb:
     build:
@@ -46,6 +48,8 @@ services:
       test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p$$MARIADB_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
       interval: 2s
       retries: 120
+    networks:
+      - taskmanager
 
   phpmyadmin:
     image: linuxserver/phpmyadmin
@@ -60,8 +64,8 @@ services:
       UPLOAD_LIMIT: 10M
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.phpmyadmin.entrypoints=web"
-      # - "traefik.http.routers.phpmyadmin.tls=true"
+      - "traefik.http.routers.phpmyadmin.entrypoints=websecure"
+      - "traefik.http.routers.phpmyadmin.tls=true"
       - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
       - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
       - "traefik.http.routers.phpmyadmin.middlewares=test-auth"
@@ -74,6 +78,8 @@ services:
       retries: 10
     depends_on:
       - mariadb
+    networks:
+      - taskmanager
 
   traefik:
     image: traefik
@@ -81,9 +87,9 @@ services:
     command: 
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
-      # - "--providers.file.directory=/etc/traefik/dynamic"
-      - "--entrypoints.web.address=:80"
-      # - "--entrypoints.websecure.address=:443"
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      # - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
       # - "--api.insecure=true"
     # ports:
       # - "80:80"
@@ -94,7 +100,13 @@ services:
       - ./config/certs-traefik.yaml:/etc/traefik/dynamic/certs-traefik.yaml
       - ./certs/:/etc/certs/
       - ./.htpasswd:/etc/traefik/htpasswd/.htpasswd
+    networks:
+      - taskmanager
+      - proxy
 
-# networks:
-#   proxy:
-    # external: true
+networks:
+  taskmanager:
+    driver: bridge
+
+  proxy:
+    driver: bridge
