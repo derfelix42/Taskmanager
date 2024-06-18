@@ -259,6 +259,17 @@ CREATE TABLE `wakeup_times` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Tabellenstruktur für Tabelle `settings`
+--
+
+CREATE TABLE `settings` (
+  `key` varchar(128) NOT NULL,
+  `value` text NOT NULL,
+  `access` varchar(64) NOT NULL,
+  `updated` timestamp NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
 -- Indexes for dumped tables
 --
 
@@ -434,6 +445,13 @@ ALTER TABLE `task_history`
 --
 ALTER TABLE `wakeup_times`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
+
+--
+-- Indizes für die Tabelle `settings`
+--
+ALTER TABLE `settings`
+  ADD PRIMARY KEY (`key`);
+COMMIT;
 
 --
 -- Constraints for dumped tables
