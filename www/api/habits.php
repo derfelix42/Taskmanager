@@ -72,6 +72,14 @@ if (isset($_GET['create'])) {
   header('Content-Type: application/json');
   print '{"status": "done", "sql": "' . $sql . '"}';
 
+} else if (isset($_GET['createGroup'])) {
+  $newName = $body->newGroupName;
+  $sql = "INSERT INTO `habit_groups` (`ID`, `name`, `created`, `deleted`) VALUES (NULL, '$newName', current_timestamp(), '0');";
+  mysqli_query($db, $sql);
+  $res = mysqli_query($db, "SELECT LAST_INSERT_ID() as ID;");
+  $row = mysqli_fetch_assoc($res);
+  header('Content-Type: application/json');
+  print '{"status": "done", "sql": "' . $sql . '", "ID": ' . $row['ID'] . '}';
 } else {
   // result array with list of habits and list of associations
   $habits = array();
