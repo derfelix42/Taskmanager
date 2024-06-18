@@ -20,6 +20,7 @@ services:
       - ./logs/:/var/log/
       - ./backups/:/var/www/html/backups/
     labels:
+      - my.zone=$COOLIFY_FQDN
       - "traefik.enable=true"
       - "traefik.http.routers.webserver.entrypoints=websecure"
       - "traefik.http.routers.webserver.tls=true"
@@ -29,8 +30,8 @@ services:
       - "traefik.http.middlewares.test-auth.basicauth.usersfile=/etc/traefik/htpasswd/.htpasswd"
     depends_on:
       - mariadb
-    networks:
-      - taskmanager
+    # networks:
+    #   - taskmanager
 
   mariadb:
     build:
@@ -48,8 +49,8 @@ services:
       test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p$$MARIADB_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
       interval: 2s
       retries: 120
-    networks:
-      - taskmanager
+    # networks:
+    #   - taskmanager
 
   phpmyadmin:
     image: linuxserver/phpmyadmin
@@ -63,6 +64,7 @@ services:
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 10M
     labels:
+      - my.zone=$COOLIFY_FQDN
       - "traefik.enable=true"
       - "traefik.http.routers.phpmyadmin.entrypoints=websecure"
       - "traefik.http.routers.phpmyadmin.tls=true"
@@ -78,8 +80,8 @@ services:
       retries: 10
     depends_on:
       - mariadb
-    networks:
-      - taskmanager
+    # networks:
+    #   - taskmanager
 
   traefik:
     image: traefik
@@ -88,6 +90,7 @@ services:
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.directory=/etc/traefik/dynamic"
+      - --providers.docker.constraints=Label(`my.zone`, $COOLIFY_FQDN)
       # - "--entrypoints.web.address=:80"
       # - "--entrypoints.websecure.address=:443"
       # - "--api.insecure=true"
@@ -100,13 +103,13 @@ services:
       - ./config/certs-traefik.yaml:/etc/traefik/dynamic/certs-traefik.yaml
       - ./certs/:/etc/certs/
       - ./.htpasswd:/etc/traefik/htpasswd/.htpasswd
-    networks:
-      - taskmanager
-      - proxy
+    # networks:
+    #   - taskmanager
+    #   - proxy
 
-networks:
-  taskmanager:
-    driver: custom
+# networks:
+#   taskmanager:
+#     driver: custom
 
-  proxy:
-    external: true
+#   proxy:
+#     external: true
