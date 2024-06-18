@@ -91,11 +91,11 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.directory=/etc/traefik/dynamic"
       - --providers.docker.constraints=Label(`my.zone`, $COOLIFY_FQDN)
-      # - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.address=:80"
       # - "--entrypoints.websecure.address=:443"
       # - "--api.insecure=true"
-    # ports:
-      # - "80:80"
+    ports:
+      - "80:9001"
       # - "443:443"
       # - "8234:8080"
     volumes:
