@@ -7,6 +7,8 @@ $body = json_decode(file_get_contents('php://input'));
 
 $db = $globals['db'];
 $sql = "";
+
+/* Create new Habit */
 if (isset($_GET['create'])) {
   $sql = "INSERT INTO `habits` (`ID`, `name`, `type`, `created`, `active`) VALUES (NULL, '', 'daily', current_timestamp(), '1');";
   mysqli_query($db, $sql);
@@ -15,6 +17,7 @@ if (isset($_GET['create'])) {
   header('Content-Type: application/json');
   print '{"status": "done", "sql": "' . $sql . '", "ID": ' . $row['ID'] . '}';
 
+/* Delete a habit */
 } else if (isset($_GET['delete'])) {
   $ID = $_GET["delete"];
   $sql = "UPDATE `habits` SET `active` = 0 WHERE ID = $ID";
@@ -22,11 +25,13 @@ if (isset($_GET['create'])) {
   header('Content-Type: application/json');
   print '{"status": "done", "sql": "' . $sql . '"}';
   
+/* Move a habit to (another) group */
 } else if (isset($_GET['move'])) {
   $ID = $_GET["move"];
   $groupID = $_GET["group"];
   // first delete all associations
-  $sql = "UPDATE `habit_group_members` SET `deleted` = current_timestamp() WHERE habitID = '$ID' AND deleted IS NULL";
+  $sql = "UPDATE `habit_group_members` SET `deleted` = current_timestamp() WHERE habitID = '$ID' AND deleted IS NULL;";
+  // echo $sql."\n";
   mysqli_query($db, $sql);
   
   header('Content-Type: application/json');
@@ -34,6 +39,7 @@ if (isset($_GET['create'])) {
   if($groupID != "null") {
     // then insert new association
     $sql = "INSERT INTO `habit_group_members` (`groupID`, `habitID`, `added`, `deleted`) VALUES ('$groupID', '$ID', CURRENT_TIMESTAMP(), NULL);";
+    // echo $sql."\n";
     mysqli_query($db, $sql);
     print '{"status": "done", "sql": "' . $sql . '"}';
   } else {
@@ -43,7 +49,7 @@ if (isset($_GET['create'])) {
 
 
   
-  
+/* Mark a habit as done */
 } else if (isset($_GET['ID'])) {
 
   $ID = $_GET['ID'];
@@ -63,6 +69,8 @@ if (isset($_GET['create'])) {
   header('Content-Type: application/json');
   
   print '{"status": "done", "sql": "' . $sql . '"}';
+
+/* Update habit name */
 } else if (isset($_GET['updateName'])) {
   $habitID = $_GET['updateName'];
   $name = $body->name;
@@ -72,6 +80,7 @@ if (isset($_GET['create'])) {
   header('Content-Type: application/json');
   print '{"status": "done", "sql": "' . $sql . '"}';
 
+/* Create new group */
 } else if (isset($_GET['createGroup'])) {
   $newName = $body->newGroupName;
   $sql = "INSERT INTO `habit_groups` (`ID`, `name`, `created`, `deleted`) VALUES (NULL, '$newName', current_timestamp(), '0');";
@@ -80,6 +89,8 @@ if (isset($_GET['create'])) {
   $row = mysqli_fetch_assoc($res);
   header('Content-Type: application/json');
   print '{"status": "done", "sql": "' . $sql . '", "ID": ' . $row['ID'] . '}';
+
+/* Get all habits and their entries for given month */
 } else {
   // result array with list of habits and list of associations
   $habits = array();
