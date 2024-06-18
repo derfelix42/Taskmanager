@@ -24,7 +24,6 @@ sudo apt-get install -y docker docker-compose git apache2-utils vim
 echo "Cloning repository..."
 git clone https://github.com/derfelix42/Taskmanager.git
 cd Taskmanager
-git checkout 5-docker-deploy
 
 # create .env file
 cp .env.sample .env
@@ -33,5 +32,5 @@ cp .env.sample .env
 echo "Starting up the software..."
 sudo docker-compose up -d --build
 
-echo "Installation complete! Visit this Pi in the browser on port 80 on the correct IP address"
+echo "Installation complete! Visit this Pi in the browser in https on the correct IP address"
 ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'
