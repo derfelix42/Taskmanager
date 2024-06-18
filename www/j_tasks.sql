@@ -79,6 +79,35 @@ CREATE TABLE `habits_tracker` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `habit_groups`
+--
+
+CREATE TABLE `habit_groups` (
+  `ID` int NOT NULL,
+  `name` text NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted` tinyint NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `habit_group_members`
+--
+
+CREATE TABLE `habit_group_members` (
+  `groupID` int NOT NULL,
+  `habitID` int NOT NULL,
+  `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `m_health`
 --
 
@@ -242,6 +271,19 @@ ALTER TABLE `habits`
 --
 ALTER TABLE `habits_tracker`
   ADD PRIMARY KEY (`habitID`,`done`);
+
+--
+-- Indizes für die Tabelle `habit_groups`
+--
+ALTER TABLE `habit_groups`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indizes für die Tabelle `habit_group_members`
+--
+ALTER TABLE `habit_group_members`
+  ADD PRIMARY KEY (`groupID`,`habitID`,`added`),
+  ADD KEY `habitID` (`habitID`);
 
 --
 -- Indizes für die Tabelle `m_health`
