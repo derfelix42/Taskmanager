@@ -218,3 +218,12 @@ async function moveHabitToGroup(habitID, groupID) {
   const res = await fetch(url)
   return await res.json()
 }
+
+async function createHabitGroup(name) {
+  const url = "api/habits.php?createGroup"
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({newGroupName: name})
+  })
+  return await res.json()
+}

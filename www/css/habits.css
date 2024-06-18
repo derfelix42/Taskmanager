@@ -29,6 +29,10 @@ table.habits td {
     border: 1px solid white;
 }
 
+table.habits :not(thead) tr td {
+    box-shadow: inset 0 0 10px black;
+}
+
 table.habits input[type=checkbox] {
     cursor: pointer;
 }

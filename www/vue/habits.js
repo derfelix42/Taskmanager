@@ -6,6 +6,8 @@ const habit_tracker = createApp({
         const habits_month = ref(new Date())
         const habits_curr_date = computed(() => (habits_month.value.getMonth() + 1).toString().padStart(2, "0") + "-" + habits_month.value.getFullYear())
         const days_in_month = computed(() => new Date(habits_month.value.getFullYear(), habits_month.value.getMonth() + 1, 0).getDate())
+        const adding_new_group = ref(false);
+        const adding_new_group_name = ref("");
 
         async function currentMonth() {
             const d = new Date()
@@ -66,6 +68,12 @@ const habit_tracker = createApp({
             await getHabits()
         }
 
+        async function adding_new_group_fnc() {
+            await createHabitGroup(adding_new_group_name.value)
+            await getHabits()
+            adding_new_group.value = false
+        }
+
         async function dragStart(event, habitID) {
             event.dataTransfer.setData("text/plain", habitID)
         }
@@ -91,6 +99,8 @@ const habit_tracker = createApp({
             habits_month,
             habits_curr_date,
             days_in_month,
+            adding_new_group,
+            adding_new_group_name,
             clickedHabit,
             renameHabit,
             createNewHabit,
@@ -99,7 +109,8 @@ const habit_tracker = createApp({
             prevMonth,
             dragStart,
             dragOver,
-            drop
+            drop,
+            adding_new_group_fnc
         }
 
     },
@@ -110,6 +121,15 @@ const habit_tracker = createApp({
 
         <button @click="prevMonth()">prev</button>
         <button @click="nextMonth()">next</button>
+
+        <section>
+            <button @click="adding_new_group = true" v-if="!adding_new_group">Add Group</button>
+            <template v-if="adding_new_group">
+                <input type="text" v-model="adding_new_group_name">
+                <button @click="adding_new_group = false">Cancel</button>
+                <button @click="adding_new_group_fnc">Save</button>
+            </template>
+        </section>
         
         <table class="habits" v-for="group in habits.groups">
             <thead>
