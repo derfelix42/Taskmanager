@@ -21,12 +21,13 @@ table.habits tr:hover {
 }
 
 table.habits tr td:first-child {
-    min-width: 5em;
+    width: 10em;
 }
 
 table.habits td {
     box-shadow: inset 0 0 10px black;
     border: 1px solid white;
+    width: 1em;
 }
 
 table.habits :not(thead) tr td {
