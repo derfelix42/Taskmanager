@@ -21,6 +21,8 @@ services:
       - ./backups/:/var/www/html/backups/
     depends_on:
       - mariadb
+    links:
+      - "nginx:webserver"
 
   mariadb:
     build:
@@ -58,6 +60,8 @@ services:
       retries: 10
     depends_on:
       - mariadb
+    links:
+      - "nginx:phpmyadmin"
 
   nginx:
     image: nginx
@@ -77,6 +81,6 @@ services:
       - webserver
       - phpmyadmin
 
-networks:
-  proxy:
+# networks:
+#   proxy:
     # external: true
