@@ -77,9 +77,9 @@ services:
       - ./certs/:/etc/nginx/certs/
       - ./.htpasswd:/etc/nginx/.htpasswd
       - ./404.html:/etc/nginx/404.html
-    depends_on:
-      - webserver
-      - phpmyadmin
+    # depends_on:
+    #   - webserver
+    #   - phpmyadmin
 
 # networks:
 #   proxy:
