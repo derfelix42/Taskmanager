@@ -10,7 +10,7 @@ function decodeEntity(inputStr) {
 
 let settings = {
   scale: 0.9,
-  starttime: 4,
+  starttime: 0,
   endtime: 23,
   spacings: {
     hour: 35,
