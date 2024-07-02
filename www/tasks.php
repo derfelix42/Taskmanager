@@ -221,6 +221,11 @@ $result = mysqli_query($db, $sql);
       ?>
           </main>
 
+<?php } else if (isset($_GET['statistics'])) {
+  require_once("./statistics.php")
+    ?>
+        </main>
+
 <?php } else if (isset($_GET['youtube'])) {
     require_once("./youtube-history.php")
       ?>
