@@ -43,9 +43,20 @@ function getStats($category="", $start=NULL, $stop=NULL) {
     
     $seconds = str_pad($overall_time % 60, 2, "0", STR_PAD_LEFT);
     $minutes = str_pad(floor($overall_time / 60) % 60, 2, "0", STR_PAD_LEFT);
-    $hours = str_pad(floor($overall_time / 60 / 60) % 24, 2, "0", STR_PAD_LEFT);
-    $days = floor($overall_time / 60 / 60 / 24);
-    return [$max_id, "$days Tage, $hours:$minutes:$seconds"];
+    $hours = str_pad(floor($overall_time / 60 / 60), 2, "0", STR_PAD_LEFT);
+    $time_string = "-";
+    if($seconds > 0) {
+        $time_string = "$seconds seconds";
+    }
+    if($minutes > 0) {
+        $time_string = "$minutes minutes, $time_string";
+    }
+    if($hours > 0) {
+        $time_string = "$hours hours, $time_string";
+    }
+
+    // $days = floor($overall_time / 60 / 60 / 24);
+    return [$max_id, $time_string];
 }
 ?>
 <section class="statistics">
