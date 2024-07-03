@@ -2,6 +2,22 @@
 
 <?php
 
+function getCategories() {
+    global $db;
+    $sql = "SELECT ID, Bezeichnung, color FROM `category` WHERE display = 1;";
+    $res = mysqli_query($db, $sql);
+    // If there are no categories, return an empty array
+    if(mysqli_num_rows($res) == 0) {
+        return [];
+    } else {
+        $categories = [];
+        while($row = mysqli_fetch_array($res)) {
+            $categories[$row["ID"]] = $row;
+        }
+        return $categories;
+    }
+}
+
 function getStats($category="", $start=NULL, $stop=NULL) {
     global $db;
     $where = "";
@@ -21,7 +37,7 @@ function getStats($category="", $start=NULL, $stop=NULL) {
     $res = mysqli_query($db, $sql);
     $max_id = mysqli_fetch_array($res)["num_ids"];
     
-    $sql = "SELECT SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(CURRENT_TIMESTAMP, stop_time))) as overall_time FROM `task_history`;";
+    $sql = "SELECT SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIMESTAMP))) as overall_time FROM `task_history` JOIN tasks ON tasks.ID = task_history.taskID $where;";
     $res = mysqli_query($db, $sql);
     $overall_time = mysqli_fetch_array($res)["overall_time"];
     
@@ -44,42 +60,31 @@ function getStats($category="", $start=NULL, $stop=NULL) {
 </section>
 
 
-<h3 class="stats">This week:</h3>
+<h3 class="stats">Overall per Category:</h3>
 <section class="statistics week_stats">
-    <div class="panel">
-        <header><div class='categoryIndicator' style='--color: #777'></div>null</header>
-        <div class="main">
-            <?php $data = getStats(0); ?>
-            <p>Number of Tasks created:  <?php echo $data[0]; ?></p>
-            <p>Tracked hours: 0:00</p>
+    <?php 
+    $categories = getCategories();
+    foreach($categories as $category) {
+        $data = getStats($category["ID"]);
+
+        if($category['color'] == NULL) {
+            $category['color'] = "777";
+        }
+
+    ?>
+
+        <div class="panel">
+            <header><div class='categoryIndicator' style='--color: #<?php echo $category['color']; ?>'></div><?php echo $category['Bezeichnung']; ?></header>
+            <div class="main">
+                <?php $data = getStats($category['ID']); ?>
+                <p>Number of Tasks created:  <?php echo $data[0]; ?></p>
+                <p>Tracked hours: <?php echo $data[1]; ?></p>
+            </div>
         </div>
-    </div>
-    
-    <div class="panel">
-        <header><div class='categoryIndicator' style='--color: #e6e200'></div>Uni</header>
-        <div class="main">
-        <?php $data = getStats(1); ?>
-            <p>Number of Tasks created:  <?php echo $data[0]; ?></p>
-            <p>Tracked hours: 0:00</p>
-        </div>
-    </div>
-    
-    <div class="panel">
-        <header><div class='categoryIndicator' style='--color: #6efff0'></div>Sport</header>
-        <div class="main">
-        <?php $data = getStats(2);?>
-            <p>Number of Tasks created:  <?php echo $data[0]; ?></p>
-            <p>Tracked hours: 0:00</p>
-        </div>
-    </div>
-    
-    <div class="panel">
-        <header><div class='categoryIndicator' style='--color: #D41C4D'></div>Wachmann</header>
-        <div class="main">
-        <?php $data = getStats(3);?>
-            <p>Number of Tasks created:  <?php echo $data[0]; ?></p>
-            <p>Tracked hours: 0:00</p>
-        </div>
-    </div>
+
+    <?php
+    }
+    ?>
+
 </section>
 
