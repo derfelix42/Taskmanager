@@ -4,7 +4,7 @@
 
 function getCategories() {
     global $db;
-    $sql = "SELECT ID, Bezeichnung, color FROM `category` WHERE display = 1;";
+    $sql = "SELECT ID, Bezeichnung, color FROM `category`;";
     $res = mysqli_query($db, $sql);
     // If there are no categories, return an empty array
     if(mysqli_num_rows($res) == 0) {
