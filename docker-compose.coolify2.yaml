@@ -76,10 +76,10 @@ services:
     # environment:
     #   - WEBSERVER_HOST=${WEBSERVER_HOST}
     #   - PHPMYADMIN_HOST=${PHPMYADMIN_HOST}
-    volumes:
+    # volumes:
       # - ./configs/nginx.conf:/etc/nginx/nginx.conf
-      - ./certs/:/etc/nginx/certs/
-      - ./.htpasswd:/etc/nginx/.htpasswd
+      # - ./certs/:/etc/nginx/certs/
+      # - ./.htpasswd:/etc/nginx/.htpasswd
       # - ./404.html:/etc/nginx/404.html
     # depends_on:
     #   - webserver
