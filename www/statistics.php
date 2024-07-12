@@ -37,6 +37,10 @@ function getStats($category="", $timeframe=NULL, $offset=NULL) {
 
     if($timeframe != NULL) {
         $time_sel_time_tracked = "$timeframe(due) = $timeframe(CURRENT_DATE)$offset";
+        if($timeframe == "WEEK" || $timeframe == "MONTH") {
+            // TODO: New Year Overwrap makes things go kaboom!
+            $time_sel_time_tracked .= " AND YEAR(due) = YEAR(CURRENT_DATE)";
+        }
     }
 
     if($category != "") {
