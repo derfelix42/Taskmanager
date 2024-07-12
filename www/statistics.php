@@ -1,6 +1,16 @@
 <h2>Statistics</h2>
 
 <?php
+$get_timeframe = "";
+$get_offset = "";
+
+if(isset($_GET['timeframe'])) {
+    $get_timeframe = $_GET['timeframe'];
+
+    if(isset($_GET['offset'])) {
+        $get_offset = $_GET['offset'];
+    }
+}
 
 function getCategories() {
     global $db;
@@ -18,12 +28,16 @@ function getCategories() {
     }
 }
 
-function getStats($category="", $start=NULL, $stop=NULL) {
+function getStats($category="", $timeframe=NULL, $offset=NULL) {
     global $db;
     $where = "";
     $cat_sel = "";
     $time_sel_ids = "";
     $time_sel_time_tracked = "";
+
+    if($timeframe != NULL) {
+        $time_sel_time_tracked = "$timeframe(due) = $timeframe(CURRENT_DATE)$offset";
+    }
 
     if($category != "") {
         $cat_sel = "category = '$category'";
@@ -33,7 +47,14 @@ function getStats($category="", $start=NULL, $stop=NULL) {
     if($cat_sel != "" && $time_sel_ids == "") {
         $where = "WHERE $cat_sel";
     }
+    if($time_sel_time_tracked != "" && $where != "") {
+        $where .= " AND ".$time_sel_time_tracked;
+    }
+    if($time_sel_time_tracked != "" && $where == "") {
+        $where = "WHERE ".$time_sel_time_tracked;
+    }
     $sql = "SELECT COUNT(ID) AS num_ids FROM `tasks` $where";
+    // echo $sql;
     $res = mysqli_query($db, $sql);
     $max_id = mysqli_fetch_array($res)["num_ids"];
     
@@ -61,17 +82,42 @@ function getStats($category="", $start=NULL, $stop=NULL) {
 ?>
 <section class="statistics">
     <div class="wide">
-        <header style='--color: #111'>Overall Statistics</header>
+        <header style='--color: #111'>Instance Statistics</header>
         <main>
-            <?php $data = getStats(); ?>
-            <p>Number of Tasks created: <?php echo $data[0]; ?></p>
-            <p>Tracked hours: <?php echo $data[1]; ?></p>
+            <section>
+                <h3>Overall</h3>
+                <?php $data = getStats(); ?>
+                <p>Number of Tasks created: <?php echo $data[0]; ?></p>
+                <p>Tracked hours: <?php echo $data[1]; ?></p>
+            </section>
+
+            <section>
+                <h3>This Year</h3>
+                <?php $data = getStats("", "YEAR"); ?>
+                <p>Number of Tasks created: <?php echo $data[0]; ?></p>
+                <p>Tracked hours: <?php echo $data[1]; ?></p>
+            </section>
+
+            <section>
+                <h3>Last Year</h3>
+                <?php $data = getStats("", "YEAR", "-1"); ?>
+                <p>Number of Tasks created: <?php echo $data[0]; ?></p>
+                <p>Tracked hours: <?php echo $data[1]; ?></p>
+            </section>
+
         </main>
     </div>
 </section>
 
 
-<h3 class="stats">Overall per Category:</h3>
+<h3 class="stats">Statistics per Category:</h3>
+<nav class="statistics">
+    <a href="?statistics">Overall</a>
+    <a href="?statistics&timeframe=WEEK">This Week</a>
+    <a href="?statistics&timeframe=WEEK&offset=-1">Last Week</a>
+    <a href="?statistics&timeframe=MONTH">This Month</a>
+    <a href="?statistics&timeframe=MONTH&offset=-1">Last Month</a>
+</nav>
 <section class="statistics week_stats">
     <?php 
     $categories = getCategories();
@@ -87,7 +133,7 @@ function getStats($category="", $start=NULL, $stop=NULL) {
         <div class="panel">
             <header><div class='categoryIndicator' style='--color: #<?php echo $category['color']; ?>'></div><?php echo $category['Bezeichnung']; ?></header>
             <div class="main">
-                <?php $data = getStats($category['ID']); ?>
+                <?php $data = getStats($category['ID'], $get_timeframe, $get_offset); ?>
                 <p>Number of Tasks created:  <?php echo $data[0]; ?></p>
                 <p>Tracked hours: <?php echo $data[1]; ?></p>
             </div>
