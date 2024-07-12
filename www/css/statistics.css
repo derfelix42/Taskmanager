@@ -37,6 +37,17 @@ h3.stats {
     background-color: #555;
     padding: 0.25em 0.5em;
     border-radius: 0 0 0.5em 0.5em;
+    display: flex;
+    flex-direction: row;
+}
+
+.statistics main section {
+    flex-grow: 1;
+}
+
+.statistics main section h3 {
+    padding: 0.25em 0.5em;
+    text-decoration: underline;
 }
 
 .statistics .main {
@@ -50,4 +61,16 @@ h3.stats {
 .statistics p {
     display: block;
     padding: 0.25em 0.5em;
+}
+
+nav.statistics a {
+    background-color: #555;
+    padding: 0.25em 0.5em;
+    margin-left: 0.5em;
+}
+
+nav.statistics a:active {
+    background-color: #777;
+    padding: 0.25em 0.5em;
+    margin-left: 0.5em;
 }
