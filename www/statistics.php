@@ -85,7 +85,7 @@ function getStats($category="", $timeframe=NULL, $offset=NULL) {
     }
 
     // $days = floor($overall_time / 60 / 60 / 24);
-    return [$max_id, $time_string];
+    return [$max_id, $time_string, $overall_time];
 }
 ?>
 <section class="statistics">
@@ -117,7 +117,6 @@ function getStats($category="", $timeframe=NULL, $offset=NULL) {
     </div>
 </section>
 
-
 <h3 class="stats">Statistics per Category:</h3>
 <nav class="statistics">
     <a href="?statistics">Overall</a>
@@ -126,6 +125,36 @@ function getStats($category="", $timeframe=NULL, $offset=NULL) {
     <a href="?statistics&timeframe=MONTH">This Month</a>
     <a href="?statistics&timeframe=MONTH&offset=-1">Last Month</a>
 </nav>
+
+<section class="statistics">
+    <div class="wide">
+        <header style='--color: #111'>Statistics</header>
+        <main>
+            <section>
+                <h3>Overall</h3>
+                <?php $sum_data = getStats("", $get_timeframe, $get_offset); ?>
+                <p>Number of Tasks created: <?php echo $sum_data[0]; ?></p>
+                <p>Tracked hours: <?php echo $sum_data[1]; ?></p>
+            </section>
+
+            <!-- <section>
+                <h3>???</h3>
+                <?php // $data = getStats("", "YEAR"); ?>
+                <p>Number of Tasks created: <?php echo $data[0]; ?></p>
+                <p>Tracked hours: <?php echo $data[1]; ?></p>
+            </section>
+
+            <section>
+                <h3>???</h3>
+                <?php //$data = getStats("", "YEAR", "-1"); ?>
+                <p>Number of Tasks created: <?php echo $data[0]; ?></p>
+                <p>Tracked hours: <?php echo $data[1]; ?></p>
+            </section> -->
+
+        </main>
+    </div>
+</section>
+
 <section class="statistics week_stats">
     <?php 
     $categories = getCategories();
@@ -143,7 +172,12 @@ function getStats($category="", $timeframe=NULL, $offset=NULL) {
             <div class="main">
                 <?php $data = getStats($category['ID'], $get_timeframe, $get_offset); ?>
                 <p>Number of Tasks created:  <?php echo $data[0]; ?></p>
-                <p>Tracked hours: <?php echo $data[1]; ?></p>
+                <p>
+                    Tracked hours: <?php echo $data[1]; ?>
+                    <?php 
+                        if($data[2] > 0) { echo "(".number_format(((floatval($data[2]) / floatval($sum_data[2])*100)),1,',','')."%)"; } 
+                    ?>
+                </p>
             </div>
         </div>
 
