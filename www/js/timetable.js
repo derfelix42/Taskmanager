@@ -905,7 +905,7 @@ function drawSleepBlock(start_day, start_time, end_day, end_time) {
     const height = y_end - y_start
     const width = settings.spacings.day * settings.scale
 
-    ctx.fillStyle = "#080808";
+    ctx.fillStyle = "#181818";
     ctx.fillRect(x_start, y_start, width, height)
   }
 
@@ -919,7 +919,7 @@ function drawSleepBlock(start_day, start_time, end_day, end_time) {
     const height = y_end - y_start
     const width = settings.spacings.day * settings.scale
 
-    ctx.fillStyle = "#080808";
+    ctx.fillStyle = "#181818";
     ctx.fillRect(x_start, y_start, width, height)
   }
 
