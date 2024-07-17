@@ -198,6 +198,8 @@ function drawTimetable() {
 
 
   for (let sleep_session of sleep_history) {
+    if(sleep_session.sleep_secs > 60*30) {} // TODO: integrate in nice way - starting sleep now should invoke drawSleepPattern, but won't this way...
+    
     let h = parseInt(sleep_session.wakeup_time.split(":")[0])
     let m = parseInt(sleep_session.wakeup_time.split(":")[1])
     const waketime = h + m / 60
