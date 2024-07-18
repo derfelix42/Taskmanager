@@ -70,6 +70,10 @@ function getStats($category="", $timeframe=NULL, $offset=NULL) {
     $res = mysqli_query($db, $sql);
     $overall_time = mysqli_fetch_array($res)["overall_time"];
     
+    $sql = "SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(second, start_time, stop_time))) as time_slept FROM `sleep_history` WHERE (WEEK(start_time,7) = WEEK(CURRENT_DATE,7) OR WEEK(stop_time,7) = WEEK(CURRENT_DATE,7)) AND (YEAR(start_time) = YEAR(CURRENT_DATE) OR YEAR(stop_time) = YEAR(CURRENT_DATE));";
+    $res = mysqli_query($db, $sql);
+    $time_slept = mysqli_fetch_array($res)["time_slept"];
+
     $seconds = str_pad($overall_time % 60, 2, "0", STR_PAD_LEFT);
     $minutes = str_pad(floor($overall_time / 60) % 60, 2, "0", STR_PAD_LEFT);
     $hours = str_pad(floor($overall_time / 60 / 60), 2, "0", STR_PAD_LEFT);
@@ -85,7 +89,7 @@ function getStats($category="", $timeframe=NULL, $offset=NULL) {
     }
 
     // $days = floor($overall_time / 60 / 60 / 24);
-    return [$max_id, $time_string, $overall_time];
+    return [$max_id, $time_string, $overall_time, $time_slept];
 }
 ?>
 <section class="statistics">
@@ -137,19 +141,19 @@ function getStats($category="", $timeframe=NULL, $offset=NULL) {
                 <p>Tracked hours: <?php echo $sum_data[1]; ?></p>
             </section>
 
-            <!-- <section>
-                <h3>???</h3>
-                <?php // $data = getStats("", "YEAR"); ?>
-                <p>Number of Tasks created: <?php echo $data[0]; ?></p>
-                <p>Tracked hours: <?php echo $data[1]; ?></p>
+            <section>
+                <h3>Sleep this week</h3>
+                <?php $data = getStats(""); ?>
+                <!-- <p>Number of Tasks created: <?php //echo $data[0]; ?></p> -->
+                <p>Time slept: <?php echo $data[3]; ?></p>
             </section>
 
             <section>
-                <h3>???</h3>
+                <h3>Timeframe stats</h3>
                 <?php //$data = getStats("", "YEAR", "-1"); ?>
-                <p>Number of Tasks created: <?php echo $data[0]; ?></p>
-                <p>Tracked hours: <?php echo $data[1]; ?></p>
-            </section> -->
+                <p>Hours in week: <?php echo 24*7; ?>h</p>
+                <!-- <p>: <?php echo $data[1]; ?></p> -->
+            </section>
 
         </main>
     </div>
