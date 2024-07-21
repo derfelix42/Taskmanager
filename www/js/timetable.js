@@ -208,9 +208,9 @@ function drawTimetable() {
     m = parseInt(sleep_session.sleep_time.split(":")[1])
     const sleeptime = h + m / 60
 
-    drawSleepBlock((sleep_session.sleep_dow - 2) % 7, sleeptime, (sleep_session.wakeup_dow - 2) % 7, waketime)
+    drawSleepBlock((7 + sleep_session.sleep_dow - 2) % 7, sleeptime, (7 + sleep_session.wakeup_dow - 2) % 7, waketime)
 
-    // console.log(sleep_session.sleep_dow-1, sleeptime, "-", sleep_session.wakeup_dow-1, waketime)
+    // console.log((7 + sleep_session.sleep_dow - 2) % 7, sleeptime, "-", (7 + sleep_session.wakeup_dow - 2) % 7, waketime)
   }
 
   for (let i in wakeup_times) {
