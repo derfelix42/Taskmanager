@@ -38,6 +38,7 @@ services:
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: example
       # - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
       # - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
       # - MARIADB_DATABASE=j_tasks
