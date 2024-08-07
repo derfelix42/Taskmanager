@@ -44,7 +44,9 @@ services:
       interval: 2s
       retries: 120
     networks:
-      - my_network
+      my_network:
+        aliases:
+          - mariadb
 
   phpmyadmin:
     image: linuxserver/phpmyadmin
