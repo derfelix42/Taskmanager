@@ -73,6 +73,9 @@ services:
 
   nginx:
     # image: nginx
+    depends_on:
+      - webserver
+      - phpmyadmin
     build:
       context: ./
       dockerfile: nginx.Dockerfile
