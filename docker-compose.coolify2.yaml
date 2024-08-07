@@ -30,9 +30,10 @@ services:
 
 
   mariadb:
-    build:
-      context: ./
-      dockerfile: mariadb.Dockerfile
+    # build:
+    #   context: ./
+    #   dockerfile: mariadb.Dockerfile
+    image: mariadb:latest
     container_name: mariadb
     restart: unless-stopped
     environment:
@@ -43,10 +44,10 @@ services:
     volumes:
       - ./database:/var/lib/mysql
       - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
-    healthcheck:
-      test: ["CMD-SHELL", "mariadb ping | grep 'mysqld is alive' || exit 1"]
-      interval: 2s
-      retries: 120
+    # healthcheck:
+    #   test: ["CMD-SHELL", "mariadb ping | grep 'mysqld is alive' || exit 1"]
+    #   interval: 2s
+    #   retries: 120
     networks:
       my_network:
         aliases:
