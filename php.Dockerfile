@@ -46,4 +46,4 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 COPY www /var/www/html
 RUN mkdir /var/www/html/backups
-RUN mkdir /var/log
+# RUN mkdir /var/log
