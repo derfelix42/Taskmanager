@@ -23,6 +23,11 @@ services:
       - mariadb
     links:
       - "nginx:webserver"
+    networks:
+      my_network:
+        aliases:
+          - webserver
+
 
   mariadb:
     build:
@@ -40,6 +45,8 @@ services:
       test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p$$MARIADB_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
       interval: 2s
       retries: 120
+    networks:
+      - my_network
 
   phpmyadmin:
     image: linuxserver/phpmyadmin
@@ -62,6 +69,11 @@ services:
       - mariadb
     links:
       - "nginx:phpmyadmin"
+    networks:
+      my_network:
+        aliases:
+          - phpmyadmin
+
 
   nginx:
     # image: nginx
@@ -70,6 +82,8 @@ services:
       dockerfile: nginx.Dockerfile
 
     restart: always
+    networks:
+      - my_network
     # ports:
     #   - "80:80"
     #   - "443:443"
@@ -85,6 +99,5 @@ services:
     #   - webserver
     #   - phpmyadmin
 
-# networks:
-#   proxy:
-    # external: true
+networks:
+  my_network:
