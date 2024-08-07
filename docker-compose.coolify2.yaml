@@ -8,7 +8,8 @@ services:
       dockerfile: php.Dockerfile
     container_name: webserver
     environment:
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_PASSWORD=pass
+      - MYSQL_USERNAME=root
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:80"]
@@ -30,18 +31,15 @@ services:
 
 
   mariadb:
-    # build:
-    #   context: ./
-    #   dockerfile: mariadb.Dockerfile
-    image: mariadb:latest
-    container_name: mariadb
-    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: mariadb.Dockerfile
+    # image: mariadb:latest
+    # container_name: mariadb
+    restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: example
-      MYSQL_ROOT_PASSWORD: example
-      # - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
-      # - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
-      # - MARIADB_DATABASE=j_tasks
+      - MARIADB_ROOT_PASSWORD=pass
+      - MARIADB_DATABASE=j_tasks
     volumes:
       - ./database:/var/lib/mysql
       - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
