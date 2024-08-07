@@ -36,9 +36,14 @@ services:
     container_name: mariadb
     restart: unless-stopped
     environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: j_tasks
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+
       # - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
       # - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
-      - MARIADB_DATABASE=j_tasks
+      # - MARIADB_DATABASE=j_tasks
     volumes:
       - ./database:/var/lib/mysql
       - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
