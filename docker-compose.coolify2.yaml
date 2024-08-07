@@ -36,11 +36,7 @@ services:
     container_name: mariadb
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: j_tasks
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-
+      MARIADB_ROOT_PASSWORD: example
       # - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
       # - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
       # - MARIADB_DATABASE=j_tasks
