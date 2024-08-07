@@ -1,0 +1,76 @@
+section.week_stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1em;
+}
+
+h3.stats {
+    padding: 0.5em 1em;
+    margin-top: 2em;
+    font-size: 1.3em;
+}
+
+.statistics {
+    margin: 1em;
+}
+
+.statistics .wide {
+    width: 100%;
+}
+
+.statistics .panel {
+}
+
+.statistics header {
+    font-size: 1.2em;
+    border-radius: 0.5em 0.5em 0 0;
+    padding: 0.25em 0.5em;
+    font-weight: 700;
+    background-color: #111;
+    text-shadow: 0 0 2px black;
+    display: flex;
+    gap: 0.25em;
+}
+
+.statistics main {
+    overflow: hidden;
+    background-color: #555;
+    padding: 0.25em 0.5em;
+    border-radius: 0 0 0.5em 0.5em;
+    display: flex;
+    flex-direction: row;
+}
+
+.statistics main section {
+    flex-grow: 1;
+}
+
+.statistics main section h3 {
+    padding: 0.25em 0.5em;
+    text-decoration: underline;
+}
+
+.statistics .main {
+    overflow: hidden;
+    background-color: #555;
+    padding: 0.25em 0.5em;
+    border-radius: 0 0 0.5em 0.5em;
+}
+
+
+.statistics p {
+    display: block;
+    padding: 0.25em 0.5em;
+}
+
+nav.statistics a {
+    background-color: #555;
+    padding: 0.25em 0.5em;
+    margin-left: 0.5em;
+}
+
+nav.statistics a:active {
+    background-color: #777;
+    padding: 0.25em 0.5em;
+    margin-left: 0.5em;
+}

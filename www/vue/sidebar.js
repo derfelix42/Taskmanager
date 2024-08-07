@@ -81,6 +81,9 @@ const sidebar = createApp({
 <!-- <a href="?bahnapi">
 <li>BahnAPI</li>
 </a> -->
+<a href="?statistics&timeframe=WEEK">
+<li>Statistics <i class="fa-solid fa-chart-line"></i></li>
+</a>
 <a href="?trash">
 <li>Trashcan <i class="fa-solid fa-trash-can small"></i></li>
 </a>

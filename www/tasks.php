@@ -132,6 +132,7 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/settings.css">
   <link rel="stylesheet" href="css/habits.css">
+  <link rel="stylesheet" href="css/statistics.css">
   <link rel="stylesheet" href="css/day_view.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
@@ -220,6 +221,11 @@ $result = mysqli_query($db, $sql);
     require_once("./trash.php")
       ?>
           </main>
+
+<?php } else if (isset($_GET['statistics'])) {
+  require_once("./statistics.php")
+    ?>
+        </main>
 
 <?php } else if (isset($_GET['youtube'])) {
     require_once("./youtube-history.php")

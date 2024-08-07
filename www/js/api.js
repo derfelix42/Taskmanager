@@ -157,7 +157,7 @@ async function getCurrentDayTimeSpent() {
 
 async function getWakeupTimes(date) {
   date = date.toISOString().split('T')[0]
-  const url = "api/getWakeupTimes.php?date=" + date
+  const url = "api/getSleepHistory.php?date=" + date
   if (config.debug) {
     console.log(url)
   }
