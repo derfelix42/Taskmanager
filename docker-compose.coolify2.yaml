@@ -36,13 +36,14 @@ services:
     container_name: mariadb
     restart: unless-stopped
     environment:
-      - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
+      # - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
       - MARIADB_DATABASE=j_tasks
     volumes:
       - ./database:/var/lib/mysql
       - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p$$MARIADB_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
+      test: ["CMD-SHELL", "mariadb ping | grep 'mysqld is alive' || exit 1"]
       interval: 2s
       retries: 120
     networks:
