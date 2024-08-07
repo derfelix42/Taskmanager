@@ -1,6 +1,6 @@
 FROM mariadb:latest
 
-ENV MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
+ENV MARIADB_ROOT_PASSWORD=pass
 
 # Set the timezone for mariadb to Europe/Berlin
 ENV TZ=Europe/Berlin
