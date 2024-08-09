@@ -90,6 +90,25 @@ if (isset($_GET['create'])) {
   header('Content-Type: application/json');
   print '{"status": "done", "sql": "' . $sql . '", "ID": ' . $row['ID'] . '}';
 
+/* Delete group */
+} else if (isset($_GET['deleteGroup'])) {
+  $ID = $_GET["deleteGroup"];
+  $sql = "UPDATE `habit_groups` SET `deleted` = 1 WHERE ID = $ID";
+  mysqli_query($db, $sql);
+  header('Content-Type: application/json');
+  print '{"status": "done", "sql": "' . $sql . '"}';
+
+/* Rename group */
+} else if (isset($_GET['renameGroup'])) {
+
+  $groupID = $_GET['renameGroup'];
+  $new_name = $body->name;
+
+  $sql = "UPDATE `habit_groups` SET `name`='$new_name' WHERE ID = $groupID";
+  mysqli_query($db, $sql);
+  header('Content-Type: application/json');
+  print '{"status": "done", "sql": "' . $sql . '"}';
+
 /* Get all habits and their entries for given month */
 } else {
   // result array with list of habits and list of associations

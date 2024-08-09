@@ -213,17 +213,36 @@ async function deleteHabit(habitID) {
   return await res.json()
 }
 
+// move habit into another Group
 async function moveHabitToGroup(habitID, groupID) {
   const url = "api/habits.php?move=" + habitID + "&group=" + groupID
   const res = await fetch(url)
   return await res.json()
 }
 
+// Create a new Habit Group
 async function createHabitGroup(name) {
   const url = "api/habits.php?createGroup"
   const res = await fetch(url, {
     method: "POST",
     body: JSON.stringify({newGroupName: name})
   })
+  return await res.json()
+}
+
+// Rename an existing Habit Group
+async function renameHabitGroup(groupID, name) {
+  const url = "api/habits.php?renameGroup="+groupID
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({name: name})
+  })
+  return await res.json()
+}
+
+// Delete a habit Group
+async function deleteHabitGroup(groupID) {
+  const url = "api/habits.php?deleteGroup="+groupID
+  const res = await fetch(url)
   return await res.json()
 }

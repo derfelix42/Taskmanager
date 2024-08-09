@@ -78,6 +78,27 @@ const habit_tracker = createApp({
             adding_new_group.value = false
         }
 
+        async function renameHabitGroup_fn(groupID, name) {
+            console.log("habits:renameHabitGroup",groupID,name)
+            await renameHabitGroup(groupID, name)
+            await getHabits()
+        }
+
+        async function deleteHabitGroup_fn(groupID) {
+            // console.log("habits:deleteHabitGroup")
+            // TODO: move all habits within to null group
+            let habits_to_move = habits.habits?.filter(x => x.groupID === groupID)
+            // console.log("Would have to move the following habits:", habits_to_move)
+            for (const habit of habits_to_move) {
+                // console.log("habit:", habit, habit.ID)
+                await moveHabitToGroup(habit.ID, "null")
+            }
+
+            // console.log("stopping before.")
+            await deleteHabitGroup(groupID)
+            await getHabits()
+        }
+
         async function dragStart(event, habitID) {
             event.dataTransfer.setData("text/plain", habitID)
         }
@@ -114,7 +135,9 @@ const habit_tracker = createApp({
             dragStart,
             dragOver,
             drop,
-            adding_new_group_fnc
+            adding_new_group_fnc,
+            renameHabitGroup_fn,
+            deleteHabitGroup_fn,
         }
 
     },
@@ -139,7 +162,16 @@ const habit_tracker = createApp({
         <table class="habits" v-for="group in habits.groups">
         <thead>
         <tr @dragover="dragOver($event)" @drop="drop($event, group.ID)">
-        <td>{{group.name}}</td>
+
+        <td v-if="!group.editMode" @click="group.editMode = true" class="clickable">
+        {{ group.name }}
+        </td>
+        <td v-else>
+        <input type="text" @change="renameHabitGroup_fn(group.ID, $event.target.value)" :value="group.name" v-on:keyup.enter="group.editMode = false">
+        <span @click.stop="deleteHabitGroup_fn(group.ID)" class="clickable right">🗑️</span>
+        </td>
+
+
         <td v-for="i in days_in_month" :key="group.ID + '-' + i">
         {{ i.toString().padStart(2, "0") }}.
         </td>
