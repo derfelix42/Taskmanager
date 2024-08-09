@@ -134,6 +134,7 @@ const habit_tracker = createApp({
         </a>
         </div>
 
+        <span class="divider height-1"/>
         
         <table class="habits" v-for="group in habits.groups">
         <thead>
