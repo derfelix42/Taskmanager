@@ -20,20 +20,22 @@ const habit_tracker = createApp({
         async function nextMonth() {
             const date = habits_month.value
             if (date.getMonth() === 11) {
-                return new Date(date.getFullYear() + 1, 0, 1)
+                habits_month.value = new Date(date.getFullYear() + 1, 0, 1)
+            } else {
+                habits_month.value = new Date(date.getFullYear(), date.getMonth() + 1, 1)
             }
         
-            habits_month.value = new Date(date.getFullYear(), date.getMonth() + 1, 1)
             await getHabits()
         }
         
         async function prevMonth() {
             const date = habits_month.value
             if (date.getMonth() === 0) {
-                return new Date(date.getFullYear() - 1, 11, 1)
+                habits_month.value = new Date(date.getFullYear() - 1, 11, 1)
+            } else {
+                habits_month.value = new Date(date.getFullYear(), date.getMonth() - 1, 1)
             }
         
-            habits_month.value = new Date(date.getFullYear(), date.getMonth() - 1, 1)
             await getHabits()
         }
 
