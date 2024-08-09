@@ -31,7 +31,7 @@ table.habits td {
     height: 2em;
 }
 
-table.habits td input {
+table.habits td input, section#add_habits_group input {
     width: calc(100% - 2em);
 
     line-height: 1em;
@@ -46,7 +46,6 @@ table.habits td input {
     background-color: #555;
     color: white;
     outline: none;
-  
 }
 
 table.habits :not(thead) tr td {
@@ -79,4 +78,18 @@ div.habits_header * {
 
 div.habits_header a {
     margin: 0 2em;
+}
+
+button.habits {
+    margin-right: 0.5em;
+    margin-top: 0.5em;
+    padding: 0.5em 1em;
+    background-color: #111;
+    color: white;
+    border: 1px solid white;
+    border-radius: 0.75em;
+}
+
+button.habits:hover {
+    background-color: rgba(255,255,255,0.1);
 }

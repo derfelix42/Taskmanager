@@ -168,7 +168,7 @@ const habit_tracker = createApp({
         </td>
         <td v-else>
         <input type="text" @change="renameHabitGroup_fn(group.ID, $event.target.value)" :value="group.name" v-on:keyup.enter="group.editMode = false">
-        <span @click.stop="deleteHabitGroup_fn(group.ID)" class="clickable right">🗑️</span>
+        <span @click.stop="deleteHabitGroup_fn(group.ID)" class="clickable right">❌</span>
         </td>
 
 
@@ -185,7 +185,7 @@ const habit_tracker = createApp({
         </td>
         <td v-else>
         <input type="text" @change="renameHabit(habit.ID, $event.target.value)" :value="habit.name" v-on:keyup.enter="habit.editMode = false">
-        <span @click.stop="deleteHabitByID(habit.ID)" class="clickable right">🗑️</span>
+        <span @click.stop="deleteHabitByID(habit.ID)" class="clickable right">❌</span>
         </td>
         <td v-for="i in days_in_month" @click="clickedHabit(habit.ID, i)" :key="habit.ID + '-' + i + '-' + habits_curr_date" :class="{checked: (habits.entries !== undefined ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false)}" class="clickable">
         </td>
@@ -210,7 +210,7 @@ const habit_tracker = createApp({
         </td>
         <td v-else>
         <input type="text" @change="renameHabit(habit.ID, $event.target.value)" :value="habit.name" v-on:keyup.enter="habit.editMode = false">
-        <span @click.stop="deleteHabitByID(habit.ID)" class="clickable right">🗑️</span>
+        <span @click.stop="deleteHabitByID(habit.ID)" class="clickable right">❌</span>
         </td>
         
         <td v-for="i in days_in_month" @click="clickedHabit(habit.ID, i)" :key="habit.ID + '-' + i + '-' + habits_curr_date" :class="{checked: (habits.entries !== undefined ? habits.entries.filter(x => x.habitID === habit.ID).map(x => x.dom).includes(i.toString()) : false)}" class="clickable">
@@ -224,12 +224,13 @@ const habit_tracker = createApp({
         </tbody>
         </table>
 
-        <section>
-            <button @click="adding_new_group = true" v-if="!adding_new_group">Add Group</button>
+        <section id="add_habits_group">
+            <button class="habits clickable" @click="adding_new_group = true" v-if="!adding_new_group">Add Group</button>
             <template v-if="adding_new_group">
-                <input type="text" v-model="adding_new_group_name">
-                <button @click="adding_new_group = false">Cancel</button>
-                <button @click="adding_new_group_fnc">Save</button>
+                <h3>Add new Group:</h3>
+                <input type="text" v-model="adding_new_group_name" placeholder="New Groups Name">
+                <button class="habits clickable" @click="adding_new_group = false">Cancel</button>
+                <button class="habits clickable" @click="adding_new_group_fnc">Save</button>
             </template>
         </section>
         `
