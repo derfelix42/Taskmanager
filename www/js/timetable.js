@@ -10,7 +10,7 @@ function decodeEntity(inputStr) {
 
 let settings = {
   scale: 0.9,
-  starttime: 4,
+  starttime: 0,
   endtime: 23,
   spacings: {
     hour: 35,
@@ -49,6 +49,7 @@ let currentWeek = [
 ]
 
 // Default Values for WakeupTimes
+let sleep_history = []
 let wakeup_times = {}
 let sleep_hours = {}
 let bedtimes = {}
@@ -186,29 +187,52 @@ function drawTimetable() {
   drawBlocking(6, 19,20)
   drawBlocking(6, 9,10)
 
-  for(let day = 0; day < 7; day++) {
-    drawWakeUpPattern(day,wakeup_times[day])
-    drawSleepPattern(day,bedtimes[day])
-    printLastNightsSleep(day, sleep_hours[day])
+  // for(let day = 0; day < 7; day++) {
+  //   drawWakeUpPattern(day,wakeup_times[day])
+  //   drawSleepPattern(day,bedtimes[day])
+  //   printLastNightsSleep(day, sleep_hours[day])
 
+  // }
+
+  // wakeup_times
+
+
+  for (let sleep_session of sleep_history) {
+    if(sleep_session.sleep_secs > 60*30) {} // TODO: integrate in nice way - starting sleep now should invoke drawSleepPattern, but won't this way...
+    
+    let h = parseInt(sleep_session.wakeup_time.split(":")[0])
+    let m = parseInt(sleep_session.wakeup_time.split(":")[1])
+    const waketime = h + m / 60
+
+    h = parseInt(sleep_session.sleep_time.split(":")[0])
+    m = parseInt(sleep_session.sleep_time.split(":")[1])
+    const sleeptime = h + m / 60
+
+    drawSleepBlock((7 + sleep_session.sleep_dow - 2) % 7, sleeptime, (7 + sleep_session.wakeup_dow - 2) % 7, waketime)
+
+    // console.log((7 + sleep_session.sleep_dow - 2) % 7, sleeptime, "-", (7 + sleep_session.wakeup_dow - 2) % 7, waketime)
   }
 
-  
-  // drawWakeUpPattern(1,wakeup_times[1])
-  // drawWakeUpPattern(2,wakeup_times[2])
-  // drawWakeUpPattern(3,wakeup_times[3])
-  // drawWakeUpPattern(4,wakeup_times[4])
-  // drawWakeUpPattern(5,wakeup_times[5])
-  // drawWakeUpPattern(6,wakeup_times[6])
+  for (let i in wakeup_times) {
+    const wakeup = wakeup_times[i]
+    if (wakeup >= 0) {
+      drawWakeUpPattern(i, wakeup)
+    }
+  }
 
-  // drawSleepPattern(1,bedtimes[1])
-  // drawSleepPattern(2,bedtimes[2])
-  // drawSleepPattern(3,bedtimes[3])
-  // drawSleepPattern(4,bedtimes[4])
-  // drawSleepPattern(5,bedtimes[5])
-  // drawSleepPattern(6,bedtimes[6])
+  for (let i in sleep_hours) {
+    const wakeup = sleep_hours[i]
+    if (wakeup >= 0) {
+      drawSleepPattern(i, wakeup)
+    }
+  }
 
-  
+  // drawSleepBlock(-1,22,0,4)
+  // drawSleepBlock(0,14,0,18)
+  // drawSleepBlock(0,22.66666666667,1,6.783465823495)
+  // drawSleepBlock(6,22,7,6)
+
+
   drawWeek(ctx)
   drawTasks()
 
@@ -384,80 +408,35 @@ async function updateTasks() {
 
 async function loadWakeupTimes() {
   data = await getWakeupTimes(dateOfMonday)
-  if(config.debug)
+  if (config.debug)
     console.log(data)
 
-  if(data.data.length > 0) {
-    // Go through Days of Week
-    for(let i = 0; i < 7; i++) {
-      dow = i
-  
-      // Get Data from DB, if available
-      filtered = data.data.filter(x => (((x.DOW - 2 % 7) + 7 ) % 7) == i)
-      if (filtered.length === 1) {
-        waketime = filtered[0].wakeup_time
-        // console.log(waketime)
-        h = parseInt(waketime.split(":")[0])
-        m = parseInt(waketime.split(":")[1])
-        waketime = h+m/60
+  sleep_history = data.data;
 
-        sleeptime = filtered[0].yesterday_sleep_time
-        // console.log(sleeptime)
-        h = parseInt(sleeptime.split(":")[0])
-        m = parseInt(sleeptime.split(":")[1])
-        sleeptime = h+m/60
-
-        hours_of_sleep = filtered[0].sleep_hours
-        // console.log(hours_of_sleep)
-        // h = parseInt(hours_of_sleep.split(":")[0])
-        // m = parseInt(hours_of_sleep.split(":")[1])
-        // hours_of_sleep = h+m/60
-
-      } else {
-        // Use Default-Values if no data in DB for DOW
-        waketime = 7
-        if (dow < 5) {
-          waketime = 6
-        }
-
-        sleeptime = 24
-        hours_of_sleep = ""
-      }
-  
-      // Set wakeup-time
-      wakeup_times[i] = waketime
-      bedtimes[(i-1)%7] = sleeptime
-      sleep_hours[i] = hours_of_sleep
-    }
-  } else {
-    for(let i = 0; i < 7; i++) {
-      dow = i
-  
-      // Get Data from DB, if available
-      filtered = data.data.filter(x => (((x.DOW - 2 % 7) + 7 ) % 7) == i)
-      if (filtered.length === 1) {
-        waketime = filtered[0].time
-        h = parseInt(waketime.split(":")[0])
-        m = parseInt(waketime.split(":")[1])
-        waketime = h+m/60
-      } else {
-        // Use Default-Values if no data in DB for DOW
-        waketime = 7
-        if (dow < 5) {
-          waketime = 6
-        }
-      }
-  
-      // Set wakeup-time
-      wakeup_times[i] = waketime
-      bedtimes[(i-1)%7] = 24
-      sleep_hours[i] = ""
-    }
+  wakeup_times = {
+    0: 6,
+    1: 6,
+    2: 6,
+    3: 6,
+    4: 6,
+    5: 7,
+    6: 7,
   }
-  if(config.debug)
-    console.log(bedtimes, sleep_hours)
 
+  sleep_hours = {
+    0: 22,
+    1: 22,
+    2: 22,
+    3: 22,
+    4: 22,
+    5: 22,
+    6: 22,
+  }
 
+  for (let session of sleep_history) {
+    wakeup_times[session.wakeup_dow - 2] = -1
+    sleep_hours[session.sleep_dow - 2] = -1
+  }
 }
 
 function drawTasks() {
@@ -915,42 +894,90 @@ function drawBlocking(day,start,end) {
   }
 }
 
+function drawSleepBlock(start_day, start_time, end_day, end_time) {
+  if (start_day >= 0) {
+    let tmp_end_time = end_time
+    if (start_day !== end_day) {
+      tmp_end_time = 24
+    }
+    const x_start = settings.start_x + start_day * settings.spacings.day * settings.scale
+    const y_start = settings.start_y + (start_time - settings.starttime) * settings.spacings.hour * settings.scale
+    const y_end = settings.start_y + (tmp_end_time - settings.starttime) * settings.spacings.hour * settings.scale
+
+    const height = y_end - y_start
+    const width = settings.spacings.day * settings.scale
+
+    ctx.fillStyle = "#181818";
+    ctx.fillRect(x_start, y_start, width, height)
+  }
+
+  if (start_day !== end_day && end_day < 7) {
+    let tmp_start_time = 0
+
+    const x_start = settings.start_x + end_day * settings.spacings.day * settings.scale
+    const y_start = settings.start_y + (tmp_start_time - settings.starttime) * settings.spacings.hour * settings.scale
+    const y_end = settings.start_y + (end_time - settings.starttime) * settings.spacings.hour * settings.scale
+
+    const height = y_end - y_start
+    const width = settings.spacings.day * settings.scale
+
+    ctx.fillStyle = "#181818";
+    ctx.fillRect(x_start, y_start, width, height)
+  }
+
+  if (start_day >= 0) {
+    drawSleepPattern(start_day, start_time)
+  }
+
+  if (end_day < 7) {
+    drawWakeUpPattern(end_day, end_time)
+  }
+
+}
+
+
 function drawWakeUpPattern(day, time) {
-  const margin = settings.spacings.day*settings.scale/12
-  const x_start = settings.start_x+day*settings.spacings.day*settings.scale
-  const x_end = settings.start_x+(day+1)*settings.spacings.day*settings.scale
-  const y_start = settings.start_y+(time-0.5-settings.starttime)*settings.spacings.hour*settings.scale
-  const y_end = settings.start_y+(time-settings.starttime)*settings.spacings.hour*settings.scale
+  day = parseInt(day)
+  const margin = settings.spacings.day * settings.scale / 12
+  const x_start = settings.start_x +     day    * settings.spacings.day * settings.scale
+  const x_end = settings.start_x + (day + 1) * settings.spacings.day * settings.scale
+  const y_start = settings.start_y + (time - 0.5 - settings.starttime) * settings.spacings.hour * settings.scale
+  const y_end = settings.start_y + (time - settings.starttime) * settings.spacings.hour * settings.scale
+
+  // const width = x_end - x_start
+  // if (width > settings.spacings.day * settings.scale) {
+  //   console.log("Möp!", width, settings.spacings.day * settings.scale)
+  // }
 
   const height = y_end - y_start
 
   ctx.lineWidth = 2;
-  if(settings.printing) {
+  if (settings.printing) {
     ctx.strokeStyle = "#000"
   } else {
     ctx.strokeStyle = "#fff"
   }
 
   let x1 = x_start
-  let x2 = x_end-height
+  let x2 = x_end - height
   let y1 = y_start
   let y2 = y_end
 
   let counter = 0
 
-  while(x2+margin <= x_end+1 && counter < 1000) {
-    x1 = x_start+(counter*margin)
-    x2 = x1-height
+  while (x2 + margin <= x_end + 1 && counter < 1000) {
+    x1 = x_start + (counter * margin)
+    x2 = x1 - height
 
-    if(x2 < x_start) {
+    if (x2 < x_start) {
       y2 = y_end - x_start + x2
       x2 = x_start
     } else {
       y2 = y_end
     }
 
-    if(x1 > x_end) {
-      y1 = y_start + (x1-x_end)
+    if (x1 > x_end) {
+      y1 = y_start + (x1 - x_end)
       x1 = x_end
     } else {
       y1 = y_start
@@ -969,47 +996,47 @@ function drawWakeUpPattern(day, time) {
   ctx.moveTo(x_start, y_end)
   ctx.lineTo(x_end, y_end)
   ctx.stroke()
-
 }
 
 function drawSleepPattern(day, time) {
-  if(time === 24)
+  day = parseInt(day)
+  if (time === 24)
     return
-  const margin = settings.spacings.day*settings.scale/12
-  const x_start = settings.start_x+day*settings.spacings.day*settings.scale
-  const x_end = settings.start_x+(day+1)*settings.spacings.day*settings.scale
-  const y_start = settings.start_y+(time-settings.starttime)*settings.spacings.hour*settings.scale
-  const y_end = settings.start_y+(time+0.5-settings.starttime)*settings.spacings.hour*settings.scale
+  const margin = settings.spacings.day * settings.scale / 12
+  const x_start = settings.start_x + day * settings.spacings.day * settings.scale
+  const x_end = settings.start_x + (day + 1) * settings.spacings.day * settings.scale
+  const y_start = settings.start_y + (time - settings.starttime) * settings.spacings.hour * settings.scale
+  const y_end = settings.start_y + (time + 0.5 - settings.starttime) * settings.spacings.hour * settings.scale
 
   const height = y_end - y_start
 
   ctx.lineWidth = 2;
-  if(settings.printing) {
+  if (settings.printing) {
     ctx.strokeStyle = "#000"
   } else {
     ctx.strokeStyle = "#fff"
   }
 
   let x1 = x_start
-  let x2 = x_end-height
+  let x2 = x_end - height
   let y1 = y_start
   let y2 = y_end
 
   let counter = 0
 
-  while(x2+margin <= x_end+1 && counter < 1000) {
-    x1 = x_start+(counter*margin)
-    x2 = x1-height
+  while (x2 + margin <= x_end + 1 && counter < 1000) {
+    x1 = x_start + (counter * margin)
+    x2 = x1 - height
 
-    if(x2 < x_start) {
+    if (x2 < x_start) {
       y2 = y_end - x_start + x2
       x2 = x_start
     } else {
       y2 = y_end
     }
 
-    if(x1 > x_end) {
-      y1 = y_start + (x1-x_end)
+    if (x1 > x_end) {
+      y1 = y_start + (x1 - x_end)
       x1 = x_end
     } else {
       y1 = y_start

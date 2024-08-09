@@ -5,7 +5,7 @@ require_once("../includes/db_connection.php");
 
 $db = $globals['db'];
 
-$sql = "INSERT INTO `wakeup_times` (`ID`, `date`, `time`, `wake_up`) VALUES (NULL, CURRENT_DATE, CURRENT_TIME, '1');";
+$sql = "UPDATE `sleep_history` SET `stop_time` = NOW() WHERE stop_time IS NULL;";
 mysqli_query($db, $sql);
 
 

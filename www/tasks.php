@@ -132,6 +132,7 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/settings.css">
   <link rel="stylesheet" href="css/habits.css">
+  <link rel="stylesheet" href="css/statistics.css">
   <link rel="stylesheet" href="css/day_view.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
@@ -154,6 +155,7 @@ $result = mysqli_query($db, $sql);
 
   <!-- Fontawesome -->
   <script src="https://kit.fontawesome.com/06843879cb.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Markdown to HTML -->
   <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
@@ -210,10 +212,20 @@ $result = mysqli_query($db, $sql);
           <div id="habit_tracker" class="habit-tracker"></div>
         </main>
 
-<?php } else if (isset($_GET['search'])) {
+        <?php } else if (isset($_GET['search'])) {
     require_once("./search.php")
       ?>
           </main>
+          
+<?php } else if (isset($_GET['trash'])) {
+    require_once("./trash.php")
+      ?>
+          </main>
+
+<?php } else if (isset($_GET['statistics'])) {
+  require_once("./statistics.php")
+    ?>
+        </main>
 
 <?php } else if (isset($_GET['youtube'])) {
     require_once("./youtube-history.php")
