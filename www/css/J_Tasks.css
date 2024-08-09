@@ -285,3 +285,7 @@ code {
 .right {
   float: right;
 }
+
+h1.underline {
+  text-decoration: underline;
+}

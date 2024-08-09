@@ -28,6 +28,25 @@ table.habits td {
     box-shadow: inset 0 0 10px black;
     border: 1px solid white;
     width: 1em;
+    height: 2em;
+}
+
+table.habits td input {
+    width: calc(100% - 2em);
+
+    line-height: 1em;
+    font-size: 1em;
+    font-family: monospace;
+    font-weight: 600;
+  
+    /* height: 1.4em; */
+    border: 0;
+    border-bottom: 1px solid black;
+    padding: 0.2em;
+    background-color: #555;
+    color: white;
+    outline: none;
+  
 }
 
 table.habits :not(thead) tr td {
@@ -45,4 +64,19 @@ table.habits {
 table.habits td.checked {
     /* box-shadow: inset 0 0 10px white; */
     background-color: #349127;
+}
+
+div.habits_header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.habits_header * {
+    display: inline-block;
+}
+
+div.habits_header a {
+    margin: 0 2em;
 }
