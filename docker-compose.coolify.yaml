@@ -7,6 +7,9 @@ services:
       context: ./
       dockerfile: php.Dockerfile
     container_name: webserver
+    environment:
+      - MYSQL_PASSWORD=pass
+      - MYSQL_USERNAME=root
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:80"]
@@ -15,37 +18,37 @@ services:
       retries: 5
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./www/:/var/www/html/
-      - ./.env:/var/www/html/.env
+      # - ./www/:/var/www/html/
+      # - ./.env:/var/www/html/.env
       - ./logs/:/var/log/
       - ./backups/:/var/www/html/backups/
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.webserver.entrypoints=web"
-      # - "traefik.http.routers.webserver.tls=true"
-      - "traefik.http.routers.webserver.rule=PathPrefix(`/`)"
-      - "traefik.http.services.webserver.loadbalancer.server.port=80"
-      - "traefik.http.routers.webserver.middlewares=test-auth"
-      - "traefik.http.middlewares.test-auth.basicauth.usersfile=/etc/traefik/htpasswd/.htpasswd"
     depends_on:
       - mariadb
+    networks:
+      my_network:
+        aliases:
+          - webserver
+
 
   mariadb:
     build:
       context: ./
       dockerfile: mariadb.Dockerfile
-    container_name: mariadb
-    restart: unless-stopped
+    restart: always
     environment:
-      - MARIADB_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=pass
       - MARIADB_DATABASE=j_tasks
     volumes:
       - ./database:/var/lib/mysql
-      - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p$$MARIADB_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
-      interval: 2s
-      retries: 120
+      # - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
+    # healthcheck:
+    #   test: ["CMD-SHELL", "mariadb ping | grep 'mysqld is alive' || exit 1"]
+    #   interval: 2s
+    #   retries: 120
+    networks:
+      my_network:
+        aliases:
+          - mariadb
 
   phpmyadmin:
     image: linuxserver/phpmyadmin
@@ -58,14 +61,6 @@ services:
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 10M
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.phpmyadmin.entrypoints=web"
-      # - "traefik.http.routers.phpmyadmin.tls=true"
-      - "traefik.http.routers.phpmyadmin.rule=PathPrefix(`/phpmyadmin`)"
-      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
-      - "traefik.http.routers.phpmyadmin.middlewares=test-auth"
-      - "traefik.http.middlewares.test-auth.basicauth.usersfile=/etc/traefik/htpasswd/.htpasswd"
     healthcheck:
       test: ["CMD", "curl", "-Ss", "http://localhost/robots.txt"]
       start_period: 5s
@@ -74,27 +69,38 @@ services:
       retries: 10
     depends_on:
       - mariadb
+    networks:
+      my_network:
+        aliases:
+          - phpmyadmin
 
-  traefik:
-    image: traefik
+
+  nginx:
+    # image: nginx
+    depends_on:
+      - webserver
+      - phpmyadmin
+    build:
+      context: ./
+      dockerfile: nginx.Dockerfile
+
     restart: always
-    command: 
-      - "--providers.docker"
-      - "--providers.docker.exposedbydefault=false"
-      # - "--providers.file.directory=/etc/traefik/dynamic"
-      - "--entrypoints.web.address=:80"
-      # - "--entrypoints.websecure.address=:443"
-      # - "--api.insecure=true"
+    networks:
+      - my_network
     # ports:
-      # - "80:80"
-      # - "443:443"
-      # - "8234:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - ./config/certs-traefik.yaml:/etc/traefik/dynamic/certs-traefik.yaml
-      - ./certs/:/etc/certs/
-      - ./.htpasswd:/etc/traefik/htpasswd/.htpasswd
+    #   - "80:80"
+    #   - "443:443"
+    # environment:
+    #   - WEBSERVER_HOST=${WEBSERVER_HOST}
+    #   - PHPMYADMIN_HOST=${PHPMYADMIN_HOST}
+    # volumes:
+      # - ./configs/nginx.conf:/etc/nginx/nginx.conf
+      # - ./certs/:/etc/nginx/certs/
+      # - ./.htpasswd:/etc/nginx/.htpasswd
+      # - ./404.html:/etc/nginx/404.html
+    # depends_on:
+    #   - webserver
+    #   - phpmyadmin
 
-# networks:
-#   proxy:
-    # external: true
+networks:
+  my_network:
