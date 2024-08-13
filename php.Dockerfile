@@ -43,3 +43,7 @@ RUN sed -i 's/^exec /service cron start\n\nexec /' /usr/local/bin/apache2-foregr
 
 # Server-Name für Apache ergänzen
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+COPY www /var/www/html
+RUN mkdir -p /var/www/html/backups
+COPY .env /var/www/html/.env
