@@ -1,9 +1,11 @@
 ![Taskmanager](https://img.shields.io/badge/in_development_since-2019--08--10-purple)
-![Taskmanager](https://img.shields.io/badge/time_spent-121h-198a11) 
+![Taskmanager](https://img.shields.io/badge/time_spent-154h-198a11) 
 
 # Taskmanager
 
 In our modern digital and fast-paced world, we are constantly inundated with information and tasks. This can lead to overwhelm and loss of productivity, as it becomes difficult to maintain an overview and focus on what is important. This project aims to help overcome this challenge. For this purpose, a smart todo list with time management features shall be provided, helping users to organize their tasks, set priorities and process them efficiently. Thus, it helps to cope with the challenges of digital acceleration and enables people to stay in control of their lives in the digital world.
+
+Join us on [Discord](https://discord.gg/juDqrgRUZa)!
 
 ## Getting started
 
