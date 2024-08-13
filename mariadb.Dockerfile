@@ -4,4 +4,4 @@ FROM mariadb:latest
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN touch /docker-entrypoint-initdb.d/j_tasks.sql
+COPY j_tasks.sql /docker-entrypoint-initdb.d/j_tasks.sql

@@ -35,7 +35,7 @@ services:
       - MARIADB_DATABASE=j_tasks
     volumes:
       - ./database:/var/lib/mysql
-      - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
+      # - ./j_tasks.sql:/docker-entrypoint-initdb.d/j_tasks.sql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p$$MARIADB_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
       interval: 2s
