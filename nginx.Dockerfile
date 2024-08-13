@@ -1,5 +1,7 @@
 FROM nginx
 
+RUN apt install apache2-utils
+
 WORKDIR "/etc/nginx"
 COPY ./configs/nginx.conf nginx.conf
 COPY ./.htpasswd .htpasswd
