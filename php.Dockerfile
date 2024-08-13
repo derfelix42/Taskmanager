@@ -48,4 +48,5 @@ COPY www /var/www/html
 RUN mkdir /var/www/html/backups
 # RUN mkdir /var/log
 
-RUN tail -f /var/log/apache2/*.log &
+# RUN tail -f /var/log/apache2/*.log &
+ENV LOG_LEVEL=INFO
