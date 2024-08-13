@@ -1,6 +1,7 @@
 FROM nginx
 
-RUN apt install apache2-utils
+RUN apt update
+RUN apt install apache2-utils -y
 
 WORKDIR "/etc/nginx"
 COPY ./configs/nginx.conf nginx.conf
