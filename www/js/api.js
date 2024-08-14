@@ -155,6 +155,15 @@ async function getCurrentDayTimeSpent() {
   return json.DaySum
 }
 
+async function resetTimerOnTask(ID) {
+  const url = "api/taskHistory.php?taskID=" + ID + "&reset"
+  await fetch(url)
+}
+
+/**
+ * SLEEP TRACKING
+ */
+
 async function getWakeupTimes(date) {
   date = date.toISOString().split('T')[0]
   const url = "api/getSleepHistory.php?date=" + date
@@ -166,9 +175,14 @@ async function getWakeupTimes(date) {
   return json
 }
 
-async function resetTimerOnTask(ID) {
-  const url = "api/taskHistory.php?taskID=" + ID + "&reset"
-  await fetch(url)
+async function goToSleepNow() {
+  const url = "api/goToSleep.php"
+  const res = await fetch(url)
+}
+
+async function wakeUpNow() {
+  const url = "api/wakeUpNow.php"
+  const res = await fetch(url)
 }
 
 /**
