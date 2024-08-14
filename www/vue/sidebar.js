@@ -59,6 +59,9 @@ const sidebar = createApp({
   <a href="?habits">
     <li>Habit Tracker</li>
   </a>
+  <a href="?sleep">
+    <li>Sleep Tracker</li>
+  </a>
   <!-- <a href="?calendar"><li>Calendar</li></a> -->
 </ul>
 <hr>

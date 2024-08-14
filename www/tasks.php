@@ -217,6 +217,11 @@ $result = mysqli_query($db, $sql);
       ?>
           </main>
           
+<?php } else if (isset($_GET['sleep'])) {
+    require_once("./sleep.php")
+      ?>
+          </main>
+          
 <?php } else if (isset($_GET['trash'])) {
     require_once("./trash.php")
       ?>
