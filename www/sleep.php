@@ -1,15 +1,23 @@
 <script type="module" src="vue/sleep_history_entries.js" defer></script>
-<script>
-async function start_sleep_session() {
+<script type="module" src="js/sleep_history.js" defer></script>
 
-}
-</script>
 <h2>
     Sleep Tracker 
     <i class="fa-regular fa-moon"></i>
 </h2>
+<section class="sleep_buttons">
+    <p id="sleep_awake_since_text"></p>
+    <button id="goToSleep_btn" class="clickable disabled">
+        Go the fuck to sleep
+        <i class="fa-solid fa-bed small"></i>
+    </button>
+    <button id="wakeUpNow_btn" class="clickable disabled">
+        Wake the fuck up now
+        <i class="fa-solid fa-mug-hot small"></i>
+    </button>
+</section>
 
-<section class="statistics">
+<!-- <section class="statistics">
     <div class="wide">
         <header style='--color: #111'>Sleep Statistics</header>
         <main>
@@ -20,10 +28,8 @@ async function start_sleep_session() {
             </section>
         </main>
     </div>
-</section>
+</section> -->
 
-<button onclick="goToSleepNow()">Go to sleep</button>
-<button onclick="wakeUpNow()">Wake up now</button>
 
 
 <section class="sleep_history">
