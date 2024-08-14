@@ -2,14 +2,11 @@ import { createApp, ref, reactive, computed, onMounted, onBeforeUnmount } from '
 
 const sleep_history_entries = createApp({
     setup() {
-        const entries = [
-            {start: "Mo, 12.08.2024 22:00:00", stop: "Di, 13.08.2024 06:00:00"},
-            {start: "Mo, 12.08.2024 22:00:00", stop: "Di, 13.08.2024 06:00:00"},
-            {start: "Mo, 12.08.2024 22:00:00", stop: "Di, 13.08.2024 06:00:00"},
-        ]
+        const entries = reactive([])
 
         async function fetchSleepHistory() {
             const times = await getWakeupTimes((new Date()))
+            Object.assign(entries, times.data)
             console.log("Sleep History:",times)
         }
 
@@ -24,10 +21,10 @@ const sleep_history_entries = createApp({
     },
     template: `
         <div class="entry clickable" v-for="entry in entries" :key="entry.start">
-            <span>{{entry.start}}</span>
+            <span>{{entry.start_time}}</span>
             ->
-            <span>{{entry.stop}}</span>
-            (8:00)
+            <span>{{entry.stop_time}}</span>
+            ({{entry.sleep_hours}})
         </div>
         `
     })
