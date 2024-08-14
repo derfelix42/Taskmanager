@@ -134,6 +134,7 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/habits.css">
   <link rel="stylesheet" href="css/statistics.css">
   <link rel="stylesheet" href="css/day_view.css">
+  <link rel="stylesheet" href="css/sleep_history.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
   <script src="js/j_tasks.js"></script>
