@@ -1,7 +1,7 @@
 <script type="module" src="vue/sleep_history_entries.js" defer></script>
 <script>
 async function start_sleep_session() {
-    
+
 }
 </script>
 <h2>
@@ -21,6 +21,9 @@ async function start_sleep_session() {
         </main>
     </div>
 </section>
+
+<button onclick="goToSleepNow()">Go to sleep</button>
+<button onclick="wakeUpNow()">Wake up now</button>
 
 
 <section class="sleep_history">
