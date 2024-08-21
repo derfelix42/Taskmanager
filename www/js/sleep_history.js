@@ -22,8 +22,21 @@ async function check_current_sleep_status() {
         goToSleep_btn.classList.add("disabled")
     } else if (sleep_sessions.data.length > 0) {
         const latest_session = sleep_sessions.data[sleep_sessions.data.length - 1]
-        console.log(latest_session)
-        text_output.innerText = "Awake since "+latest_session.wakeup_time+" ("+((new Date()) - (new Date(latest_session.stop_time)))/1000+"s)"
+        let seconds = ((new Date()) - (new Date(latest_session.stop_time)))/1000
+        let secs = Math.floor(seconds % 60)
+        let min = Math.floor(seconds / 60 % 60)
+        let hour = Math.floor(seconds / 60 / 60)
+        let timer_string = String(hour.toFixed(0)).padStart(2, "0") + ":"
+          + String(min.toFixed(0)).padStart(2, "0") + ":"
+          + String(secs.toFixed(0)).padStart(2, "0")
+        // console.log(latest_session)
+        text_output.innerText = "Awake since "+latest_session.wakeup_time+" ("+timer_string+")"
+        console.log("Awake for",seconds,"seconds -", 60*60*24, seconds > 60 * 60 * 24)
+        if (seconds > 60 * 60 * 24) {
+            goToSleep_btn.innerHTML = "Go the fuck to sleep! <i class=\"fa-solid fa-bed small\"></i>"
+        } else {
+            goToSleep_btn.innerHTML = "Go to sleep <i class=\"fa-solid fa-bed small\"></i>"
+        }
         wakeUpNow_btn.classList.add("disabled")
         goToSleep_btn.classList.remove("disabled")
     } else {

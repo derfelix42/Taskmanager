@@ -8,11 +8,11 @@
 <section class="sleep_buttons">
     <p id="sleep_awake_since_text"></p>
     <button id="goToSleep_btn" class="clickable disabled">
-        Go the fuck to sleep
+        Go to sleep
         <i class="fa-solid fa-bed small"></i>
     </button>
     <button id="wakeUpNow_btn" class="clickable disabled">
-        Wake the fuck up now
+        Wake up now
         <i class="fa-solid fa-mug-hot small"></i>
     </button>
 </section>
@@ -35,12 +35,13 @@
 <section class="sleep_history">
     <h3>
         Sleep History
-        <button>Add new <i class="fa-regular fa-plus"></i></button>
+        <!-- <button>Add new <i class="fa-regular fa-plus"></i></button> -->
     </h3>
+    
+    <em>Coming soon...</em>
 
-
-    <div id="sleep_history_entries">
+    <!-- <div id="sleep_history_entries">
         
-    </div>
+    </div> -->
 
 </section>

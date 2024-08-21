@@ -29,4 +29,4 @@ const sleep_history_entries = createApp({
         `
     })
     
-sleep_history_entries.mount("#sleep_history_entries")
+// sleep_history_entries.mount("#sleep_history_entries")
