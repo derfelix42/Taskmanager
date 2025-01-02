@@ -4,3 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+axum = "0.8.1"
+axum-server = "0.7.1"
+chrono = "0.4.39"
+serde = { version = "1.0.217", features = ["derive"]}
+serde_json = "1.0.134"
+tokio = { version = "1.42.0", features = ["full"]}
+tower-http = { version = "0.6.2", features = ["cors"] }
+tracing = "0.1.41"
+tracing-subscriber = "0.3.19"
