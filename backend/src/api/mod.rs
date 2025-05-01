@@ -9,7 +9,7 @@ use categoryHandler::category_router;
 pub fn get_api_router(database: &db) -> Router {
     Router::new()
         .route(
-            "/",
+            "/api/v2",
             get(|| async {
                 Html(format!(
                     "<h1>Hello, world!</h1>
@@ -18,6 +18,6 @@ pub fn get_api_router(database: &db) -> Router {
                 ))
             }),
         )
-        .route("/category", category_router())
+        .route("/api/v2/category", category_router())
         .with_state(database.clone())
 }
