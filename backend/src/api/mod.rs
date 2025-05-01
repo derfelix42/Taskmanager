@@ -1,7 +1,10 @@
-use axum::{extract::State, response::Html, routing::get, Json, Router};
+use axum::{extract::State, response::Html, routing::get, Router};
 use chrono::Utc;
 
-use crate::database::{category, db};
+use crate::database::db;
+
+mod categoryHandler;
+use categoryHandler::category_router;
 
 pub fn get_api_router(database: &db) -> Router {
     Router::new()
@@ -15,11 +18,6 @@ pub fn get_api_router(database: &db) -> Router {
                 ))
             }),
         )
-        .route("/category", get(get_categories))
+        .route("/category", category_router())
         .with_state(database.clone())
-}
-
-pub async fn get_categories(State(database): State<db>) -> Json<Vec<category>> {
-    let categories = database.get_categories().await;
-    Json(categories)
 }

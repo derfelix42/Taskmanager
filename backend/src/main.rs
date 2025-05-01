@@ -3,6 +3,7 @@ use tower_http::cors::{Any, CorsLayer};
 
 mod api;
 mod database;
+mod models;
 
 #[tokio::main]
 async fn main() -> Result<(), String> {
@@ -12,7 +13,7 @@ async fn main() -> Result<(), String> {
 
     let database = database::db::new().await;
 
-    let address = "0.0.0.0:3000";
+    let address = "0.0.0.0:3008";
 
     tracing::info!("Hello, world!");
 
