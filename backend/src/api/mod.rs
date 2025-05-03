@@ -1,12 +1,12 @@
-use axum::{extract::State, response::Html, routing::get, Router};
+use axum::{response::Html, routing::get, Router};
 use chrono::Utc;
 
-use crate::database::db;
+use crate::database::Db;
 
 mod categoryHandler;
 use categoryHandler::category_router;
 
-pub fn get_api_router(database: &db) -> Router {
+pub fn get_api_router(database: &Db) -> Router {
     Router::new()
         .route(
             "/api/v2",

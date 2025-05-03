@@ -11,7 +11,7 @@ async fn main() -> Result<(), String> {
     // sub = sub.with_max_level(tracing::Level::DEBUG);
     sub.init();
 
-    let database = database::db::new().await;
+    let database = database::Db::new().await;
 
     let address = "0.0.0.0:3008";
 

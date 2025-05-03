@@ -1,12 +1,7 @@
-use axum::{
-    extract::State,
-    routing::MethodRouter,
-    routing::{delete, get, post},
-    Json, Router,
-};
+use axum::{extract::State, routing::MethodRouter, Json};
 use serde::{Deserialize, Serialize};
 
-use crate::{database::db, models::category};
+use crate::{database::Db, models::category};
 
 #[derive(Deserialize)]
 pub struct CreateCategory {
@@ -25,14 +20,14 @@ pub struct SimpleResponse {
     pub message: String,
 }
 
-pub fn category_router() -> MethodRouter<db> {
+pub fn category_router() -> MethodRouter<Db> {
     MethodRouter::new()
         .get(get_categories)
         .post(create_category)
         .delete(delete_category)
 }
 
-pub async fn get_categories(State(database): State<db>) -> Json<Vec<category>> {
+pub async fn get_categories(State(database): State<Db>) -> Json<Vec<category>> {
     match database.get_categories().await {
         Ok(categories) => Json(categories),
         Err(_) => Json(vec![]),
@@ -40,7 +35,7 @@ pub async fn get_categories(State(database): State<db>) -> Json<Vec<category>> {
 }
 
 pub async fn create_category(
-    State(database): State<db>,
+    State(database): State<Db>,
     Json(payload): Json<CreateCategory>,
 ) -> Json<SimpleResponse> {
     let result = database
@@ -60,7 +55,7 @@ pub async fn create_category(
 }
 
 pub async fn delete_category(
-    State(database): State<db>,
+    State(database): State<Db>,
     Json(payload): Json<DeleteCategory>,
 ) -> Json<SimpleResponse> {
     let result = database.delete_category(payload.ID).await;
