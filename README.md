@@ -1,5 +1,5 @@
 ![Taskmanager](https://img.shields.io/badge/in_development_since-2019--08--10-purple)
-![Taskmanager](https://img.shields.io/badge/time_spent-154h-198a11) 
+![Taskmanager](https://img.shields.io/badge/time_spent-164h_30mins-198a11) 
 
 # Taskmanager
 
