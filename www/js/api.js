@@ -7,12 +7,6 @@ async function getCategoryColors() {
   return await res.json()
 }
 
-async function getCategoryPrefixes(category) {
-  const res = await fetch("api/prefixes.php?category=" + category);
-  return await res.json()
-}
-
-
 /**
  * Tasks
  */
