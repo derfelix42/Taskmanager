@@ -3,15 +3,9 @@
  * Categories
  */
 async function getCategoryColors() {
-  const res = await fetch("api/getCategoryColors.php");
+  const res = await fetch("api/v2/category");
   return await res.json()
 }
-
-async function getCategoryPrefixes(category) {
-  const res = await fetch("api/prefixes.php?category=" + category);
-  return await res.json()
-}
-
 
 /**
  * Tasks
@@ -41,11 +35,11 @@ async function getTaskNotes(id) {
 
 async function updateTaskNotes(taskID, text) {
   const url = "api/task_notes.php?update&taskID=" + taskID
-  console.log(url, JSON.stringify({note: text}))
+  console.log(url, JSON.stringify({ note: text }))
 
   let res = await fetch(url, {
     method: "POST",
-    body: JSON.stringify({note: text})
+    body: JSON.stringify({ note: text })
   })
 
   if (config.debug) console.log(await res.text())
@@ -201,7 +195,7 @@ async function updateHabitName(habitID, name) {
   const url = "api/habits.php?updateName=" + habitID
   const res = await fetch(url, {
     method: "POST",
-    body: JSON.stringify({name: name})
+    body: JSON.stringify({ name: name })
   })
   return await res.json()
 }
@@ -225,24 +219,24 @@ async function createHabitGroup(name) {
   const url = "api/habits.php?createGroup"
   const res = await fetch(url, {
     method: "POST",
-    body: JSON.stringify({newGroupName: name})
+    body: JSON.stringify({ newGroupName: name })
   })
   return await res.json()
 }
 
 // Rename an existing Habit Group
 async function renameHabitGroup(groupID, name) {
-  const url = "api/habits.php?renameGroup="+groupID
+  const url = "api/habits.php?renameGroup=" + groupID
   const res = await fetch(url, {
     method: "POST",
-    body: JSON.stringify({name: name})
+    body: JSON.stringify({ name: name })
   })
   return await res.json()
 }
 
 // Delete a habit Group
 async function deleteHabitGroup(groupID) {
-  const url = "api/habits.php?deleteGroup="+groupID
+  const url = "api/habits.php?deleteGroup=" + groupID
   const res = await fetch(url)
   return await res.json()
 }

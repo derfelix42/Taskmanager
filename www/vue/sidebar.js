@@ -1,25 +1,25 @@
 import { createApp, ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 
 const sidebar = createApp({
-    setup() {
-        const categories = ref({})
+  setup() {
+    const categories = ref({})
 
-        onMounted(async () => {
-            categories.value = await getCategoryColors()
-        })
+    onMounted(async () => {
+      categories.value = await getCategoryColors()
+    })
 
-        return {
-            categories
-        }
-    },
-    template: `
+    return {
+      categories
+    }
+  },
+  template: `
   <ul id="categories">
   <a href='?'>
     <li>All Tasks</li>
   </a>
   <hr>
   <template v-for="category in categories" :key="category.ID">
-    <a v-if="category.display === '1'" :href="'?category='+category.ID">
+    <a v-if="category.display" :href="'?category='+category.ID">
         <li>
             <div class="categoryIndicator" :style="'--color: #'+(category.color||'777')"></div>
             {{category.Bezeichnung}}
