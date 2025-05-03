@@ -3,7 +3,7 @@
  * Categories
  */
 async function getCategoryColors() {
-  const res = await fetch("api/getCategoryColors.php");
+  const res = await fetch("api/v2/category");
   return await res.json()
 }
 
