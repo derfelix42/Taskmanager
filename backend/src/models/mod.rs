@@ -6,6 +6,7 @@ pub struct category {
     Bezeichnung: String,
     color: Option<String>,
     display: bool,
+    prefixes: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, sqlx::FromRow)]
