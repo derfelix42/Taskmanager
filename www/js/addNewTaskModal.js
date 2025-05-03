@@ -150,8 +150,8 @@ class addNewTaskModal {
   }
 
   setHeaderColor = () => {
-    let color = "#"+categoryColors.filter(cat => cat.ID === this.category.value)[0].color
-    if(color === "#null") {
+    let color = "#" + categoryColors.find(cat => cat.ID === parseInt(this.category.value)).color
+    if (color === "#null") {
       color = "#777"
     }
     this.modal.querySelector('.header').style.backgroundColor = color

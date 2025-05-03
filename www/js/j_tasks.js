@@ -5,9 +5,7 @@ window.addEventListener('beforeunload', function (event) {
 
 
 let categoryColors = {}
-fetch("api/getCategoryColors.php")
-    .then(response => response.json())
-    .then(json => categoryColors = json);
+getCategoryColors().then(json => categoryColors = json);
 
 function updateDurationSumOfDay(day, sum) {
     //console.log("Update Date's Duration Sum of",day,"to",sum)
