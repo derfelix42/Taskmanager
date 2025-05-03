@@ -1,7 +1,7 @@
-if(typeof main === 'undefined') {
+if (typeof main === 'undefined') {
   let main = document.querySelector('main')
 }
-if(typeof sidebar === 'undefined'){
+if (typeof sidebar === 'undefined') {
   let sidebar = document.getElementById('sidebar')
 }
 
@@ -32,7 +32,7 @@ class addNewTaskModal {
 
     this.registerEventListeners()
 
-    if(config.debug)
+    if (config.debug)
       console.log(this.modal.querySelector('input[name=due-date]'))
   }
 
@@ -58,26 +58,26 @@ class addNewTaskModal {
     })
 
     this.title.addEventListener("keypress", (e) => {
-      if(e.key === 'Enter') {
+      if (e.key === 'Enter') {
         this.save()
       } else {
-        let cat = getCategorySuggestionByName(this.title.value+e.key)
-        console.log("Auto-Cat-Suggestion:",cat)
-        if(this.category.value !== cat) {
+        let cat = getCategorySuggestionByName(this.title.value + e.key)
+        console.log("Auto-Cat-Suggestion:", cat)
+        if (this.category.value !== cat) {
           this.category.value = cat
           this.setHeaderColor()
         }
       }
     })
 
-    document.addEventListener("keydown", async function(e){
-      if(e.key === 'n' && e.altKey) {
+    document.addEventListener("keydown", async function (e) {
+      if (e.key === 'n' && e.altKey) {
         console.log("whoop!", e.key, e)
         e.preventDefault();
         // await this.open()
       }
 
-      if(e.key === "Escape") {
+      if (e.key === "Escape") {
         modal.close()
         e.preventDefault();
         window.location.reload(true)
@@ -85,9 +85,9 @@ class addNewTaskModal {
     });
 
     document.addEventListener("keydown", async (e) => {
-      if(e.ctrlKey && e.keyCode === 13) {
+      if (e.ctrlKey && e.keyCode === 13) {
         console.log("ctrl+enter")
-        if(this.is_open) {
+        if (this.is_open) {
           console.log("is open!")
           await this.save(true)
         }
@@ -107,14 +107,14 @@ class addNewTaskModal {
     this.fillPrioritySelector()
 
     this.due_date.value = (new Date().toISOString().substring(0, 10))
-    if(php_date && php_date !== "" && new Date(php_date) > new Date()) {
+    if (php_date && php_date !== "" && new Date(php_date) > new Date()) {
       this.due_date.value = (new Date(php_date).toISOString().substring(0, 10))
     }
 
     this.title.focus()
   }
 
-  save = async (autostart=false) => {
+  save = async (autostart = false) => {
     const title = this.title.value
     const description = this.description.value
     const location = this.location.value
@@ -124,10 +124,10 @@ class addNewTaskModal {
     const priority = this.priority.value
     const category = this.category.value
 
-    const res = await createTask({title, description, due_date, due_time, duration, priority, category, location})
+    const res = await createTask({ title, description, due_date, due_time, duration, priority, category, location })
     const new_id = res.result.ID
 
-    if(autostart) {
+    if (autostart) {
       await startTimerOnTask(new_id)
     }
 
@@ -150,34 +150,34 @@ class addNewTaskModal {
   }
 
   setHeaderColor = () => {
-    let color = "#"+categoryColors.filter(cat => cat.ID === this.category.value)[0].color
-    if(color === "#null") {
+    let color = "#" + categoryColors.find(cat => cat.ID === parseInt(this.category.value)).color
+    if (color === "#null") {
       color = "#777"
     }
     this.modal.querySelector('.header').style.backgroundColor = color
   }
 
   fillCategorySelector = () => {
-    for(let cat of categoryColors) {
+    for (let cat of categoryColors) {
       let opt = document.createElement('option')
       opt.value = cat.ID
-      opt.innerText = cat.ID+" - "+cat.Bezeichnung
+      opt.innerText = cat.ID + " - " + cat.Bezeichnung
       this.category.appendChild(opt)
     }
   }
 
   fillPrioritySelector = () => {
-    if(this.priority.childNodes.length === 0) {
-      for(let i = 10; i >= 1; i--) {
+    if (this.priority.childNodes.length === 0) {
+      for (let i = 10; i >= 1; i--) {
         let opt = document.createElement('option')
         opt.value = i
         opt.innerText = i
-        if(i === 1) {
+        if (i === 1) {
           opt.innerText = "1 - Niedrig"
-        } if(i === 5) {
+        } if (i === 5) {
           opt.innerText = "5 - Normal"
           opt.selected = true
-        } if(i === 10) {
+        } if (i === 10) {
           opt.innerText = "10 - Hoch"
         }
         this.priority.appendChild(opt)

@@ -3,4 +3,5 @@ logs/*
 .env
 .vscode
 database/
+!backend/src/database/
 certs/*
