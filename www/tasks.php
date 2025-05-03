@@ -135,16 +135,17 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/statistics.css">
   <link rel="stylesheet" href="css/day_view.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; ?>"-->
+  <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; 
+                                                            ?>"-->
+  <script src="js/api.js"></script>
   <script src="js/j_tasks.js"></script>
   <script>
     let php_date = "<?php if (isset($selectedDate)) {
-      echo $selectedDate;
-    } ?>";
+                      echo $selectedDate;
+                    } ?>";
   </script>
   <script src="js/config.js" defer></script>
   <script src="js/helpers.js" defer></script>
-  <script src="js/api.js" defer></script>
   <!-- <script src="js/categorySidebar.js" defer></script> -->
   <script src="js/taskModal.js" defer></script>
   <script src="js/addNewTaskModal.js" defer></script>
@@ -183,161 +184,161 @@ $result = mysqli_query($db, $sql);
 </header>
 
 <div id="sidebar">
-  
+
 </div>
 <main id="main">
 
   <?php if (isset($_GET['timetable'])) { ?>
 
     <canvas id="timetable"></canvas>
-  </main>
+</main>
 
 <?php } else if (isset($_GET['day_view'])) { ?>
-  <div id="day_view"></div>  
-</main>
+  <div id="day_view"></div>
+  </main>
 
 <?php } else if (isset($_GET['settings'])) {
     require_once("./settings.php")
-      ?>
-    </main>
+?>
+  </main>
 
 <?php } else if (isset($_GET['bahnapi'])) {
     require_once("./bahnapi.php")
-      ?>
-      </main>
+?>
+  </main>
 
 <?php } else if (isset($_GET['habits'])) {
     // require_once("./habits.php")
-      ?>
-          <div id="habit_tracker" class="habit-tracker"></div>
-        </main>
+?>
+  <div id="habit_tracker" class="habit-tracker"></div>
+  </main>
 
-        <?php } else if (isset($_GET['search'])) {
+<?php } else if (isset($_GET['search'])) {
     require_once("./search.php")
-      ?>
-          </main>
-          
+?>
+  </main>
+
 <?php } else if (isset($_GET['trash'])) {
     require_once("./trash.php")
-      ?>
-          </main>
+?>
+  </main>
 
 <?php } else if (isset($_GET['statistics'])) {
-  require_once("./statistics.php")
-    ?>
-        </main>
+    require_once("./statistics.php")
+?>
+  </main>
 
 <?php } else if (isset($_GET['youtube'])) {
     require_once("./youtube-history.php")
-      ?>
-            </main>
+?>
+  </main>
 
 <?php } else if (isset($_GET['calendar'])) { ?>
-              <canvas id="calendar"></canvas>
-              </main>
+  <canvas id="calendar"></canvas>
+  </main>
 
 <?php } else { ?>
 
-              <div id="tasks">
+  <div id="tasks">
 
-                <center>
-                  <h2>Open Tasks:</h2>
-                </center>
-                <table>
+    <center>
+      <h2>Open Tasks:</h2>
+    </center>
+    <table>
 
-        <?php
-        /**
+      <?php
+      /**
 
         ADDING CURRENT THE EVENTS
 
-        */
-        $weather = getForecast();
+       */
+      $weather = getForecast();
 
-        $day = 0;
-        $duration_sum = 0;
-        $spent_time_daysum = 0;
-        if (mysqli_num_rows($result) > 0) {
-          while ($row = mysqli_fetch_assoc($result)) {
-            $ID = $row['ID'];
-            $name = urldecode($row['Name']);
-            $desc = urldecode(str_replace("\n", "<br>", $row['description']));
-            $DaysLeft = $row['daysLeft'];
-            $DueDate = $row['due'];
-            $category = $row['category'];
-            $DueTime = $row['due_time'];
-            $Duration = $row['duration'];
-            $Duration2 = $row['duration2'];
-            $priority = $row['priority'];
-            $difficulty = $row['difficulty'];
-            $Location = $row['location'];
-            $color = $row['color'];
-            if (empty($color)) {
-              $color = "777";
-            }
-            $setNewDate = "";
-            $exclamation = "";
-            if ($priority == 10) {
-              $exclamation = " <b>❗</b>";
-            }
+      $day = 0;
+      $duration_sum = 0;
+      $spent_time_daysum = 0;
+      if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+          $ID = $row['ID'];
+          $name = urldecode($row['Name']);
+          $desc = urldecode(str_replace("\n", "<br>", $row['description']));
+          $DaysLeft = $row['daysLeft'];
+          $DueDate = $row['due'];
+          $category = $row['category'];
+          $DueTime = $row['due_time'];
+          $Duration = $row['duration'];
+          $Duration2 = $row['duration2'];
+          $priority = $row['priority'];
+          $difficulty = $row['difficulty'];
+          $Location = $row['location'];
+          $color = $row['color'];
+          if (empty($color)) {
+            $color = "777";
+          }
+          $setNewDate = "";
+          $exclamation = "";
+          if ($priority == 10) {
+            $exclamation = " <b>❗</b>";
+          }
 
-            $duration_sum += $Duration2;
+          $duration_sum += $Duration2;
 
-            if ($DaysLeft >= 0) {
-              if ($day != $DueDate) {
+          if ($DaysLeft >= 0) {
+            if ($day != $DueDate) {
 
-                $daysOfWeek = array("Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag");
-                $dow = $daysOfWeek[$row['DOW'] - 1];
-                $date_text = date("d.m.Y", strtotime($DueDate));
+              $daysOfWeek = array("Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag");
+              $dow = $daysOfWeek[$row['DOW'] - 1];
+              $date_text = date("d.m.Y", strtotime($DueDate));
 
-                //update duration sum of previous day
-                echo "<script>updateDurationSumOfDay('daysum_" . $day . "', $duration_sum)</script>";
+              //update duration sum of previous day
+              echo "<script>updateDurationSumOfDay('daysum_" . $day . "', $duration_sum)</script>";
 
-                // $time_spent_day_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks` WHERE (done IS NULL AND due = '$DueDate') OR DATE(done) = '$DueDate'";
-                $time_spent_day_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks`
+              // $time_spent_day_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks` WHERE (done IS NULL AND due = '$DueDate') OR DATE(done) = '$DueDate'";
+              $time_spent_day_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks`
                                       JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIME))) as time_spent FROM `task_history` WHERE (DATE(start_time) = '$DueDate') GROUP BY taskID) as b ON tasks.ID = b.taskID
                                       WHERE (done IS NULL AND due = '$DueDate') OR DATE(done) = '$DueDate'";
 
-                $time_spent_day_sum_res = mysqli_query($db, $time_spent_day_sum_sql);
-                $time_spent_day_sum_string = "";
-                if (mysqli_num_rows($time_spent_day_sum_res) > 0) {
-                  $time_spent_day_sum_secs = mysqli_fetch_assoc($time_spent_day_sum_res)['sum'];
+              $time_spent_day_sum_res = mysqli_query($db, $time_spent_day_sum_sql);
+              $time_spent_day_sum_string = "";
+              if (mysqli_num_rows($time_spent_day_sum_res) > 0) {
+                $time_spent_day_sum_secs = mysqli_fetch_assoc($time_spent_day_sum_res)['sum'];
 
-                  $time_spent_day_sum_minutes = str_pad(floor($time_spent_day_sum_secs / 60 % 60), 2, '0', STR_PAD_LEFT);
-                  $time_spent_day_sum_hours = floor($time_spent_day_sum_secs / 60 / 60);
+                $time_spent_day_sum_minutes = str_pad(floor($time_spent_day_sum_secs / 60 % 60), 2, '0', STR_PAD_LEFT);
+                $time_spent_day_sum_hours = floor($time_spent_day_sum_secs / 60 / 60);
 
-                  $time_spent_day_sum_string = "(" . $time_spent_day_sum_hours . ":" . $time_spent_day_sum_minutes . ")";
-                }
+                $time_spent_day_sum_string = "(" . $time_spent_day_sum_hours . ":" . $time_spent_day_sum_minutes . ")";
+              }
 
-                // Difficulty Scoring
-                $difficulty_score_of_day_sql = "SELECT DATE(start_time) as Datum, SUM(TIMESTAMPDIFF(MINUTE, task_history.start_time, IFNULL(task_history.stop_time, CURRENT_TIMESTAMP)) / 60 * difficulty) as score 
+              // Difficulty Scoring
+              $difficulty_score_of_day_sql = "SELECT DATE(start_time) as Datum, SUM(TIMESTAMPDIFF(MINUTE, task_history.start_time, IFNULL(task_history.stop_time, CURRENT_TIMESTAMP)) / 60 * difficulty) as score 
                                           FROM `task_history` LEFT JOIN tasks on task_history.taskID = tasks.ID 
                                           WHERE DATE(start_time) = '$DueDate' GROUP BY `Datum`;";
-                $difficulty_score_of_day_res = mysqli_query($db, $difficulty_score_of_day_sql);
-                $difficulty_score_of_day_string = "";
-                if (mysqli_num_rows($difficulty_score_of_day_res) > 0) {
-                  $difficulty_score_of_day_string = "[" . round((float) mysqli_fetch_assoc($difficulty_score_of_day_res)['score'], 1) . "]";
+              $difficulty_score_of_day_res = mysqli_query($db, $difficulty_score_of_day_sql);
+              $difficulty_score_of_day_string = "";
+              if (mysqli_num_rows($difficulty_score_of_day_res) > 0) {
+                $difficulty_score_of_day_string = "[" . round((float) mysqli_fetch_assoc($difficulty_score_of_day_res)['score'], 1) . "]";
+              }
+
+              $sunrise_data = date_sun_info(strtotime($DueDate), floatval($sunrise_latitude), floatval($sunrise_longitude));
+              $sunrise = date("H:i", $sunrise_data['sunrise']);
+              $sunset = date("H:i", $sunrise_data['sunset']);
+              $sunset_dark = date("H:i", $sunrise_data['civil_twilight_end']);
+
+              $weatherInfo = "";
+              foreach ($weather as $wd) {
+                if (!(intval(date_diff(new DateTime("now"), new DateTime($DueDate))->format("%a")) > 3)) { //Eigentlich >5, aber scheinbar muss es >3 sein :laugh:
+                  $weatherInfo = $weather[$DueDate][1] . "°C bis " . $weather[$DueDate][2] . "°C";
                 }
+              }
 
-                $sunrise_data = date_sun_info(strtotime($DueDate), floatval($sunrise_latitude), floatval($sunrise_longitude));
-                $sunrise = date("H:i", $sunrise_data['sunrise']);
-                $sunset = date("H:i", $sunrise_data['sunset']);
-                $sunset_dark = date("H:i", $sunrise_data['civil_twilight_end']);
+              if ($DaysLeft == 0) {
+                $currentTemp = getCurrentTemp() . "°C";
+                $weatherInfo = "(" . $weatherInfo . ")";
+              } else {
+                $currentTemp = "";
+              }
 
-                $weatherInfo = "";
-                foreach ($weather as $wd) {
-                  if (!(intval(date_diff(new DateTime("now"), new DateTime($DueDate))->format("%a")) > 3)) { //Eigentlich >5, aber scheinbar muss es >3 sein :laugh:
-                    $weatherInfo = $weather[$DueDate][1] . "°C bis " . $weather[$DueDate][2] . "°C";
-                  }
-                }
-
-                if ($DaysLeft == 0) {
-                  $currentTemp = getCurrentTemp() . "°C";
-                  $weatherInfo = "(" . $weatherInfo . ")";
-                } else {
-                  $currentTemp = "";
-                }
-
-                echo "
+              echo "
             <tr date>
               <td>$dow - $date_text $time_spent_day_sum_string $difficulty_score_of_day_string</td>
               <td></td>
@@ -348,33 +349,33 @@ $result = mysqli_query($db, $sql);
               <td></td>
             </tr>
         ";
-                $day = $DueDate;
-                $duration_sum = 0;
-                $spent_time_daysum = 0;
-              }
-            } else {
-              if (!isset($category)) {
-                $category = "";
-              }
+              $day = $DueDate;
+              $duration_sum = 0;
+              $spent_time_daysum = 0;
             }
-
-            $time_spent_string = "";
-            $time_spent = $row['time_spent'];
-            if ($time_spent > 0) {
-              if ($category != 12) {
-                $spent_time_daysum += $time_spent;
-              }
-              $minutes = str_pad(floor($time_spent / 60 % 60), 2, '0', STR_PAD_LEFT);
-              $hours = floor($time_spent / 60 / 60);
-
-              $time_spent_string = " ($hours:$minutes)";
+          } else {
+            if (!isset($category)) {
+              $category = "";
             }
-            $difficulty_string = "";
-            if ($difficulty != NULL && $difficulty > 1) {
-              $difficulty_string = " [" . $difficulty . "]";
-            }
+          }
 
-            echo "
+          $time_spent_string = "";
+          $time_spent = $row['time_spent'];
+          if ($time_spent > 0) {
+            if ($category != 12) {
+              $spent_time_daysum += $time_spent;
+            }
+            $minutes = str_pad(floor($time_spent / 60 % 60), 2, '0', STR_PAD_LEFT);
+            $hours = floor($time_spent / 60 / 60);
+
+            $time_spent_string = " ($hours:$minutes)";
+          }
+          $difficulty_string = "";
+          if ($difficulty != NULL && $difficulty > 1) {
+            $difficulty_string = " [" . $difficulty . "]";
+          }
+
+          echo "
         <tr priority='$priority'>
           <td onclick='openModal($ID)' class='clickable'><div class='categoryIndicator' style='--color: #$color'></div>$name$exclamation$time_spent_string$difficulty_string</td>
           <td onclick='openModal($ID)' class='clickable'><p class='description'>$desc</p></td>
@@ -385,24 +386,24 @@ $result = mysqli_query($db, $sql);
           <td><a href='tasks.php?doneID=$ID&category=$category&$curSelDay&prefix=$prefix'>&#10004;</a></td>
         </tr>
     ";
-          }
-          echo "<script>updateDurationSumOfDay('daysum_" . $day . "', $duration_sum)</script>";
         }
+        echo "<script>updateDurationSumOfDay('daysum_" . $day . "', $duration_sum)</script>";
+      }
 
 
-        ?>
+      ?>
 
-                </table>
+    </table>
 
 
-                <!-- Finished Tasks -->
+    <!-- Finished Tasks -->
 
-                <br>
-                <center>
-                  <h2>Finished Tasks:</h2>
-                </center>
-                <table>
-                  <!-- <tr>
+    <br>
+    <center>
+      <h2>Finished Tasks:</h2>
+    </center>
+    <table>
+      <!-- <tr>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Duration</th>
@@ -413,23 +414,23 @@ $result = mysqli_query($db, $sql);
                     <th></th>
                   </tr> -->
 
-        <?php
-        $day_sel = "AND TIMESTAMPDIFF(DAY, done, NOW()) < 7";
-        if (isset($_GET['today'])) {
-          $day_sel = "AND DATE(done) = CURRENT_DATE";
-        }
-        if (isset($_GET['tomorrow'])) {
-          $day_sel = "AND DATE(done) = CURRENT_DATE+1";
-        }
-        if (isset($_GET['yesterday'])) {
-          $day_sel = "AND DATE(done) = CURRENT_DATE-1";
-        }
-        if (isset($_GET['date'])) {
-          $selectedDate = $_GET['date'];
-          $day_sel = "AND DATE(done) = '" . $selectedDate . "'";
-        }
+      <?php
+      $day_sel = "AND TIMESTAMPDIFF(DAY, done, NOW()) < 7";
+      if (isset($_GET['today'])) {
+        $day_sel = "AND DATE(done) = CURRENT_DATE";
+      }
+      if (isset($_GET['tomorrow'])) {
+        $day_sel = "AND DATE(done) = CURRENT_DATE+1";
+      }
+      if (isset($_GET['yesterday'])) {
+        $day_sel = "AND DATE(done) = CURRENT_DATE-1";
+      }
+      if (isset($_GET['date'])) {
+        $selectedDate = $_GET['date'];
+        $day_sel = "AND DATE(done) = '" . $selectedDate . "'";
+      }
 
-        $sql = "SELECT tasks.ID, Name, description, difficulty, done, duration, priority, IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due)) AS due,
+      $sql = "SELECT tasks.ID, Name, description, difficulty, done, duration, priority, IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due)) AS due,
           TIMESTAMPDIFF(DAY,(IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due))), done) as timeDiff, TIMESTAMPDIFF(DAY, done, NOW()) AS DaysAgo, color, IFNULL(time_spent, 0) as time_spent
           FROM `tasks`
           JOIN category ON category.ID = tasks.category
@@ -438,51 +439,51 @@ $result = mysqli_query($db, $sql);
           ORDER BY done desc, priority desc";
 
 
-        // $sql = "SELECT tasks.ID, Name, time_spent, description, done, duration, priority, IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due)) AS due, TIMESTAMPDIFF(DAY,(IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due))), done) as timeDiff, TIMESTAMPDIFF(DAY, done, NOW()) AS DaysAgo, color
-//           FROM `tasks`
-//           JOIN category ON category.ID = tasks.category
-//           WHERE done IS NOT NULL $cat_sel $day_sel
-//           ORDER BY done desc, priority desc";
-// echo $sql;
-        $result = mysqli_query($db, $sql);
+      // $sql = "SELECT tasks.ID, Name, time_spent, description, done, duration, priority, IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due)) AS due, TIMESTAMPDIFF(DAY,(IF(due_time IS NOT NULL, TIMESTAMP(due, due_time), TIMESTAMP(due))), done) as timeDiff, TIMESTAMPDIFF(DAY, done, NOW()) AS DaysAgo, color
+      //           FROM `tasks`
+      //           JOIN category ON category.ID = tasks.category
+      //           WHERE done IS NOT NULL $cat_sel $day_sel
+      //           ORDER BY done desc, priority desc";
+      // echo $sql;
+      $result = mysqli_query($db, $sql);
 
 
 
-        $past_tasks_spent_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks`
+      $past_tasks_spent_sum_sql = "SELECT SUM(time_spent) as sum FROM `tasks`
                               JOIN (SELECT taskID, SUM(TIMESTAMPDIFF(SECOND, start_time, IFNULL(stop_time, CURRENT_TIME))) as time_spent FROM `task_history` GROUP BY taskID) as b ON tasks.ID = b.taskID
                               WHERE done IS NOT NULL $cat_sel $day_sel AND deleted = 0 AND Name LIKE '$prefix%'";
 
-        // echo $past_tasks_spent_sum_sql;
-      
-        $past_tasks_spent_sum_res = mysqli_query($db, $past_tasks_spent_sum_sql);
-        $past_tasks_spent_sum_string = "";
-        if (mysqli_num_rows($past_tasks_spent_sum_res) > 0) {
-          $past_tasks_spent_sum_secs = mysqli_fetch_assoc($past_tasks_spent_sum_res)['sum'];
+      // echo $past_tasks_spent_sum_sql;
 
-          $past_tasks_spent_sum_minutes = str_pad(floor($past_tasks_spent_sum_secs / 60 % 60), 2, '0', STR_PAD_LEFT);
-          $past_tasks_spent_sum_hours = floor($past_tasks_spent_sum_secs / 60 / 60);
+      $past_tasks_spent_sum_res = mysqli_query($db, $past_tasks_spent_sum_sql);
+      $past_tasks_spent_sum_string = "";
+      if (mysqli_num_rows($past_tasks_spent_sum_res) > 0) {
+        $past_tasks_spent_sum_secs = mysqli_fetch_assoc($past_tasks_spent_sum_res)['sum'];
 
-          $past_tasks_spent_sum_string = "(" . $past_tasks_spent_sum_hours . ":" . $past_tasks_spent_sum_minutes . ")";
-        }
+        $past_tasks_spent_sum_minutes = str_pad(floor($past_tasks_spent_sum_secs / 60 % 60), 2, '0', STR_PAD_LEFT);
+        $past_tasks_spent_sum_hours = floor($past_tasks_spent_sum_secs / 60 / 60);
 
-        // Difficulty Scoring
-        $past_difficulty_score_of_day_sql = "SELECT DATE(start_time) as Datum, SUM(TIMESTAMPDIFF(MINUTE, task_history.start_time, IFNULL(task_history.stop_time, CURRENT_TIMESTAMP)) / 60 * difficulty) as score 
+        $past_tasks_spent_sum_string = "(" . $past_tasks_spent_sum_hours . ":" . $past_tasks_spent_sum_minutes . ")";
+      }
+
+      // Difficulty Scoring
+      $past_difficulty_score_of_day_sql = "SELECT DATE(start_time) as Datum, SUM(TIMESTAMPDIFF(MINUTE, task_history.start_time, IFNULL(task_history.stop_time, CURRENT_TIMESTAMP)) / 60 * difficulty) as score 
                                   FROM `task_history` LEFT JOIN tasks on task_history.taskID = tasks.ID 
                                   WHERE done IS NOT NULL $cat_sel $day_sel GROUP BY `Datum`;";
-        $past_difficulty_score_of_day_res = mysqli_query($db, $past_difficulty_score_of_day_sql);
-        $past_difficulty_score_of_day_string = "";
-        if (mysqli_num_rows($past_difficulty_score_of_day_res) > 0) {
-          $past_difficulty_score_of_day_string = "[" . round((float) mysqli_fetch_assoc($past_difficulty_score_of_day_res)['score'], 1) . "]";
-        }
+      $past_difficulty_score_of_day_res = mysqli_query($db, $past_difficulty_score_of_day_sql);
+      $past_difficulty_score_of_day_string = "";
+      if (mysqli_num_rows($past_difficulty_score_of_day_res) > 0) {
+        $past_difficulty_score_of_day_string = "[" . round((float) mysqli_fetch_assoc($past_difficulty_score_of_day_res)['score'], 1) . "]";
+      }
 
 
 
-        $date_string = "Last 7 Days";
-        if ($day_sel != "AND TIMESTAMPDIFF(DAY, done, NOW()) < 7") {
-          $date_string = $date_text;
-        }
+      $date_string = "Last 7 Days";
+      if ($day_sel != "AND TIMESTAMPDIFF(DAY, done, NOW()) < 7") {
+        $date_string = $date_text;
+      }
 
-        echo "
+      echo "
     <tr date>
       <td>$date_string $past_tasks_spent_sum_string $past_difficulty_score_of_day_string</td>
       <td></td>
@@ -495,38 +496,38 @@ $result = mysqli_query($db, $sql);
     </tr>
 ";
 
-        if (mysqli_num_rows($result) > 0) {
-          while ($row = mysqli_fetch_assoc($result)) {
-            $ID = $row['ID'];
-            $name = urldecode($row['Name']);
-            $desc = urldecode(str_replace("\n", "<br>", $row['description']));
-            $duration = "";
-            if (isset($row['duration'])) {
-              $duration = $row['duration'];
-            }
-            $due = $row['due'];
-            $done = $row['done'];
-            $ago = $row['DaysAgo'];
-            $timediff = $row['timeDiff'];
-            $priority = $row['priority'];
-            $difficulty = $row['difficulty'];
-            if (empty($row['color'])) {
-              $color = "777";
-            } else {
-              $color = $row['color'];
-            }
+      if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+          $ID = $row['ID'];
+          $name = urldecode($row['Name']);
+          $desc = urldecode(str_replace("\n", "<br>", $row['description']));
+          $duration = "";
+          if (isset($row['duration'])) {
+            $duration = $row['duration'];
+          }
+          $due = $row['due'];
+          $done = $row['done'];
+          $ago = $row['DaysAgo'];
+          $timediff = $row['timeDiff'];
+          $priority = $row['priority'];
+          $difficulty = $row['difficulty'];
+          if (empty($row['color'])) {
+            $color = "777";
+          } else {
+            $color = $row['color'];
+          }
 
-            $time_spent = $row['time_spent'];
-            if ($time_spent > 0) {
-              $minutes = str_pad(floor($time_spent / 60 % 60), 2, '0', STR_PAD_LEFT);
-              $hours = floor($time_spent / 60 / 60);
+          $time_spent = $row['time_spent'];
+          if ($time_spent > 0) {
+            $minutes = str_pad(floor($time_spent / 60 % 60), 2, '0', STR_PAD_LEFT);
+            $hours = floor($time_spent / 60 / 60);
 
-              $time_spent_string = "($hours:$minutes)";
-            } else {
-              $time_spent_string = "";
-            }
+            $time_spent_string = "($hours:$minutes)";
+          } else {
+            $time_spent_string = "";
+          }
 
-            echo "
+          echo "
         <tr priority='$priority'>
           <td onclick='openModal($ID)' class='clickable'><div class='categoryIndicator' style='--color: #$color'></div>$name $time_spent_string</td>
           <td onclick='openModal($ID)' class='clickable'>$desc</td>
@@ -538,19 +539,18 @@ $result = mysqli_query($db, $sql);
           <td><a href='tasks.php?revive=$ID&category=$category&$curSelDay'>&#10004;</a></td>
         </tr>
     ";
-
-          }
         }
+      }
 
 
-        ?>
+      ?>
 
-                </table>
-              </div>
+    </table>
+  </div>
 
-              <div id="day_timetable"></div>
+  <div id="day_timetable"></div>
 
-              </main>
+  </main>
 
 
 
