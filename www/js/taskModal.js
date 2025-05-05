@@ -165,7 +165,7 @@ function updateModal(task) {
   document.getElementById('taskmodal_id').innerText = task.ID
   const date = new Date(task.created)
   document.getElementById('taskmodal_created').innerText = String(date.getDate()).padStart(2, "0") + '.' + String(date.getMonth() + 1).padStart(2, "0") + '.' + date.getFullYear()
-  taskModal.querySelector('.header').style.backgroundColor = "#" + categoryColors.filter(cat => cat.ID === task.category)[0].color
+  taskModal.querySelector('.header').style.backgroundColor = "#" + categoryColors.filter(cat => cat.ID === parseInt(task.category))[0].color
   title.innerHTML = task.Name
   description.innerText = task.description || "No further description given..."
   description_textarea.value = task.description
