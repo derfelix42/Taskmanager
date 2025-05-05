@@ -1,10 +1,13 @@
 use axum::{response::Html, routing::get, Router};
 use chrono::Utc;
+use sleepHistoryHandler::sleep_history_router;
 
 use crate::database::Db;
 
 mod categoryHandler;
 use categoryHandler::category_router;
+
+mod sleepHistoryHandler;
 
 pub fn get_api_router(database: &Db) -> Router {
     Router::new()
@@ -19,5 +22,6 @@ pub fn get_api_router(database: &Db) -> Router {
             }),
         )
         .route("/api/v2/category", category_router())
+        .route("/api/v2/sleep_history", sleep_history_router())
         .with_state(database.clone())
 }

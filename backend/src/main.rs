@@ -15,9 +15,7 @@ async fn main() -> Result<(), String> {
 
     let address = "0.0.0.0:3008";
 
-    tracing::info!("Hello, world!");
-
-    tracing::info!("Starting up HTTP-Server");
+    tracing::info!("Starting up Backend API Server");
 
     let cors = CorsLayer::new().allow_origin(Any);
 
