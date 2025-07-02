@@ -165,7 +165,7 @@ function updateModal(task) {
   document.getElementById('taskmodal_id').innerText = task.ID
   const date = new Date(task.created)
   document.getElementById('taskmodal_created').innerText = String(date.getDate()).padStart(2, "0") + '.' + String(date.getMonth() + 1).padStart(2, "0") + '.' + date.getFullYear()
-  taskModal.querySelector('.header').style.backgroundColor = "#" + categoryColors.filter(cat => cat.ID === task.category)[0].color
+  taskModal.querySelector('.header').style.backgroundColor = "#" + categoryColors.filter(cat => cat.ID === parseInt(task.category))[0].color
   title.innerHTML = task.Name
   description.innerText = task.description || "No further description given..."
   description_textarea.value = task.description
@@ -175,7 +175,7 @@ function updateModal(task) {
   taskModal.querySelector('.notes').querySelector('.title').innerText = task.Name
   if (task.notes) {
     const converter = new showdown.Converter({ tasklists: true, simpleLineBreaks: true, strikethrough: true, noHeaderId: true, disableForced4SpacesIndentedSublists: true })
-    taskModal.querySelector('.notes').querySelector('.title').innerText = task.Name+" | "+task.notes.created.split(" ")[0]
+    taskModal.querySelector('.notes').querySelector('.title').innerText = task.Name + " | " + task.notes.created.split(" ")[0]
     taskModal.querySelector('.notes').querySelector('p').innerHTML = converter.makeHtml(task.notes.note);
     taskModal.querySelector('.notes').querySelector('textarea').value = task.notes.note
   }
@@ -212,7 +212,7 @@ function closeNotes() {
 }
 
 function toggleNotes() {
-  if(taskModal.querySelector('.notes').classList.contains("disabled")) {
+  if (taskModal.querySelector('.notes').classList.contains("disabled")) {
     openNotes()
   } else {
     closeNotes()
@@ -261,7 +261,7 @@ async function startStopTimer() {
 async function stopTimer() {
   clearInterval(timer_interval)
   // throw new Error("taskModal.js: stopTimer() got called!")
-  if(currentTask?.ID) {
+  if (currentTask?.ID) {
     await stopTimerOnTask(currentTask.ID)
     const task_data = await getTaskData(currentTask.ID)
     currentTask = task_data
@@ -277,7 +277,7 @@ function setButtonText(text) {
 }
 
 function updateTimer() {
-  if(timer_interval && start_time) {
+  if (timer_interval && start_time) {
     let time_diff_secs = parseInt(currentTask.time_spent) + Math.floor(((new Date()).getTime() - start_time.getTime()) / 1000)
     printTimer(time_diff_secs)
   }
