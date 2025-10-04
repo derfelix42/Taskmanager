@@ -8,6 +8,7 @@ services:
     restart: unless-stopped
     depends_on:
       - mariadb
+      - migrator
     networks:
       my_network:
         aliases:
@@ -36,6 +37,7 @@ services:
       - ./backups/:/var/www/html/backups/
     depends_on:
       - mariadb
+      - migrator
     networks:
       my_network:
         aliases:
@@ -63,6 +65,22 @@ services:
     ports:
       - "3306:3306"
 
+  migrator:
+    build:
+      context: ./
+      dockerfile: migrator.Dockerfile
+    container_name: migrator
+    restart: "no"
+    environment:
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    depends_on:
+      - mariadb
+    networks:
+      - my_network
+    # Mount host migrations so devs don't need to rebuild the image
+    volumes:
+      - ./migrations:/migrations:ro
+
   phpmyadmin:
     image: linuxserver/phpmyadmin
     build:
@@ -82,6 +100,7 @@ services:
       retries: 10
     depends_on:
       - mariadb
+      - migrator
     networks:
       my_network:
         aliases:
@@ -93,6 +112,7 @@ services:
       - webserver
       - phpmyadmin
       - backend
+      - migrator
     build:
       context: ./
       dockerfile: nginx.Dockerfile
