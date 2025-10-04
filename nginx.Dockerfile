@@ -1,4 +1,4 @@
-FROM nginx
+FROM nginx:1.27
 
 RUN apt update
 RUN apt install apache2-utils -y
