@@ -1,0 +1,1 @@
+CREATE TABLE `j_tasks`.`sleep_history` (`ID` INT NOT NULL AUTO_INCREMENT , `start_time` TIMESTAMP NOT NULL , `stop_time` timestamp NULL DEFAULT NULL, PRIMARY KEY (`ID`)) ENGINE = InnoDB;
