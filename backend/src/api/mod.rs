@@ -1,4 +1,9 @@
-use axum::{response::Html, routing::get, Router};
+use axum::{
+    http::{StatusCode, Uri},
+    response::Html,
+    routing::get,
+    Router,
+};
 use chrono::Utc;
 
 mod sleep_history_handler;
@@ -21,7 +26,12 @@ pub fn get_api_router(database: &Db) -> Router {
                 ))
             }),
         )
-        .route("/api/v2/category", category_router())
+        .nest("/api/v2/category", category_router())
         .route("/api/v2/sleep_history", sleep_history_router())
         .with_state(database.clone())
+        .fallback(fallback)
+}
+
+async fn fallback(uri: Uri) -> (StatusCode, String) {
+    (StatusCode::NOT_FOUND, format!("No route for {uri}"))
 }

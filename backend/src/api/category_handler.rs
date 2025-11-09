@@ -1,4 +1,4 @@
-use axum::{extract::State, routing::MethodRouter, Json};
+use axum::{extract::State, routing::get, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::{database::Db, models::category};
@@ -20,11 +20,13 @@ pub struct SimpleResponse {
     pub message: String,
 }
 
-pub fn category_router() -> MethodRouter<Db> {
-    MethodRouter::new()
-        .get(get_categories)
-        .post(create_category)
-        .delete(delete_category)
+pub fn category_router() -> Router<Db> {
+    Router::new().route(
+        "/",
+        get(get_categories)
+            .post(create_category)
+            .delete(delete_category),
+    )
 }
 
 pub async fn get_categories(State(database): State<Db>) -> Json<Vec<category>> {
