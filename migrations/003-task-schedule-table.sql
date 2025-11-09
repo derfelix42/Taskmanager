@@ -1,0 +1,3 @@
+-- CREATE TABLE `j_tasks`.`task_schedule` (`ID` INT NOT NULL AUTO_INCREMENT , `taskID` INT NOT NULL , `start_time` TIMESTAMP NOT NULL , `stop_time` TIMESTAMP NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;
+
+-- ALTER TABLE `task_schedule` ADD FOREIGN KEY (`taskID`) REFERENCES `tasks`(`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;

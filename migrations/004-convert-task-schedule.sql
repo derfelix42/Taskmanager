@@ -1,0 +1,1 @@
+-- INSERT INTO `task_schedule` (`taskID`, `start_time`, `stop_time`) SELECT ID as taskID, TIMESTAMP(due, due_time) as start_time, TIMESTAMP(due, due_time+duration) as stop_time FROM `tasks` WHERE duration IS NOT NULL;
