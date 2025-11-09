@@ -1,4 +1,4 @@
-FROM nginx
+FROM nginx:trixie
 
 RUN apt update
 RUN apt install apache2-utils -y
