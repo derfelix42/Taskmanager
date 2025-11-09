@@ -27,7 +27,7 @@ pub fn get_api_router(database: &Db) -> Router {
             }),
         )
         .nest("/api/v2/category", category_router())
-        .route("/api/v2/sleep_history", sleep_history_router())
+        .nest("/api/v2/sleep_history", sleep_history_router())
         .with_state(database.clone())
         .fallback(fallback)
 }

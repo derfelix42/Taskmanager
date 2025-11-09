@@ -72,7 +72,48 @@ impl Db {
             .map(|_| ())
     }
 
-    pub async fn get_sleep_history(
+    pub async fn get_sleep_history_page(
+        &self,
+        limit: Option<i32>,
+        offset: Option<i32>,
+    ) -> Result<Vec<SleepHistoryEntry>, sqlx::Error> {
+        let query = r#"
+            SELECT
+                ID,
+                start_time,
+                IFNULL(stop_time, NOW()) AS stop_time,
+                stop_time IS NULL AS is_active,
+                DAYOFWEEK(start_time) AS sleep_dow,
+                DAYOFWEEK(IFNULL(stop_time, NOW())) AS wakeup_dow,
+                TIME(start_time) AS sleep_time,
+                TIME(IFNULL(stop_time, NOW())) AS wakeup_time,
+                TIMESTAMPDIFF(
+                    SECOND,
+                    start_time,
+                    IFNULL(stop_time, NOW())) AS sleep_secs,
+                    SEC_TO_TIME(
+                        TIMESTAMPDIFF(
+                            SECOND,
+                            start_time,
+                            IFNULL(stop_time, NOW()))
+                        ) AS sleep_hours
+                    FROM
+                        sleep_history
+                    ORDER BY
+                        start_time
+                    DESC
+                LIMIT ? OFFSET ?;
+        "#;
+
+        let rows = sqlx::query_as::<_, SleepHistoryEntry>(query)
+            .bind(limit.unwrap_or(30))
+            .bind(offset.unwrap_or(0))
+            .fetch_all(&self.pool)
+            .await?;
+        Ok(rows)
+    }
+
+    pub async fn get_sleep_history_for_week(
         &self,
         date: &str,
     ) -> Result<Vec<SleepHistoryEntry>, sqlx::Error> {
