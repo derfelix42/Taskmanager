@@ -1,6 +1,6 @@
 use sqlx::{MySql, MySqlPool, Pool};
 
-use crate::models::category;
+use crate::models::{category, task};
 
 #[derive(Clone, Debug)]
 pub struct Db {
@@ -54,5 +54,15 @@ impl Db {
             .execute(&self.pool)
             .await
             .map(|_| ())
+    }
+
+    pub async fn get_tasks_by_category(&self, category: i64) -> Result<Vec<task>, sqlx::Error> {
+        let query = "SELECT * FROM tasks WHERE deleted = 0 AND category=?";
+
+        let rows: Vec<task> = sqlx::query_as(query)
+            .bind(category)
+            .fetch_all(&self.pool)
+            .await?;
+        Ok(rows)
     }
 }
