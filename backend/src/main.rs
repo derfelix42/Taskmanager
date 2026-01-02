@@ -25,7 +25,7 @@ async fn main() -> Result<(), String> {
 
     let router = Router::new()
         .nest("/api/v2", api::get_api_router(&database))
-        .nest("/ical", icalendar::get_ical_router());
+        .nest("/ical", icalendar::get_ical_router(&database));
     let handle = Handle::new();
     let server = axum_server::bind(address.parse().unwrap())
         .handle(handle)
