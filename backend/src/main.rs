@@ -1,8 +1,10 @@
+use axum::Router;
 use axum_server::Handle;
 use tower_http::cors::{Any, CorsLayer};
 
 mod api;
 mod database;
+mod icalendar;
 mod models;
 
 #[tokio::main]
@@ -21,7 +23,9 @@ async fn main() -> Result<(), String> {
 
     let cors = CorsLayer::new().allow_origin(Any);
 
-    let router = api::get_api_router(&database);
+    let router = Router::new()
+        .nest("/api/v2", api::get_api_router(&database))
+        .nest("/ical", icalendar::get_ical_router());
     let handle = Handle::new();
     let server = axum_server::bind(address.parse().unwrap())
         .handle(handle)
