@@ -1,6 +1,6 @@
 use axum::{
     extract::{Path, State},
-    response::Html,
+    response::{Html, IntoResponse},
     routing::get,
     Router,
 };
@@ -25,7 +25,7 @@ pub fn get_ical_router(database: &Db) -> Router {
         .with_state(database.clone())
 }
 
-pub async fn get_ical(State(database): State<Db>, Path(category): Path<i64>) -> String {
+pub async fn get_ical(State(database): State<Db>, Path(category): Path<i64>) -> impl IntoResponse {
     match database.get_categories().await {
         Ok(categories) => {
             let target = categories.iter().find(|c| c.ID == category);
@@ -69,16 +69,18 @@ pub async fn get_ical(State(database): State<Db>, Path(category): Path<i64>) -> 
                         }
                     }
                     Err(e) => {
-                        return format!("SQL Error: {:?}", e);
+                        return format!("SQL Error: {:?}", e).into_response();
                     }
                 }
 
                 let output = format!("{calendar}");
-                return output;
+                return ([("content-type", "text/calendar")], output).into_response();
             }
         }
-        Err(_) => return "ERROR".to_string(),
+        Err(_) => {
+            return "ERROR".into_response();
+        }
     }
 
-    "ERROR".to_string()
+    "ERROR".into_response()
 }
