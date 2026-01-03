@@ -48,6 +48,8 @@ pub async fn get_ical(State(database): State<Db>, Path(category): Path<i64>) -> 
                         for task in tasks {
                             let mut event = Event::new();
                             event.summary(&task.Name).description(&task.description);
+                            event.uid(&format!("{}", task.ID));
+                            event.created(task.created);
 
                             if task.due_time.is_some() && task.duration.is_some() {
                                 let start_time = task.due.and_time(task.due_time.unwrap());
@@ -74,7 +76,7 @@ pub async fn get_ical(State(database): State<Db>, Path(category): Path<i64>) -> 
                 }
 
                 let output = format!("{calendar}");
-                return ([("content-type", "text/calendar")], output).into_response();
+                return ([("Content-Type", "text/calendar")], output).into_response();
             }
         }
         Err(_) => {
