@@ -1,7 +1,7 @@
 use axum::{
     extract::{Path, State},
     response::Html,
-    routing::{get, MethodRouter},
+    routing::get,
     Router,
 };
 use chrono::{Timelike, Utc};
@@ -25,10 +25,6 @@ pub fn get_ical_router(database: &Db) -> Router {
         .with_state(database.clone())
 }
 
-// pub fn ical_router() -> MethodRouter<Db> {
-//     MethodRouter::new().get(get_ical)
-// }
-
 pub async fn get_ical(State(database): State<Db>, Path(category): Path<i64>) -> String {
     match database.get_categories().await {
         Ok(categories) => {
@@ -38,13 +34,17 @@ pub async fn get_ical(State(database): State<Db>, Path(category): Path<i64>) -> 
                 let mut calendar = Calendar::default();
                 calendar.name(&target.Bezeichnung);
 
-                println!("Got request for {:?}", calendar.get_name());
+                println!(
+                    "Got ical request for category {} ({:?})",
+                    category,
+                    calendar.get_name()
+                );
 
                 let category_tasks = database.get_tasks_by_category(category).await;
 
                 match category_tasks {
                     Ok(tasks) => {
-                        println!("-> Found {} tasks in this category", tasks.len());
+                        // println!("-> Found {} tasks in this category", tasks.len());
                         for task in tasks {
                             let mut event = Event::new();
                             event.summary(&task.Name).description(&task.description);
@@ -59,10 +59,10 @@ pub async fn get_ical(State(database): State<Db>, Path(category): Path<i64>) -> 
                                 let duration = chrono::TimeDelta::seconds(duration_seconds as i64);
                                 event.ends(start_time + duration);
 
-                                println!("    - created event {} for defined duration", task.Name);
+                                // println!("    - created event {} for defined duration", task.Name);
                             } else {
                                 event.all_day(task.due);
-                                println!("    - created event {} all day long", task.Name);
+                                // println!("    - created event {} all day long", task.Name);
                             }
 
                             calendar.push(event);
