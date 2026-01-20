@@ -1,3 +1,5 @@
 logs/
 backups/
 backend/target/
+database/
+target/
