@@ -1,0 +1,4 @@
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+INSERT INTO `category` (`ID`, `Bezeichnung`, `color`, `display`) VALUES ('0', 'null', NULL, '1');
+INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `difficulty`, `created`, `category`, `location`, `deleted`, `autogen`) VALUES (NULL, 'Setup Task', 'This is a hidden task for you to see, when this system was initially started as it gets created on the first startup :)', CURRENT_DATE(), NULL, NULL, NULL, '5', '1', current_timestamp(), '0', '', '1', '1');
+INSERT INTO `tasks` (`ID`, `Name`, `description`, `due`, `due_time`, `done`, `duration`, `priority`, `difficulty`, `created`, `category`, `location`, `deleted`, `autogen`) VALUES (NULL, 'First Task', '', CURRENT_DATE(), NULL, NULL, NULL, '5', '1', current_timestamp(), '0', '', '0', '0');
