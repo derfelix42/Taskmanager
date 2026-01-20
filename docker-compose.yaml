@@ -88,15 +88,13 @@ services:
 
   phpmyadmin:
     image: linuxserver/phpmyadmin
-    build:
-      context: ./
-      dockerfile: phpmyadmin.Dockerfile
     restart: always
     environment:
       PMA_HOST: mariadb
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 10M
+      PMA_ABSOLUTE_URI: http://localhost/phpmyadmin/
     healthcheck:
       test: [ "CMD", "curl", "-Ss", "http://localhost/robots.txt" ]
       start_period: 5s
