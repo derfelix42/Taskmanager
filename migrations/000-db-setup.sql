@@ -31,10 +31,11 @@ USE `j_tasks`;
 
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
-  `ID` int NOT NULL,
+  `ID` int NOT NULL AUTO_INCREMENT,
   `Bezeichnung` text NOT NULL,
   `color` text,
-  `display` tinyint(1) NOT NULL DEFAULT '1'
+  `display` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -263,12 +264,6 @@ CREATE TABLE `wakeup_times` (
 --
 
 --
--- Indexes for table `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`ID`);
-
---
 -- Indexes for table `cron-jobs`
 --
 ALTER TABLE `cron-jobs`
@@ -362,12 +357,6 @@ ALTER TABLE `wakeup_times`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `category`
---
-ALTER TABLE `category`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `cron-jobs`
