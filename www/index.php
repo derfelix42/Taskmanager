@@ -1,3 +1,2 @@
 <?php
-header('Location: tasks.php');
- ?>
+header('Location: tasks.php?today');
