@@ -28,7 +28,7 @@ const day_view = createApp({
 
     onMounted(async () => {
       const params = new URLSearchParams(location.search);
-      console.log(params)
+      // console.log(params)
 
       const d = new Date(); // today
       if (params.has('tomorrow')) d.setDate(d.getDate() + 1);
@@ -38,7 +38,7 @@ const day_view = createApp({
         d.setTime(Date.parse(dateParam))
       }
       date.value = d
-      console.log(d)
+      // console.log(d)
 
       fetchSun()
     })
@@ -103,4 +103,6 @@ const day_view = createApp({
   `
 })
 
-day_view.mount("#day_header")
+if (document.getElementById("day_header")) {
+  day_view.mount("#day_header")
+}

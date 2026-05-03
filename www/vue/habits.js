@@ -2,7 +2,7 @@ import { createApp, ref, reactive, computed, onMounted, onBeforeUnmount } from '
 
 const habit_tracker = createApp({
     setup() {
-        const habits = reactive({habits: [], groups: [], entries: []})
+        const habits = reactive({ habits: [], groups: [], entries: [] })
         const habits_month = ref(new Date())
         const habits_curr_date = computed(() => {
             return (habits_month.value.getMonth() + 1).toString().padStart(2, "0") + "-" + habits_month.value.getFullYear()
@@ -16,7 +16,7 @@ const habit_tracker = createApp({
             habits_month.value = new Date(d.getFullYear(), d.getMonth(), 1);
             await getHabits()
         }
-        
+
         async function nextMonth() {
             const date = habits_month.value
             if (date.getMonth() === 11) {
@@ -24,10 +24,10 @@ const habit_tracker = createApp({
             } else {
                 habits_month.value = new Date(date.getFullYear(), date.getMonth() + 1, 1)
             }
-        
+
             await getHabits()
         }
-        
+
         async function prevMonth() {
             const date = habits_month.value
             if (date.getMonth() === 0) {
@@ -35,7 +35,7 @@ const habit_tracker = createApp({
             } else {
                 habits_month.value = new Date(date.getFullYear(), date.getMonth() - 1, 1)
             }
-        
+
             await getHabits()
         }
 
@@ -79,7 +79,7 @@ const habit_tracker = createApp({
         }
 
         async function renameHabitGroup_fn(groupID, name) {
-            console.log("habits:renameHabitGroup",groupID,name)
+            console.log("habits:renameHabitGroup", groupID, name)
             await renameHabitGroup(groupID, name)
             await getHabits()
         }
@@ -234,6 +234,8 @@ const habit_tracker = createApp({
             </template>
         </section>
         `
-    })
-    
-habit_tracker.mount("#habit_tracker")
+})
+
+if (document.getElementById("habit_tracker")) {
+    habit_tracker.mount("#habit_tracker")
+}
