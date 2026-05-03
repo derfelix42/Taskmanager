@@ -15,6 +15,10 @@ const day_view = createApp({
         + (d.getFullYear()).toString()
     })
 
+    const date_formatted = computed(() => {
+      return date.value.toLocaleDateString('sv-SE')
+    })
+
     const week_string = computed(() => {
       var d = new Date(Date.UTC(date.value.getFullYear(), date.value.getMonth(), date.value.getDate()));
       var dayNum = d.getUTCDay() || 7;
@@ -82,7 +86,7 @@ const day_view = createApp({
 
 
     return {
-      date_string, week_string, tasks, nextDay, prevDay, sun_times
+      date_string, week_string, tasks, nextDay, prevDay, sun_times, date_formatted
     }
   },
   template: `
@@ -90,7 +94,11 @@ const day_view = createApp({
     <div class="arrow left-arrow" @click="prevDay">
       <i class="fas fa-chevron-left"></i>
     </div>
-    <div class="row top-row">{{week_string}}</div>
+    <div class="row top-row">
+    <a :href="\`tasks.php?timetable&date=\${date_formatted}\`">
+
+{{week_string}}</a>
+    </div>
     <div class="row main-row">{{ date_string }}</div>
     <div class="row bottom-row">
       🌅 {{sun_times.sunrise}} / 🌇 {{sun_times.sunset}}
