@@ -321,29 +321,36 @@ function checkButtonClick() {
   let y_start = 5
   let weeks = ["prev Week", "current Week", "next Week"]
 
-  for(let index in weeks) {
+  for (let index in weeks) {
     let title = weeks[index]
-    let x1 = x_start+(index*150)
+    let x1 = x_start + (index * 150)
     let y1 = y_start
-    let x2 = x_start+120+(index*150)
-    let y2 = y_start+30
+    let x2 = x_start + 120 + (index * 150)
+    let y2 = y_start + 30
 
-    if(mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
-      weekSelected = title.split(" ")[0]
-      if(title.split(" ")[0] === "next") {
-        weekModifier += 1
-      } else if(title.split(" ")[0] === "prev") {
-        weekModifier += -1
+    if (mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2) {
+      if (title.split(" ")[0] === "next") {
+        dateOfMonday.setDate(dateOfMonday.getDate() + 7)
+      } else if (title.split(" ")[0] === "prev") {
+        dateOfMonday.setDate(dateOfMonday.getDate() - 7)
       } else {
-        weekModifier = 0
-        calculateMonday(true)
+        // "current" — go to this week's Monday
+        let now = new Date()
+        let diff = now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)
+        dateOfMonday = new Date(now.setDate(diff))
       }
-      console.log(weekModifier)
 
-      calculateMonday()
+      // Update the week dates
+      for (let i = 0; i < 7; i++) {
+        let date = new Date(dateOfMonday)
+        date.setDate(date.getDate() + i)
+        currentWeek[i].date = String(date.getDate()).padStart(2, "0") + '.' + String(date.getMonth() + 1).padStart(2, "0") + '.' + date.getFullYear()
+      }
+
+      php_date = dateOfMonday.toLocaleDateString('sv-SE')
+      window.history.pushState(null, "", "tasks.php?timetable&date=" + php_date)
       updateTasks()
-      //console.log("Button",index, weekSelected)
-      window.history.pushState("Test", "Change of Week", "tasks.php?timetable&date="+dateOfMonday.toISOString().split('T')[0]);
+      return
     }
   }
 }
@@ -706,11 +713,43 @@ function mousemovement(e) {
   if (mouseHoverID !== -1) {
     // console.log(mouseHoverID, tasks.filter(t=>t.ID === mouseHoverID)[0].Name)
   }
+
+  // Inside mousemovement, after existing code:
+  let overHeader = false
+  for (let index = 0; index < 7; index++) {
+    let center_x = settings.start_x + settings.spacings.day * settings.scale * index + settings.spacings.day * settings.scale / 2
+    let center_y = settings.start_y - settings.spacings.hour * settings.scale / 2 + 8 * settings.scale
+    let halfWidth = settings.spacings.day * settings.scale / 2
+    let halfHeight = settings.fontsize * settings.scale / 2
+    if (mouseX > center_x - halfWidth && mouseX < center_x + halfWidth &&
+      mouseY > center_y - halfHeight && mouseY < center_y + halfHeight) {
+      overHeader = true
+      break
+    }
+  }
+  canvas.style.cursor = overHeader ? "pointer" : "default"
 }
 
 function mousedown(e) {
   //console.log(e)
   checkButtonClick()
+
+  // Check if clicking on a day header
+  for (let index = 0; index < 7; index++) {
+    let center_x = settings.start_x + settings.spacings.day * settings.scale * index + settings.spacings.day * settings.scale / 2
+    let center_y = settings.start_y - settings.spacings.hour * settings.scale / 2 + 8 * settings.scale
+    let halfWidth = settings.spacings.day * settings.scale / 2
+    let halfHeight = settings.fontsize * settings.scale / 2
+
+    if (mouseX > center_x - halfWidth && mouseX < center_x + halfWidth &&
+      mouseY > center_y - halfHeight && mouseY < center_y + halfHeight) {
+      // Convert "DD.MM.YYYY" to "YYYY-MM-DD"
+      let parts = currentWeek[index].date.split(".")
+      let isoDate = parts[2] + "-" + parts[1] + "-" + parts[0]
+      window.location.href = "/tasks.php?date=" + isoDate
+      return
+    }
+  }
 
   // Open TaskModal if task is clicked
   if (mouseHoverID !== -1) {
