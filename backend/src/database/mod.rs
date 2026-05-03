@@ -1,4 +1,4 @@
-use sqlx::{MySql, MySqlPool, Pool};
+use sqlx::{query, MySql, MySqlPool, Pool};
 
 use crate::models::{category, task};
 
@@ -64,5 +64,10 @@ impl Db {
             .fetch_all(&self.pool)
             .await?;
         Ok(rows)
+    }
+
+    pub async fn start_task_by_name(&self, name: String, category: i64) -> Result<(), sqlx::Error> {
+        let query = "";
+        Ok(())
     }
 }
