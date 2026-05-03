@@ -8,6 +8,8 @@ use categoryHandler::category_router;
 mod weatherHandler;
 use weatherHandler::weather_router;
 
+mod openweathermap;
+
 pub fn get_api_router(database: &Db) -> Router {
     Router::new()
         .route(
