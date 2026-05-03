@@ -5,6 +5,8 @@ use crate::database::Db;
 
 mod categoryHandler;
 use categoryHandler::category_router;
+mod weatherHandler;
+use weatherHandler::weather_router;
 
 pub fn get_api_router(database: &Db) -> Router {
     Router::new()
@@ -19,5 +21,6 @@ pub fn get_api_router(database: &Db) -> Router {
             }),
         )
         .route("/category", category_router())
+        .nest("/weather", weather_router())
         .with_state(database.clone())
 }

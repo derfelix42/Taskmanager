@@ -240,3 +240,14 @@ async function deleteHabitGroup(groupID) {
   const res = await fetch(url)
   return await res.json()
 }
+
+/**
+ * Weather / Sun Endpoint
+ */
+
+// get sunrise / sunset
+async function getSunTimes(date) {
+  const url = "api/v2/weather/sun_times?date=" + date
+  const res = await fetch(url)
+  return await res.json()
+}

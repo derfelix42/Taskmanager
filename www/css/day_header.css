@@ -1,0 +1,54 @@
+#day_header header {
+    width: 30em;
+    margin: 1em auto;
+    border-radius: 0.5em;
+    display: grid;
+    grid-template-columns: 5em 20em 5em;
+    grid-template-rows: 1fr 2fr 1fr;
+
+    background-color: inherit;
+
+}
+
+#day_header .left-arrow {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    text-align: left;
+}
+
+#day_header .right-arrow {
+    grid-column: 3;
+    grid-row: 1 / 4;
+    text-align: right;
+}
+
+#day_header .top-row {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#day_header .main-row {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 2em;
+}
+
+#day_header .bottom-row {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+#day_header .arrow {
+    font-size: 2em;
+    margin: auto;
+    cursor: pointer;
+}
+
+#day_header .row {
+    text-align: center;
+    padding: 0.25em;
+}
+
+#day_header main input {
+    width: auto;
+}

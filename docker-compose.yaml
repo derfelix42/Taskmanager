@@ -6,6 +6,8 @@ services:
       dockerfile: backend.Dockerfile
     container_name: backend
     restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
       - mariadb
       - migrator

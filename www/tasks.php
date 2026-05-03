@@ -134,6 +134,7 @@ $result = mysqli_query($db, $sql);
   <link rel="stylesheet" href="css/habits.css">
   <link rel="stylesheet" href="css/statistics.css">
   <link rel="stylesheet" href="css/day_view.css">
+  <link rel="stylesheet" href="css/day_header.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--meta http-equiv="refresh" content="600; url=tasks.php<?php //echo "?$day&category=$category"; 
                                                             ?>"-->
@@ -175,6 +176,7 @@ $result = mysqli_query($db, $sql);
   <script type="module" src="vue/header.js" defer></script>
   <script type="module" src="vue/sidebar.js" defer></script>
   <script type="module" src="vue/day_view.js" defer></script>
+  <script type="module" src="vue/day_header.js" defer></script>
   <script type="module" src="vue/habits.js" defer></script>
 
 </head>
@@ -241,9 +243,13 @@ $result = mysqli_query($db, $sql);
 
   <div id="tasks">
 
-    <center>
-      <h2>Open Tasks:</h2>
-    </center>
+    <?php if (isset($_GET['today']) || isset($_GET['tomorrow']) || isset($_GET['yesterday']) || isset($_GET['date'])) { ?>
+      <div id="day_header"></div>
+    <?php } else { ?>
+      <center>
+        <h2>Open Tasks:</h2>
+      </center>
+    <?php } ?>
     <table>
 
       <?php
