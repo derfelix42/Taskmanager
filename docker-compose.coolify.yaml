@@ -29,6 +29,25 @@ services:
         aliases:
           - webserver
 
+  cron-worker:
+    image: my_php_apache:latest
+    build:
+      context: ./
+      dockerfile: php.Dockerfile
+    container_name: cron-worker
+    command: ["cron", "-f"]
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./logs/cron/:/var/log/cron/
+      - ./backups/:/var/www/html/backups/
+    depends_on:
+      - mariadb
+    networks:
+      my_network:
+        aliases:
+          - cron-worker
+
 
   mariadb:
     build:

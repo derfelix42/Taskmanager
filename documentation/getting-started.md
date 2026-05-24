@@ -32,8 +32,12 @@ sudo htpasswd -c .htpasswd username
 ## Cron Jobs
 You can define Cron-Jobs that are stored in the DB and can be toggle from the frontend. The file `cron.php` in the document root should be executed once per minute. This does also handle backups!
 
+When using `docker compose`, the `cron-worker` service already runs `cron.php` every minute and writes the output to `./logs/cron/cron.log`.
+
+For manual installs, add a cron entry like this:
+
 ```
-1 * * * * /usr/bin/php /var/www/html/Taskmanager/cron.php >> /var/www/html/Taskmanager/logs/cronlogs
+* * * * * /usr/bin/php /var/www/html/Taskmanager/cron.php >> /var/www/html/Taskmanager/logs/cronlogs 2>&1
 ```
 
 You might need to change the `$_SERVER['DOCUMENT_ROOT']` in `cron.php` and the above command to fit your specific Server Locations.
