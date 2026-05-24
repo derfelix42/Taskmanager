@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./logs/:/var/log/
+      - ./logs/cron/:/var/log/cron/
       - ./backups/:/var/www/html/backups/
     depends_on:
       - mariadb
