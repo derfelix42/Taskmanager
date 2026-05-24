@@ -38,9 +38,6 @@ RUN crontab /etc/cron.d/cron
 # Log-Verzeichnis erstellen
 RUN mkdir -p /var/log/cron
 
-# Entrypoint von Apache bearbeiten und "Cron" ergänzen
-RUN sed -i 's/^exec /service cron start\n\nexec /' /usr/local/bin/apache2-foreground
-
 # Server-Name für Apache ergänzen
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 

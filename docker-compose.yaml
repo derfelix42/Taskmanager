@@ -50,6 +50,29 @@ services:
         aliases:
           - webserver
 
+  cron-worker:
+    image: my_php_apache:latest
+    build:
+      context: ./
+      dockerfile: php.Dockerfile
+    container_name: cron-worker
+    environment:
+      - MYSQL_PASSWORD=pass
+      - MYSQL_USERNAME=root
+    command: ["cron", "-f"]
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./logs/:/var/log/
+      - ./backups/:/var/www/html/backups/
+    depends_on:
+      - mariadb
+      - migrator
+    networks:
+      my_network:
+        aliases:
+          - cron-worker
+
   mariadb:
     build:
       context: ./
