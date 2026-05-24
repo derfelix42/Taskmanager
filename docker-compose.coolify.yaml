@@ -35,9 +35,6 @@ services:
       context: ./
       dockerfile: php.Dockerfile
     container_name: cron-worker
-    environment:
-      - MYSQL_PASSWORD=pass
-      - MYSQL_USERNAME=root
     command: ["cron", "-f"]
     restart: unless-stopped
     volumes:
