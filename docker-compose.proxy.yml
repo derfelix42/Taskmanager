@@ -32,6 +32,24 @@ services:
     networks:
       - project1
 
+  cron:
+    image: taskmanager-cron:latest
+    build:
+      context: ./
+      dockerfile: cron.Dockerfile
+    container_name: cron
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./www/:/var/www/html/
+      - .env:/var/www/html/.env
+      - ./logs/cron:/var/log/cron
+      - ./backups/:/var/www/html/backups/
+    depends_on:
+      - mariadb
+    networks:
+      - project1
+
 
   mariadb:
     build:
