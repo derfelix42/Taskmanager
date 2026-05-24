@@ -11,9 +11,9 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY configs/php_ini_custom.ini /usr/local/etc/php/conf.d/php_ini_custom.ini
 RUN chmod 755 /usr/local/etc/php/conf.d/php_ini_custom.ini
 
-# "Cron", "tzdata" und "wget" installieren
+# "tzdata" und "wget" installieren
 RUN apt-get update && \
-	apt-get -y install cron tzdata wget
+	apt-get -y install tzdata wget
 
 # Zeit-Informationen kopieren
 RUN cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
@@ -27,19 +27,6 @@ RUN wget https://github.com/bdd/runitor/releases/download/$RUNITOR_VERSION/runit
 
 # Cache des Paket-Managers leeren
 RUN rm -rf /var/lib/apt/lists/*
-
-# "Cron"-Jobs kopieren und Berechtigungen anpassen
-COPY configs/crontab_custom /etc/cron.d/cron
-RUN chmod 0644 /etc/cron.d/cron
-
-# "Cron"-Jobs ausführen
-RUN crontab /etc/cron.d/cron
-
-# Log-Verzeichnis erstellen
-RUN mkdir -p /var/log/cron
-
-# Entrypoint von Apache bearbeiten und "Cron" ergänzen
-RUN sed -i 's/^exec /service cron start\n\nexec /' /usr/local/bin/apache2-foreground
 
 # Server-Name für Apache ergänzen
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf

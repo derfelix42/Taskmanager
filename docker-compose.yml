@@ -30,6 +30,22 @@ services:
     depends_on:
       - mariadb
 
+  cron:
+    image: taskmanager-cron:latest
+    build:
+      context: ./
+      dockerfile: cron.Dockerfile
+    container_name: cron
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./www/:/var/www/html/
+      - ./.env:/var/www/html/.env
+      - ./logs/:/var/log/
+      - ./backups/:/var/www/html/backups/
+    depends_on:
+      - mariadb
+
   mariadb:
     build:
       context: ./
