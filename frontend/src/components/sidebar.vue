@@ -45,7 +45,7 @@ onMounted(async () => {
 
   <ul>
     <li><a href="?timetable">Timetable</a></li>
-    <li><a href="?habits">Habit Tracker</a></li>
+    <li><RouterLink to="/habits">Habit Tracker</RouterLink></li>
   </ul>
 
   <hr />
