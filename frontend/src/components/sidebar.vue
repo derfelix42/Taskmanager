@@ -13,63 +13,54 @@ onMounted(async () => {
   <div id="sidebar">
 
   <ul id="categories">
-    <li><a href="?">All Tasks</a></li>
+      <RouterLink to="/tasks">
+        <li>
+          All Tasks
+        </li>
+      </RouterLink>
     <hr />
 
     <template v-for="category in categories" :key="category.ID">
-      <li v-if="category.display">
-        <a :href="'?category=' + category.ID">
-          <span
-            class="categoryIndicator"
-            :style="{ '--color': '#' + (category.color || '777') }"
-          ></span>
-          {{ category.Bezeichnung }}
-        </a>
-
-        <ul v-if="category.prefixes">
-          <li v-for="prefix in category.prefixes.split(',')" :key="category.ID + '-' + prefix">
-            <a
-              v-if="prefix && prefix.indexOf(category.Bezeichnung) === -1"
-              :href="'?category=' + category.ID + '&prefix=' + prefix"
-            >
-              <span class="categoryIndicator"></span>
-              > {{ prefix }}
-            </a>
+        <RouterLink :to="{name: 'category', params: {id: category.ID}}" v-if="category.display">
+          <li>
+            <span class="categoryIndicator" :style="{ '--color': '#' + (category.color || '777') }"></span>
+            {{ category.Bezeichnung }}
           </li>
+        </RouterLink>
+        <ul v-if="category.prefixes">
+          <template v-for="prefix in category.prefixes.split(',')" :key="category.ID + '-' + prefix">
+            <RouterLink v-if="prefix && prefix.indexOf(category.Bezeichnung) === -1" :to="{name: 'category', params: {id: category.ID, prefix}}">
+              <li>
+                <span class="categoryIndicator"></span>
+                > {{ prefix }}
+              </li>
+            </RouterLink>
+          </template>
         </ul>
-      </li>
     </template>
   </ul>
 
   <hr />
 
   <ul>
-    <li><RouterLink to="/timetable">Timetable</RouterLink></li>
-    <li><RouterLink to="/habits">Habit Tracker</RouterLink></li>
+    <RouterLink to="/timetable"><li>Timetable</li></RouterLink>
+    <RouterLink to="/habits"><li>Habit Tracker</li></RouterLink>
   </ul>
 
   <hr />
 
   <ul>
-    <li><a href="?yesterday">Gestern</a></li>
-    <li><a href="?today">Heutige Aufgaben</a></li>
-    <li><a href="?tomorrow">Morgen</a></li>
+    <RouterLink to="/tasks/yesterday"><li>Gestern</li></RouterLink>
+    <RouterLink to="/tasks/today"><li>Heutige Aufgaben</li></RouterLink>
+    <RouterLink to="/tasks/tomorrow"><li>Morgen</li></RouterLink>
   </ul>
 
   <hr />
 
   <ul>
-    <li><RouterLink to="/statistics">Statistics <i class="fa-solid fa-chart-line"></i></RouterLink></li>
-    <li>
-      <a href="?trash">
-        Trashcan <i class="fa-solid fa-trash-can small"></i>
-      </a>
-    </li>
-    <li>
-      <a href="?settings">
-        Settings <i class="fa-solid fa-gears small"></i>
-      </a>
-    </li>
+    <RouterLink to="/statistics"><li>Statistics <i class="fa-solid fa-chart-line"></i></li></RouterLink>
+    <RouterLink to="/trash"><li>Trashcan <i class="fa-solid fa-trash-can-line"></i></li></RouterLink>
+    <RouterLink to="/settings"><li>Settings <i class="fa-solid fa-gears-line"></i></li></RouterLink>
     <li>
       <a href="/phpmyadmin/index.php?route=/sql&pos=0&db=j_tasks&table=tasks" target="_blank">
         phpMyAdmin <i class="fas fa-up-right-from-square small"></i>

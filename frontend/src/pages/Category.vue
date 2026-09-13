@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-    <h2>Tasks {{ $route.params.date }}</h2>
+    <h2>Category {{ $route.params.id }} {{ $route.params.prefix }}</h2>
 </template>
 
 <style></style>
