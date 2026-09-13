@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import Header from './components/header.vue'
-import Sidebar from './components/sidebar.vue'
+import Header from './components/Header.vue'
+import Sidebar from './components/Sidebar.vue'
+import ButtonBar from './components/ButtonBar.vue';
+import { RouterView } from 'vue-router'
 
 </script>
 
@@ -12,7 +14,10 @@ import Sidebar from './components/sidebar.vue'
     
     
     <main id="main">
+      <RouterView />
     </main>
+
+    <ButtonBar></ButtonBar>
   </div>
 </template>
 
