@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HabbitTracker from '@/pages/HabbitTracker.vue'
 import Statistics from '@/pages/Statistics.vue'
+import Timetable from '@/pages/Timetable.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,6 +13,10 @@ const router = createRouter({
     {
       path: '/statistics/:timeframe?/:offset?',
       component: Statistics,
+    },
+    {
+      path: '/timetable',
+      component: Timetable,
     },
   ],
 })
