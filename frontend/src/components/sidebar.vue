@@ -59,11 +59,7 @@ onMounted(async () => {
   <hr />
 
   <ul>
-    <li>
-      <a href="?statistics&timeframe=WEEK">
-        Statistics <i class="fa-solid fa-chart-line"></i>
-      </a>
-    </li>
+    <li><RouterLink to="/statistics">Statistics <i class="fa-solid fa-chart-line"></i></RouterLink></li>
     <li>
       <a href="?trash">
         Trashcan <i class="fa-solid fa-trash-can small"></i>
