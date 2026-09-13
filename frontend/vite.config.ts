@@ -15,5 +15,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  base: '/frontend/'
+  base: '/frontend/',
+  define: {
+    __DEBUG__: false,
+  },
+
 })
