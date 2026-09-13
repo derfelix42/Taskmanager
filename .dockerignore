@@ -3,3 +3,6 @@ backups/
 backend/target/
 database/
 target/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/

@@ -21,6 +21,27 @@ services:
         aliases:
           - backend
 
+  frontend:
+    build:
+      dockerfile: vue.Dockerfile
+      target: dev
+    container_name: frontend
+    # profiles:
+    #   - dev
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    command: sh -c "pnpm install && pnpm run dev --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/frontend
+      - frontend_node_modules:/frontend/node_modules
+    networks:
+      my_network:
+        aliases:
+          - frontend
+
+
   webserver:
     image: my_php_apache:latest
     build:
@@ -38,7 +59,7 @@ services:
       retries: 5
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      # - ./www/:/var/www/html/
+      - ./www/:/var/www/html/
       # - ./.env:/var/www/html/.env
       - ./logs/:/var/log/
       - ./backups/:/var/www/html/backups/
@@ -111,6 +132,20 @@ services:
         aliases:
           - phpmyadmin
 
+  # frontend:
+  #   build:
+  #     context: ./
+  #     dockerfile: vue.Dockerfile
+  #     target: prod
+  #   container_name: frontend
+  #   restart: unless-stopped
+  #   profiles:
+  #     - prod
+  #   networks:
+  #     my_network:
+  #       aliases:
+  #         - frontend
+
   nginx:
     # image: nginx
     depends_on:
@@ -118,6 +153,7 @@ services:
       - phpmyadmin
       - backend
       - migrator
+      - frontend
     build:
       context: ./
       dockerfile: nginx.Dockerfile
@@ -142,3 +178,6 @@ services:
 
 networks:
   my_network:
+
+volumes:
+  frontend_node_modules:
