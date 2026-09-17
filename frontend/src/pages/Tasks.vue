@@ -23,7 +23,6 @@ function getDateFromParam() {
     } else if (!param.includes('today')) {
         d.setTime(Date.parse(param))
     }
-    console.log("getDateFromParam", d)
     date.value = d
 }
 

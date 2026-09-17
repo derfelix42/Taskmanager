@@ -41,7 +41,6 @@ onMounted(async () => {
 watch(() => props.date, () => fetchSun() )
 
 async function fetchSun() {
-    console.log("fetchSun")
     let data = await getSunTimes(props.date.toLocaleDateString('sv-SE'))
     const sunrise = new Date(data.sunrise);
     const sunset = new Date(data.sunset);
