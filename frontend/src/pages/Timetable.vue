@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, useTemplateRef } from 'vue';
+import { padZero } from '@/helpers'
 
 const canvas = useTemplateRef<HTMLCanvasElement>('timetable')
 
