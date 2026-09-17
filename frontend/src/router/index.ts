@@ -6,42 +6,56 @@ import Category from '@/pages/Category.vue'
 import Tasks from '@/pages/Tasks.vue'
 import Settings from '@/pages/Settings.vue'
 import Trash from '@/pages/Trash.vue'
+import MainLayout from '@/layouts/MainLayout.vue'
+import Login from '@/Login.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/habits',
-      component: HabbitTracker,
+      path: '/login',
+      name: 'login',
+      component: Login,
     },
+
     {
-      path: '/statistics/:timeframe?/:offset?',
-      component: Statistics,
-    },
-    {
-      path: '/timetable/:date?',
-      name: "timetable",
-      component: Timetable,
-    },
-    {
-      path: '/category/:id/:prefix?',
-      name: "category",
-      component: Category
-    },
-    {
-      path: '/tasks/:date?',
-      name: "tasks",
-      component: Tasks
-    },
-    {
-      path: '/settings',
-      name: "settings",
-      component: Settings
-    },
-    {
-      path: '/trash',
-      name: "trashcan",
-      component: Trash
+      path: '/',
+      component: MainLayout,
+      children: [
+        {
+          path: '/habits',
+          component: HabbitTracker,
+        },
+        {
+          path: '/statistics/:timeframe?/:offset?',
+          component: Statistics,
+        },
+        {
+          path: '/timetable/:date?',
+          name: "timetable",
+          component: Timetable,
+        },
+        {
+          path: '/category/:id/:prefix?',
+          name: "category",
+          component: Category
+        },
+        {
+          path: '/tasks/:date?',
+          name: "tasks",
+          component: Tasks
+        },
+        {
+          path: '/settings',
+          name: "settings",
+          component: Settings
+        },
+        {
+          path: '/trash',
+          name: "trashcan",
+          component: Trash
+        },
+      ],
     },
   ],
 })
