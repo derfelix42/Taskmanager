@@ -29,7 +29,11 @@ const router = createRouter({
       path: '/tasks/:date?',
       name: "tasks",
       component: Tasks
-    }
+    {
+      path: '/trash',
+      name: "trashcan",
+      component: Trash
+    },
   ],
 })
 
