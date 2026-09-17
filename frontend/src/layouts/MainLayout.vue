@@ -3,6 +3,12 @@ import Header from '@/components/Header.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import ButtonBar from '@/components/ButtonBar.vue'
 import { RouterView } from 'vue-router'
+import AddNewTaskModal from '@/components/AddNewTaskModal.vue';
+
+function openNewTaskModal() {
+
+}
+
 </script>
 
 <template>
@@ -16,7 +22,9 @@ import { RouterView } from 'vue-router'
       <RouterView />
     </main>
 
-    <ButtonBar></ButtonBar>
+    <AddNewTaskModal></AddNewTaskModal>
+
+    <ButtonBar @openNewTaskModal="openNewTaskModal"></ButtonBar>
   </div>
 </template>
 

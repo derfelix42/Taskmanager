@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineEmits(["openNewTaskModal"])
 </script>
 
 <template>
@@ -18,7 +19,7 @@
       <i class="fas fa-stopwatch"></i>
     </div>
     
-    <div id="openNewTaskModal" class="overlaybutton">
+    <div id="openNewTaskModal" class="overlaybutton" @click="$emit('openNewTaskModal')">
       <i class="fas fa-plus"></i>
     </div>
     
