@@ -4,6 +4,8 @@ import Statistics from '@/pages/Statistics.vue'
 import Timetable from '@/pages/Timetable.vue'
 import Category from '@/pages/Category.vue'
 import Tasks from '@/pages/Tasks.vue'
+import Settings from '@/pages/Settings.vue'
+import Trash from '@/pages/Trash.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +19,8 @@ const router = createRouter({
       component: Statistics,
     },
     {
-      path: '/timetable',
+      path: '/timetable/:date?',
+      name: "timetable",
       component: Timetable,
     },
     {
@@ -29,6 +32,12 @@ const router = createRouter({
       path: '/tasks/:date?',
       name: "tasks",
       component: Tasks
+    },
+    {
+      path: '/settings',
+      name: "settings",
+      component: Settings
+    },
     {
       path: '/trash',
       name: "trashcan",
