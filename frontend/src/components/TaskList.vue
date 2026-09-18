@@ -1,57 +1,53 @@
 <script lang="ts" setup>
-import { getTasksForDate } from '@/api/api';
+import { endTaskAPI, getTasksForDate } from '@/api/api';
 import { secondsToTimestamp } from '@/helpers';
-import { TaskResponse } from '@/models/tasks';
-import { onMounted, reactive } from 'vue';
+import type { TaskResponse } from '@/models/tasks';
+import { useCurrentDateStore } from '@/stores/currentDateStore';
+import { useTasksStore } from '@/stores/tasksStore';
+import { storeToRefs } from 'pinia';
+import { onMounted, reactive, watch } from 'vue';
 
+const props = defineProps(['title', 'tasks'])
 
-function openModal(taskID: number) {
-    console.log("TODO: open TaskModal with ID: ", taskID)
-}
+const emit = defineEmits<{
+    setTaskDone: [taskId: number]
+    openModal: [taskId: number]
+}>()
 
-function setTaskDone(taskID: number) {
-    console.log("TODO: set Task done with ID: ", taskID)
-}
-
-let tasks = reactive<TaskResponse[]>([])
-
-onMounted(async () => {
-    let res = await getTasksForDate("2026-09-18")
-    for (let i = 0; i < res.length; i++) {
-        if (res[i].color === "#null") {
-            res[i].color = "#777"
-        }
-    }
-    console.log(res)
-    Object.assign(tasks, res)
-})
 
 </script>
 
 <template>
-    <!-- {{ tasks }} -->
+    <!-- {{ props.tasks }} -->
     <table>
         <!-- Header -->
         <tr date>
-            <td>$dow - $date_text $time_spent_day_sum_string $difficulty_score_of_day_string</td>
+            <td>{{ props.title }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <!-- <td>$dow - $date_text $time_spent_day_sum_string $difficulty_score_of_day_string</td>
             <td></td>
             <td>$currentTemp $weatherInfo</td>
             <td>🌅 $sunrise</td>
             <td>🌇 $sunset / $sunset_dark</td>
             <td id='daysum_$DueDate'></td>
-            <td></td>
+            <td></td> -->
         </tr>
 
         <!-- Tasklist -->
 
-        <tr priority='$priority' v-for="task in tasks" :key="task.id">
-            <td @click='openModal(task.id)' class='clickable'>
-                <div class='categoryIndicator' :style="{ '--color': task.color }"></div>{{ task.title }}
+        <tr priority='$priority' v-for="task in props.tasks" :key="task.id">
+            <td @click="$emit('openModal', task.id)" class='clickable'>
+                <div class='categoryIndicator' :style="{ '--color': '#' + task.color }"></div>{{ task.title }}
                 {{ task.priority === 10 ? "❗" : "" }}
                 {{ task.stats.time_spent !== 0 ? "(" + secondsToTimestamp(task.stats.time_spent, false) + ")" : "" }}
                 {{ task.difficulty > 1 ? "[" + task.difficulty + "]" : "" }}
             </td>
-            <td @click='openModal(task.id)' class='clickable'>
+            <td @click="$emit('openModal', task.id)" class='clickable'>
                 <p class='description'>{{ task.description }}</p>
             </td>
             <td>
@@ -60,7 +56,7 @@ onMounted(async () => {
             <td>{{ task.location }}</td>
             <td>{{ task.due_time }}</td>
             <td>{{ task.duration }}</td>
-            <td @click="setTaskDone(task.id)" class="clickable">&#10004;</td>
+            <td @click="$emit('setTaskDone', task.id)" class="clickable">&#10004;</td>
         </tr>
 
 
@@ -215,4 +211,8 @@ onMounted(async () => {
 
 </template>
 
-<style></style>
+<style scoped>
+table {
+    margin-bottom: 2em;
+}
+</style>

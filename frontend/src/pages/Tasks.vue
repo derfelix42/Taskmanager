@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { getSunTimes } from '@/api/api'
+import { endTaskAPI, getSunTimes, getTasksForDate } from '@/api/api'
 import DayHeader from '@/components/DayHeader.vue'
 import TaskList from '@/components/TaskList.vue'
 import { compareDates } from '@/helpers'
+import type { TaskResponse } from '@/models/tasks'
 import router from '@/router'
+import { useCurrentDateStore } from '@/stores/currentDateStore'
+import { storeToRefs } from 'pinia'
 import { createApp, ref, reactive, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 const week_days = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
 
@@ -12,27 +15,9 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const dateParam = computed(() => String(route.params.date))
 
-const date = ref(new Date());
-
-function getDateFromParam() {
-    let param = String(route.params.date)
-    const d = new Date(); // today
-    if (param.includes('tomorrow')) {
-        d.setDate(d.getDate() + 1);
-    } else if (param.includes('yesterday')) {
-        d.setDate(d.getDate() - 1);
-    } else if (!param.includes('today')) {
-        d.setTime(Date.parse(param))
-    }
-    date.value = d
-}
-
-watch(() => route.params.date, () => getDateFromParam())
-
-
-onMounted(async () => {
-    getDateFromParam()
-})
+const currentDateStore = useCurrentDateStore()
+const dateStore = storeToRefs(currentDateStore)
+const date = dateStore.date
 
 function goToTimetable() {
     router.push({ name: 'timetable', params: { date: date.value.toLocaleDateString('sv-SE') } })
@@ -62,14 +47,49 @@ function goToDay(dir: number) { // dir is +/-1
     if (compareDates(d, currDate) === -1) {
         new_date_string = "yesterday"
     }
-
+    console.log("goToDay", d, currDate, compareDates(d, currDate), new_date_string)
     router.push({ name: 'tasks', params: { date: new_date_string } })
 }
+
+let tasks = reactive<TaskResponse[]>([])
+
+async function fetchTasks() {
+    let res = await getTasksForDate(currentDateStore.isoDate)
+    for (let i = 0; i < res.length; i++) {
+        if (res[i].color === "null") {
+            res[i].color = "777"
+        }
+    }
+    console.log(res)
+    tasks.splice(0)
+    Object.assign(tasks, res)
+}
+
+watch(() => currentDateStore.isoDate, () => fetchTasks())
+
+function openModal(taskID: number) {
+    console.log("TODO: open TaskModal with ID: ", taskID)
+}
+
+async function setTaskDone(taskId: number) {
+    console.log("TODO: set Task done with ID: ", taskId)
+    await endTaskAPI(String(taskId)) // TODO: this is not the right function (stops task session, not only sets to done)
+    await fetchTasks()
+}
+
+
+onMounted(() => {
+    fetchTasks()
+})
+
 </script>
 
 <template>
     <DayHeader :date="date" @prevDay="prevDay" , @nextDay="nextDay" @timetable="goToTimetable"></DayHeader>
-    <TaskList></TaskList>
+    <TaskList title="Open Tasks" :tasks="tasks.filter((task) => task.done_timestamp === null)" @openModal="openModal"
+        @setTaskDone="setTaskDone"></TaskList>
+    <TaskList title="Done Tasks" :tasks="tasks.filter((task) => task.done_timestamp !== null)" @openModal="openModal"
+        @setTaskDone="setTaskDone"></TaskList>
 </template>
 
 <style></style>
