@@ -72,7 +72,7 @@ pub async fn get_tasks_by_date(
             description: task.description,
             due_date: task.due,
             due_time: task.due_time,
-            color: task.color.unwrap_or("#null".to_string()),
+            color: task.color.unwrap_or("null".to_string()),
             category: task.category,
             location: task.location,
             priority: task.priority,
