@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import "./css/J_Tasks.css";
+import "./css/taskModal.css";
 
 import App from './App.vue'
 import router from './router'

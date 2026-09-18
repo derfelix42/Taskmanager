@@ -11,5 +11,8 @@ import { RouterView } from 'vue-router'
 </template>
 
 <style>
+* {
+    font-family: monospace;
 
+}
 </style>

@@ -1,233 +1,146 @@
 <script setup lang="ts">
-if (typeof main === 'undefined') {
-  let main = document.querySelector('main')
+import { createTask, getCategoryColors, startTimerOnTask } from '@/api/api'
+import { getCategorySuggestionByName } from '@/helpers'
+import { useCurrentDateStore } from '@/stores/currentDate'
+import { onMounted, ref, useTemplateRef, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const emit = defineEmits(['close'])
+
+const currentDateStore = useCurrentDateStore()
+
+let header = useTemplateRef("header")
+const titleElement = useTemplateRef<HTMLInputElement>('titleElement')
+
+let title = ref("")
+let description = ref("")
+let location = ref("")
+let category = ref(0)
+let due_date = ref("")
+let due_time = ref("")
+let duration = ref("")
+let priority = ref(5)
+
+const categories = ref<any[]>([])
+let priorities: { value: number, text: string }[] = [];
+
+function setHeaderColor() {
+  let id = category.value
+  let color = "#" + categories.value.find(cat => cat.ID === id)?.color
+  if (color === "#null") {
+    color = "#777"
+  }
+  header.value?.style.setProperty('background-color', color)
 }
-if (typeof sidebar === 'undefined') {
-  let sidebar = document.getElementById('sidebar')
+
+function fillPrioritySelector() {
+  priorities = []
+  for (let i = 10; i >= 1; i--) {
+    let line = { value: i, text: "" + i };
+    if (i === 1) {
+      line.text = "1 - Niedrig"
+    } if (i === 5) {
+      line.text = "5 - Normal"
+    } if (i === 10) {
+      line.text = "10 - Hoch"
+    }
+    priorities.push(line)
+  }
 }
 
-let modal
-
-
-class addNewTaskModal {
-  constructor() {
-    this.is_open = true
-    this.openNewTaskModalBtn = document.getElementById('openNewTaskModal')
-
-    this.modal = document.getElementById('addNewTaskModal')
-
-    this.title = this.modal.querySelector('.settings').querySelector('input[name="title"]')
-    this.description = this.modal.querySelector('.settings').querySelector('textarea[name=description]')
-    this.location = this.modal.querySelector('.settings').querySelector('input[name="location"]')
-
-    this.category = this.modal.querySelector('select[name=category]')
-    this.due_date = this.modal.querySelector('input[name=due-date]')
-    this.due_time = this.modal.querySelector('input[name=due-time]')
-    this.duration = this.modal.querySelector('input[name=duration]')
-    this.priority = this.modal.querySelector('select[name=priority]')
-
-    this.save_button = this.modal.querySelector('.save').querySelector('button[name=save]')
-    this.save_and_start_button = this.modal.querySelector('.save').querySelector('button[name=save-and-start]')
-
-    this.closeButton = document.getElementById('closeAddNewTaskModal')
-
-    this.registerEventListeners()
-
-    if (config.debug)
-      console.log(this.modal.querySelector('input[name=due-date]'))
-  }
-
-  registerEventListeners = () => {
-    this.save_and_start_button.addEventListener("click", () => {
-      this.save(true)
-    })
-
-    this.save_button.addEventListener("click", () => {
-      this.save()
-    })
-
-    this.openNewTaskModalBtn.addEventListener("click", () => {
-      this.open()
-    })
-
-    this.category.addEventListener("change", () => {
-      this.setHeaderColor()
-    })
-
-    this.closeButton.addEventListener("click", () => {
-      this.close()
-    })
-
-    this.title.addEventListener("keypress", (e) => {
-      if (e.key === 'Enter') {
-        this.save()
-      } else {
-        let cat = getCategorySuggestionByName(this.title.value + e.key)
-        console.log("Auto-Cat-Suggestion:", cat)
-        if (this.category.value !== cat) {
-          this.category.value = cat
-          this.setHeaderColor()
-        }
-      }
-    })
-
-    document.addEventListener("keydown", async function (e) {
-      if (e.key === 'n' && e.altKey) {
-        console.log("whoop!", e.key, e)
-        e.preventDefault();
-        // await this.open()
-      }
-
-      if (e.key === "Escape") {
-        modal.close()
-        e.preventDefault();
-        window.location.reload(true)
-      }
-    });
-
-    document.addEventListener("keydown", async (e) => {
-      if (e.ctrlKey && e.keyCode === 13) {
-        console.log("ctrl+enter")
-        if (this.is_open) {
-          console.log("is open!")
-          await this.save(true)
-        }
-      }
-    });
-
-
-  }
-
-  open = () => {
-    this.is_open = true
-    this.modal.classList.remove('disabled')
-    main.classList.add('blur-out')
-    sidebar.classList.add('blur-out')
-    this.fillCategorySelector()
-    this.setHeaderColor()
-    this.fillPrioritySelector()
-
-    this.due_date.value = (new Date().toISOString().substring(0, 10))
-    if (php_date && php_date !== "" && new Date(php_date) > new Date()) {
-      this.due_date.value = (new Date(php_date).toISOString().substring(0, 10))
-    }
-
-    this.title.focus()
-  }
-
-  save = async (autostart = false) => {
-    const title = this.title.value
-    const description = this.description.value
-    const location = this.location.value
-    const due_date = this.due_date.value
-    const due_time = this.due_time.value
-    const duration = this.duration.value
-    const priority = this.priority.value
-    const category = this.category.value
-
-    const res = await createTask({ title, description, due_date, due_time, duration, priority, category, location })
-    const new_id = res.result.ID
-
-    if (autostart) {
-      await startTimerOnTask(new_id)
-    }
-
-    this.reset()
-    this.close()
-  }
-
-  reset = () => {
-    this.due_time.value = ""
-    this.duration.value = ""
-  }
-
-  close = () => {
-    this.is_open = false;
-    this.modal.classList.add('disabled')
-    main.classList.remove('blur-out')
-    sidebar.classList.remove('blur-out')
-
-    window.location.reload(true)
-  }
-
-  setHeaderColor = () => {
-    let color = "#" + categoryColors.find(cat => cat.ID === parseInt(this.category.value)).color
-    if (color === "#null") {
-      color = "#777"
-    }
-    this.modal.querySelector('.header').style.backgroundColor = color
-  }
-
-  fillCategorySelector = () => {
-    for (let cat of categoryColors) {
-      let opt = document.createElement('option')
-      opt.value = cat.ID
-      opt.innerText = cat.ID + " - " + cat.Bezeichnung
-      this.category.appendChild(opt)
-    }
-  }
-
-  fillPrioritySelector = () => {
-    if (this.priority.childNodes.length === 0) {
-      for (let i = 10; i >= 1; i--) {
-        let opt = document.createElement('option')
-        opt.value = i
-        opt.innerText = i
-        if (i === 1) {
-          opt.innerText = "1 - Niedrig"
-        } if (i === 5) {
-          opt.innerText = "5 - Normal"
-          opt.selected = true
-        } if (i === 10) {
-          opt.innerText = "10 - Hoch"
-        }
-        this.priority.appendChild(opt)
-      }
-    }
+function autoSuggestCategory() {
+  let cat = getCategorySuggestionByName(title.value)
+  console.log("Auto-Cat-Suggestion:", cat)
+  if (category.value !== cat) {
+    category.value = cat
   }
 
 }
 
+async function save(autostart: boolean = false) {
+  let new_task = {
+    title: title.value,
+    description: description.value,
+    due_date: due_date.value,
+    due_time: due_time.value,
+    duration: duration.value,
+    priority: priority.value,
+    category: category.value,
+    location: location.value
+  }
 
-async function addNewTaskModal_init() {
-  modal = new addNewTaskModal()
+  const res = await createTask(new_task)
+  const new_id = res.result.ID
+
+  if (autostart) {
+    await startTimerOnTask(new_id)
+  }
+
+  emit('close')
 }
 
-addNewTaskModal_init()
+
+watch(() => title.value, () => autoSuggestCategory())
+watch(() => category.value, () => setHeaderColor())
+
+onMounted(async () => {
+  categories.value = await getCategoryColors()
+  setHeaderColor()
+  fillPrioritySelector()
+  due_date.value = currentDateStore.isoDate
+  titleElement.value?.focus()
+})
 
 </script>
 
 <template>
-  <div id="addNewTaskModal" class="taskModal disabled">
+  <div id="addNewTaskModal" class="taskModal">
     <div class="container">
-      <div class="header">
+      <div class="header" ref="header">
         Neue Aufgabe erstellen
-        <p id="closeAddNewTaskModal" class="float-right">[X]</p>
+        <p id="closeAddNewTaskModal" class="float-right" @click="$emit('close')">[X]</p>
       </div>
-      <div class="main">
+      <div class="content">
         <div class="settings flex-one">
-          <input class="bigInput" type="text" name="title" placeholder="Title" required>
-          <textarea class="flex-one" name="description" rows="4" cols="80" placeholder="Description"></textarea>
-          <input class="smallInput" type="text" name="location" placeholder="Location">
+          <input class="bigInput" type="text" ref="titleElement" placeholder="Title" v-model="title"
+            @keyup.enter="save(false)" @keyup.ctrl.enter="save(true)" required>
+          <textarea class="flex-one" v-model="description" rows="4" cols="80" placeholder="Description"></textarea>
+          <input class="smallInput" type="text" v-model="location" placeholder="Location">
         </div>
         <hr>
         <div class="settings">
-          <label>Category: <select class="mobilBigInput" name="category"></select></label>
-          <label>Priority: <select class="mobilBigInput" name="priority"></select></label>
+          <label>Category: <select class="mobilBigInput" v-model="category">
+              <option :value="category.ID" v-for="category in categories" :key="category.id">{{ category.ID }} -
+                {{ category.Bezeichnung }}</option>
+            </select></label>
+          <label>Priority: <select class="mobilBigInput" v-model="priority">
+              <option :value="prior.value" v-for="prior in priorities">{{ prior.text }}</option>
+            </select></label>
         </div>
         <hr>
         <div class="settings">
-          <label>Deadline: <input class="margin-left" type="date" name="due-date"><input class="margin-left" type="time"
-              name="due-time"></label>
-          <label>Duration: <input class="margin-left" type="time" name="duration"></label>
+          <label>Deadline: <input class="margin-left" type="date" v-model="due_date"><input class="margin-left"
+              type="time" name="due-time"></label>
+          <label>Duration: <input class="margin-left" type="time" v-model="duration"></label>
         </div>
         <hr>
         <div class="save">
-          <button type="button" name="save">Speichern</button>
-          <button type="button" name="save-and-start">Speichern und sofort starten [Strg+Enter]</button>
+          <button type="button" name="save" @click="save()">Speichern</button>
+          <button type="button" name="save-and-start" @click="save(true)">Speichern und sofort starten
+            [Strg+Enter]</button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
+<style scoped>
+.taskModal .container {
+  position: relative;
+  background-color: #333 !important;
+  border-radius: 1em;
+  z-index: 10;
+}
+</style>
