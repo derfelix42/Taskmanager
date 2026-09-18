@@ -45,13 +45,14 @@ pub struct task_by_date {
     #[serde(rename = "DOW")]
     pub dow: i64,
     pub duration: Option<chrono::NaiveTime>,
-    pub duration2: Option<f64>,
+    pub duration_in_hours: Option<f64>,
     #[serde(rename = "daysLeft")]
     pub days_left: i64,
     pub priority: i64,
     pub difficulty: i64,
     pub color: Option<String>,
     pub time_spent: i64,
+    pub active_start_time: Option<chrono::NaiveDateTime>,
     pub category: i64,
     pub location: String,
 }

@@ -72,22 +72,29 @@ impl Db {
     ) -> Result<Vec<task_by_date>, sqlx::Error> {
         let query = "SELECT tasks.ID, tasks.done, Name, description, due, due_time,
                             DAYOFWEEK(due) AS dow, duration,
-                            CAST(HOUR(duration) + (MINUTE(duration) / 60) AS DOUBLE) AS duration2,
+                            CAST(HOUR(duration) + (MINUTE(duration) / 60) AS DOUBLE) AS duration_in_hours,
                             TIMESTAMPDIFF(DAY, NOW(), due) AS days_left,
                             IF(CURRENT_DATE > due, 11, priority) AS priority,
-                            difficulty, color, CAST(IFNULL(time_spent_new, 0) AS SIGNED) AS time_spent,
+                            difficulty, color, CAST(IFNULL(completed_time_spent, 0) AS SIGNED) AS time_spent, active_start_time,
                             category, location
                      FROM tasks
                      JOIN category ON tasks.category = category.ID
                      LEFT JOIN (
                          SELECT taskID,
-                                SUM(TIMESTAMPDIFF(SECOND, start_time,
-                                    IFNULL(stop_time, CURRENT_TIMESTAMP))) AS time_spent_new
+                                SUM(TIMESTAMPDIFF(SECOND, start_time,stop_time)
+                                    ) AS completed_time_spent
                          FROM task_history
+						 WHERE stop_time IS NOT NULL
+                         GROUP BY taskID
+                     ) AS c ON tasks.ID = c.taskID
+					LEFT JOIN (
+                         SELECT taskID,start_time AS active_start_time
+                         FROM task_history
+						 WHERE stop_time IS NULL
                          GROUP BY taskID
                      ) AS b ON tasks.ID = b.taskID
                      WHERE deleted = 0 AND due = ?
-                     ORDER BY due ASC, due_time ASC, priority DESC, category";
+                     ORDER BY due ASC, due_time ASC, priority DESC, category;";
 
         sqlx::query_as(query).bind(date).fetch_all(&self.pool).await
     }

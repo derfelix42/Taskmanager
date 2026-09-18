@@ -25,21 +25,70 @@ pub struct TaskNameOnly {
     name: String,
 }
 
+#[derive(Serialize)]
+pub struct TaskResponse {
+    pub id: i64,
+    pub done_timestamp: Option<chrono::DateTime<chrono::Utc>>,
+    pub title: String,
+    pub description: String,
+    pub due_date: chrono::NaiveDate,
+    pub due_time: Option<chrono::NaiveTime>,
+    pub day_of_week: i64,
+    pub duration: Option<chrono::NaiveTime>,
+    pub duration_in_hours: Option<f64>,
+    pub priority: i64,
+    pub difficulty: i64,
+    pub color: String,
+    pub category: i64,
+    pub location: String,
+    pub stats: TaskStats,
+}
+
+#[derive(Serialize)]
+pub struct TaskStats {
+    pub days_left: i64,
+    pub time_spent: i64,
+    pub active_start_time: Option<chrono::NaiveDateTime>,
+}
+
 // Get Tasks by Date:
 // GET on /api/v2/task/by_date/:date[YYYY-MM-DD]
 // runs SQL query and returns data as JSON
 pub async fn get_tasks_by_date(
     State(database): State<Db>,
     Path(date): Path<NaiveDate>,
-) -> Result<Json<Vec<crate::models::task_by_date>>, axum::http::StatusCode> {
-    database
-        .get_tasks_by_date(date)
-        .await
-        .map(Json)
-        .map_err(|error| {
-            tracing::error!(%error, "Could not load tasks by date");
-            axum::http::StatusCode::INTERNAL_SERVER_ERROR
+) -> Result<Json<Vec<TaskResponse>>, axum::http::StatusCode> {
+    let tasks = database.get_tasks_by_date(date).await.map_err(|error| {
+        tracing::error!(%error, "Could not load tasks by date");
+        axum::http::StatusCode::INTERNAL_SERVER_ERROR
+    })?;
+
+    let response = tasks
+        .into_iter()
+        .map(|task| TaskResponse {
+            id: task.ID,
+            done_timestamp: task.done,
+            title: task.Name,
+            description: task.description,
+            due_date: task.due,
+            due_time: task.due_time,
+            color: task.color.unwrap_or("#null".to_string()),
+            category: task.category,
+            location: task.location,
+            priority: task.priority,
+            difficulty: task.difficulty,
+            day_of_week: task.dow,
+            duration: task.duration,
+            duration_in_hours: task.duration_in_hours,
+            stats: TaskStats {
+                days_left: task.days_left,
+                time_spent: task.time_spent,
+                active_start_time: task.active_start_time,
+            },
         })
+        .collect();
+
+    Ok(Json(response))
 }
 
 pub fn get_tasks_by_category() {}
