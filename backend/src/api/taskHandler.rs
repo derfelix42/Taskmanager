@@ -1,9 +1,12 @@
-use std::arch::x86_64::_SIDD_NEGATIVE_POLARITY;
-
-use axum::{extract::State, routing::MethodRouter, Json};
+use axum::{
+    extract::{Path, State},
+    routing::get,
+    Json, Router,
+};
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
-use crate::{database::Db, models::category};
+use crate::database::Db;
 
 #[derive(Serialize)]
 pub struct SimpleResponse {
@@ -22,8 +25,27 @@ pub struct TaskNameOnly {
     name: String,
 }
 
-pub fn task_router() -> MethodRouter<Db> {
-    MethodRouter::new()
+// Get Tasks by Date:
+// GET on /api/v2/task/by_date/:date[YYYY-MM-DD]
+// runs SQL query and returns data as JSON
+pub async fn get_tasks_by_date(
+    State(database): State<Db>,
+    Path(date): Path<NaiveDate>,
+) -> Result<Json<Vec<crate::models::task_by_date>>, axum::http::StatusCode> {
+    database
+        .get_tasks_by_date(date)
+        .await
+        .map(Json)
+        .map_err(|error| {
+            tracing::error!(%error, "Could not load tasks by date");
+            axum::http::StatusCode::INTERNAL_SERVER_ERROR
+        })
+}
+
+pub fn get_tasks_by_category() {}
+
+pub fn task_router() -> Router<Db> {
+    Router::new().route("/by_date/{date}", get(get_tasks_by_date))
     // .get(get_categories)
     // .post(start_task_by_name)
     // .get(get_current_task)

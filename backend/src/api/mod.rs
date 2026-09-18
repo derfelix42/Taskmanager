@@ -27,7 +27,7 @@ pub fn get_api_router(database: &Db) -> Router {
             }),
         )
         .route("/category", category_router())
-        .route("/task", task_router())
+        .nest("/task", task_router())
         .nest("/weather", weather_router())
         .with_state(database.clone())
 }

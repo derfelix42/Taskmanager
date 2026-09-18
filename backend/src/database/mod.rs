@@ -1,6 +1,6 @@
 use sqlx::{query, MySql, MySqlPool, Pool};
 
-use crate::models::{category, task};
+use crate::models::{category, task, task_by_date};
 
 #[derive(Clone, Debug)]
 pub struct Db {
@@ -64,6 +64,32 @@ impl Db {
             .fetch_all(&self.pool)
             .await?;
         Ok(rows)
+    }
+
+    pub async fn get_tasks_by_date(
+        &self,
+        date: chrono::NaiveDate,
+    ) -> Result<Vec<task_by_date>, sqlx::Error> {
+        let query = "SELECT tasks.ID, tasks.done, Name, description, due, due_time,
+                            DAYOFWEEK(due) AS dow, duration,
+                            CAST(HOUR(duration) + (MINUTE(duration) / 60) AS DOUBLE) AS duration2,
+                            TIMESTAMPDIFF(DAY, NOW(), due) AS days_left,
+                            IF(CURRENT_DATE > due, 11, priority) AS priority,
+                            difficulty, color, CAST(IFNULL(time_spent_new, 0) AS SIGNED) AS time_spent,
+                            category, location
+                     FROM tasks
+                     JOIN category ON tasks.category = category.ID
+                     LEFT JOIN (
+                         SELECT taskID,
+                                SUM(TIMESTAMPDIFF(SECOND, start_time,
+                                    IFNULL(stop_time, CURRENT_TIMESTAMP))) AS time_spent_new
+                         FROM task_history
+                         GROUP BY taskID
+                     ) AS b ON tasks.ID = b.taskID
+                     WHERE deleted = 0 AND due = ?
+                     ORDER BY due ASC, due_time ASC, priority DESC, category";
+
+        sqlx::query_as(query).bind(date).fetch_all(&self.pool).await
     }
 
     pub async fn start_task_by_name(&self, name: String, category: i64) -> Result<(), sqlx::Error> {
