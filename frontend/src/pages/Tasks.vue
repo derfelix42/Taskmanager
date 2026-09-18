@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getSunTimes } from '@/api/api'
 import DayHeader from '@/components/DayHeader.vue'
+import TaskList from '@/components/TaskList.vue'
 import { compareDates } from '@/helpers'
 import router from '@/router'
 import { createApp, ref, reactive, computed, onMounted, watch, onBeforeUnmount } from 'vue'
@@ -16,17 +17,17 @@ const date = ref(new Date());
 function getDateFromParam() {
     let param = String(route.params.date)
     const d = new Date(); // today
-    if (param.includes('tomorrow')){
+    if (param.includes('tomorrow')) {
         d.setDate(d.getDate() + 1);
     } else if (param.includes('yesterday')) {
-         d.setDate(d.getDate() - 1);
+        d.setDate(d.getDate() - 1);
     } else if (!param.includes('today')) {
         d.setTime(Date.parse(param))
     }
     date.value = d
 }
 
-watch(() => route.params.date, () => getDateFromParam() )
+watch(() => route.params.date, () => getDateFromParam())
 
 
 onMounted(async () => {
@@ -67,8 +68,8 @@ function goToDay(dir: number) { // dir is +/-1
 </script>
 
 <template>
-    <DayHeader :date="date" @prevDay="prevDay", @nextDay="nextDay" @timetable="goToTimetable"></DayHeader>
+    <DayHeader :date="date" @prevDay="prevDay" , @nextDay="nextDay" @timetable="goToTimetable"></DayHeader>
+    <TaskList></TaskList>
 </template>
 
-<style>
-</style>
+<style></style>
