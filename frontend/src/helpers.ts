@@ -10,7 +10,7 @@ export function compareDates(date1: Date, date2: Date): number {
     const date1Utc = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
     const date2Utc = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
 
-    return Math.abs(date1Utc - date2Utc) / 86400000;
+    return (date1Utc - date2Utc) / 86400000;
 }
 
 export function getCategorySuggestionByName(name: string) {
