@@ -1,31 +1,35 @@
 <script lang="ts" setup>
+import { getTasksForDate } from '@/api/api';
+import { secondsToTimestamp } from '@/helpers';
+import { TaskResponse } from '@/models/tasks';
+import { onMounted, reactive } from 'vue';
+
 
 function openModal(taskID: number) {
     console.log("TODO: open TaskModal with ID: ", taskID)
 }
 
-const tasks = [
-    {
-        id: 10,
-        title: "test Task",
-        description: "Test Description",
-        location: "Location String",
-        color: "#404",
-        difficulty: 3,
-        priority: 10,
-        due_time: "DueTime",
-        duration: "duration",
-        stats: {
-            time_spent: "0:23",
-            days_left: "0",
-        },
-        set_done: () => { console.log("TODO: set task to done") },
+function setTaskDone(taskID: number) {
+    console.log("TODO: set Task done with ID: ", taskID)
+}
+
+let tasks = reactive<TaskResponse[]>([])
+
+onMounted(async () => {
+    let res = await getTasksForDate("2026-09-18")
+    for (let i = 0; i < res.length; i++) {
+        if (res[i].color === "#null") {
+            res[i].color = "#777"
+        }
     }
-]
+    console.log(res)
+    Object.assign(tasks, res)
+})
 
 </script>
 
 <template>
+    <!-- {{ tasks }} -->
     <table>
         <!-- Header -->
         <tr date>
@@ -44,7 +48,7 @@ const tasks = [
             <td @click='openModal(task.id)' class='clickable'>
                 <div class='categoryIndicator' :style="{ '--color': task.color }"></div>{{ task.title }}
                 {{ task.priority === 10 ? "❗" : "" }}
-                {{ task.stats.time_spent !== "" ? "(" + task.stats.time_spent + ")" : "" }}
+                {{ task.stats.time_spent !== 0 ? "(" + secondsToTimestamp(task.stats.time_spent, false) + ")" : "" }}
                 {{ task.difficulty > 1 ? "[" + task.difficulty + "]" : "" }}
             </td>
             <td @click='openModal(task.id)' class='clickable'>
@@ -56,7 +60,7 @@ const tasks = [
             <td>{{ task.location }}</td>
             <td>{{ task.due_time }}</td>
             <td>{{ task.duration }}</td>
-            <td @click="task.set_done" class="clickable">&#10004;</td>
+            <td @click="setTaskDone(task.id)" class="clickable">&#10004;</td>
         </tr>
 
 

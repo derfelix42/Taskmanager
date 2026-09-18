@@ -11,9 +11,9 @@ export async function getCategoryColors() {
  * Tasks
  */
 export async function getTasksForDate(date: string) {
-    const res = await fetch("/api/getTasks.php?date=" + date);
+    const res = await fetch("/api/v2/task/by_date/" + date);
     let json = await res.json()
-    console.log("getTasks for date", date, json)
+    // console.log("getTasks for date", date, json)
     return json
 
 }

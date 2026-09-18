@@ -53,3 +53,9 @@ export function getCategorySuggestionByName(name: string) {
     return 0
 }
 
+export function secondsToTimestamp(seconds: number, displaySeconds: boolean = true) {
+    let hours = Math.floor(seconds / 3600) + ""
+    let mins = Math.floor(seconds / 60) % 60 + ""
+    let secs = seconds % 60 + ""
+    return padZero(hours, 2) + ":" + padZero(mins, 2) + ((displaySeconds) ? ":" + padZero(secs, 2) : "")
+}
