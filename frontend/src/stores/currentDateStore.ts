@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 export const useCurrentDateStore = defineStore('currentDate', () => {
@@ -12,6 +12,7 @@ export const useCurrentDateStore = defineStore('currentDate', () => {
 
     function getDateFromParam() {
         let param = String(route.params.date)
+        console.log("date param has changed", param)
         const d = new Date(); // today
         if (param.includes('tomorrow')) {
             d.setDate(d.getDate() + 1);
@@ -23,6 +24,9 @@ export const useCurrentDateStore = defineStore('currentDate', () => {
         date.value = d
     }
 
+    watch(() => route.params.date, () => getDateFromParam())
+
+    getDateFromParam()
 
     return { date, isoDate }
 })
