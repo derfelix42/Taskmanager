@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { createTask, getCategoryColors, startTimerOnTask } from '@/api/api'
 import { getCategorySuggestionByName } from '@/helpers'
-import { useCurrentDateStore } from '@/stores/currentDate'
+import { useCurrentDateStore } from '@/stores/currentDateStore'
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
