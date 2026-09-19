@@ -17,7 +17,10 @@ const router = createRouter({
       name: 'login',
       component: Login,
     },
-
+    {
+      path: '/',
+      redirect: '/tasks/today',
+    },
     {
       path: '/',
       component: MainLayout,
