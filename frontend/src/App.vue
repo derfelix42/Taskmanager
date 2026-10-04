@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, provide, ref } from 'vue'
 import { RouterView } from 'vue-router'
 
 console.log("Starting connection to WebSocket Server")
 let connection = new WebSocket("wss://localhost/websocket")
 const last_msg = ref("")
+provide('websocket-event', last_msg)
 const show_popup = ref(false)
 let hide_popup_timeout: ReturnType<typeof setTimeout> | undefined
 

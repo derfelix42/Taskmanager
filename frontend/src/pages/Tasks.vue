@@ -7,7 +7,7 @@ import type { TaskResponse } from '@/models/tasks'
 import router from '@/router'
 import { useCurrentDateStore } from '@/stores/currentDateStore'
 import { storeToRefs } from 'pinia'
-import { createApp, ref, reactive, computed, onMounted, watch, onBeforeUnmount } from 'vue'
+import { createApp, inject, ref, reactive, computed, onMounted, watch, type Ref } from 'vue'
 const week_days = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
 
 import { useRoute } from 'vue-router'
@@ -66,6 +66,14 @@ async function fetchTasks() {
 }
 
 watch(() => currentDateStore.isoDate, () => fetchTasks())
+
+const websocketEvent = inject<Ref<string>>('websocket-event', ref(''))
+
+watch(websocketEvent, (event) => {
+    if (event === 'newTaskCreated') {
+        fetchTasks()
+    }
+})
 
 function openModal(taskID: number) {
     console.log("TODO: open TaskModal with ID: ", taskID)

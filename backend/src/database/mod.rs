@@ -110,4 +110,34 @@ impl Db {
         let query = "";
         Ok(())
     }
+
+    pub async fn create_task(
+        &self,
+        name: &str,
+        description: &str,
+        due: chrono::NaiveDate,
+        due_time: Option<chrono::NaiveTime>,
+        duration: Option<chrono::NaiveTime>,
+        priority: i64,
+        category: i64,
+        location: &str,
+    ) -> Result<i64, sqlx::Error> {
+        let result = sqlx::query(
+            "INSERT INTO tasks
+                (Name, description, due, due_time, duration, priority, category, location)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        )
+        .bind(name)
+        .bind(description)
+        .bind(due)
+        .bind(due_time)
+        .bind(duration)
+        .bind(priority)
+        .bind(category)
+        .bind(location)
+        .execute(&self.pool)
+        .await?;
+
+        Ok(result.last_insert_id() as i64)
+    }
 }

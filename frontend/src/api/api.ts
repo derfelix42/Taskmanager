@@ -77,25 +77,15 @@ export async function createTask(task: { title: any; due_date: any; location: an
         due_time: task.due_time,
     }
 
-    const url = "/api/createTask.php"
+    const url = "/api/v2/task/create"
     const methods = {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
     }
 
-    if (true) console.log(url, methods)
-
-    let res = await fetch(url, methods)
-    let text = await res.text()
-
-    if (true) console.log(text)
-
-    try {
-        const json = JSON.parse(text);
-        return json;
-    } catch (e) {
-        return {};
-    }
+    const res = await fetch(url, methods)
+    return await res.json()
 }
 
 export async function endTaskAPI(ID: string) {

@@ -1,9 +1,10 @@
 use axum::{
     extract::{Path, State},
-    routing::get,
+    http::StatusCode,
+    routing::{get, post},
     Extension, Json, Router,
 };
-use chrono::NaiveDate;
+use chrono::{NaiveDate, NaiveTime};
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast::Sender;
 
@@ -24,6 +25,30 @@ pub struct StartTask {
 #[derive(Deserialize)]
 pub struct TaskNameOnly {
     name: String,
+}
+
+#[derive(Deserialize)]
+pub struct CreateTaskRequest {
+    title: String,
+    description: String,
+    due: NaiveDate,
+    due_time: String,
+    duration: String,
+    priority: i64,
+    category: i64,
+    location: String,
+}
+
+#[derive(Serialize)]
+pub struct CreatedTask {
+    #[serde(rename = "ID")]
+    pub id: i64,
+}
+
+#[derive(Serialize)]
+pub struct CreateTaskResponse {
+    pub status: &'static str,
+    pub result: CreatedTask,
 }
 
 #[derive(Serialize)]
@@ -99,12 +124,56 @@ pub fn get_tasks_by_category() {}
 
 pub fn task_router() -> Router<Db> {
     Router::new()
+        .route("/create", post(create_task))
         .route("/by_date/{date}", get(get_tasks_by_date))
         // .get(get_categories)
         // .post(start_task_by_name)
         .route("/current_task", get(get_current_task))
     // .get(stop_current_task_by_name)
     // .delete(delete_category)
+}
+
+pub async fn create_task(
+    State(database): State<Db>,
+    Extension(events): Extension<Sender<String>>,
+    Json(payload): Json<CreateTaskRequest>,
+) -> Result<Json<CreateTaskResponse>, StatusCode> {
+    let due_time = parse_optional_time(&payload.due_time)?;
+    let duration = parse_optional_time(&payload.duration)?;
+    let id = database
+        .create_task(
+            &payload.title,
+            &payload.description,
+            payload.due,
+            due_time,
+            duration,
+            payload.priority,
+            payload.category,
+            &payload.location,
+        )
+        .await
+        .map_err(|error| {
+            tracing::error!(%error, "Could not create task");
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
+
+    let _ = events.send("newTaskCreated".to_string());
+
+    Ok(Json(CreateTaskResponse {
+        status: "created",
+        result: CreatedTask { id },
+    }))
+}
+
+fn parse_optional_time(value: &str) -> Result<Option<NaiveTime>, StatusCode> {
+    if value.is_empty() {
+        return Ok(None);
+    }
+
+    NaiveTime::parse_from_str(value, "%H:%M")
+        .or_else(|_| NaiveTime::parse_from_str(value, "%H:%M:%S"))
+        .map(Some)
+        .map_err(|_| StatusCode::BAD_REQUEST)
 }
 
 pub async fn start_task_by_name(
