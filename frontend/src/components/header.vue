@@ -39,7 +39,7 @@ const getCurrentTask = async () => {
   if (currentTaskID === -1) {
     currentTask.value = null
     startStopBtn.value = ''
-  } else if (currentTask.value?.ID !== currentTaskID) {
+  } else if (parseInt(currentTask.value?.ID) !== currentTaskID) {
     currentTask.value = await getTaskData(currentTaskID)
     currentTask.value.lastUpdate = new Date()
     startStopBtn.value = 'STOP'
@@ -78,24 +78,19 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-<header id="header">
+  <header id="header">
     <p class="title" @click="openTaskModal">{{ title }}</p>
-  
-    <button
-      v-if="startStopBtn"
-      type="button"
-      name="startStop"
-      @click="apiStopTaskTimer"
-    >
+
+    <button v-if="startStopBtn" type="button" name="startStop" @click="apiStopTaskTimer">
       {{ startStopBtn }}
     </button>
-  
+
     <div class="time">{{ timer }}</div>
-  
+
     <button type="button" name="endTask" @click="apiEndTask">
       BEENDEN
     </button>
-  
+
     <div class="times">
       <!--
       <p class="startTime">start</p>
@@ -103,7 +98,7 @@ onBeforeUnmount(() => {
       -->
     </div>
 
-</header>
+  </header>
 </template>
 
 <style>
@@ -146,8 +141,7 @@ header button {
   background-color: RED;
 }
 
-header button[name="startStop"] {
-}
+header button[name="startStop"] {}
 
 header button[name="endTask"] {
   background-color: GREEN;
@@ -168,5 +162,4 @@ header .endTime {
   text-align: right;
   padding-right: 0.5em;
 }
-
 </style>

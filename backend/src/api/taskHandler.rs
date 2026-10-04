@@ -98,10 +98,11 @@ pub async fn get_tasks_by_date(
 pub fn get_tasks_by_category() {}
 
 pub fn task_router() -> Router<Db> {
-    Router::new().route("/by_date/{date}", get(get_tasks_by_date))
-    // .get(get_categories)
-    // .post(start_task_by_name)
-    // .get(get_current_task)
+    Router::new()
+        .route("/by_date/{date}", get(get_tasks_by_date))
+        // .get(get_categories)
+        // .post(start_task_by_name)
+        .route("/current_task", get(get_current_task))
     // .get(stop_current_task_by_name)
     // .delete(delete_category)
 }
@@ -120,9 +121,12 @@ pub async fn start_task_by_name(
 
 pub async fn get_current_task(
     State(database): State<Db>,
-    Json(payload): Json<TaskNameOnly>,
-) -> Json<bool> {
-    Json(false)
+    // Json(payload): Json<TaskNameOnly>,
+) -> Json<i32> {
+    match database.get_active_task().await {
+        Ok(task) => Json(task.unwrap_or(-1)),
+        Err(_) => Json(-1),
+    }
 }
 
 pub async fn stop_current_task_by_name(

@@ -137,11 +137,12 @@ export async function timeSpentOnTaskID(ID: string) {
 }
 
 export async function getCurrentlyActiveTask() {
-    const res = await fetch("/api/taskHistory.php?activeTask=1");
+    // const res = await fetch("/api/taskHistory.php?activeTask=1");
+    const res = await fetch("/api/v2/task/current_task");
     // console.log(await res.text())
     let json = await res.json()
     // console.log(json)
-    return json.data.taskID
+    return json
 }
 
 export async function getCurrentDayTimeSpent() {

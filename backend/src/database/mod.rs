@@ -99,6 +99,13 @@ impl Db {
         sqlx::query_as(query).bind(date).fetch_all(&self.pool).await
     }
 
+    pub async fn get_active_task(&self) -> Result<std::option::Option<i32>, sqlx::Error> {
+        let query = "SELECT taskID FROM `task_history` WHERE stop_time IS NULL ORDER BY start_time DESC LIMIT 1";
+        sqlx::query_scalar::<_, i32>(query)
+            .fetch_optional(&self.pool)
+            .await
+    }
+
     pub async fn start_task_by_name(&self, name: String, category: i64) -> Result<(), sqlx::Error> {
         let query = "";
         Ok(())
