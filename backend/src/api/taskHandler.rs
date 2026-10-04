@@ -1,10 +1,11 @@
 use axum::{
     extract::{Path, State},
     routing::get,
-    Json, Router,
+    Extension, Json, Router,
 };
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
+use tokio::sync::broadcast::Sender;
 
 use crate::database::Db;
 
@@ -56,6 +57,7 @@ pub struct TaskStats {
 // runs SQL query and returns data as JSON
 pub async fn get_tasks_by_date(
     State(database): State<Db>,
+    Extension(events): Extension<Sender<String>>,
     Path(date): Path<NaiveDate>,
 ) -> Result<Json<Vec<TaskResponse>>, axum::http::StatusCode> {
     let tasks = database.get_tasks_by_date(date).await.map_err(|error| {
@@ -87,6 +89,8 @@ pub async fn get_tasks_by_date(
             },
         })
         .collect();
+
+    let _ = events.send("get_tasks_by_date".to_string());
 
     Ok(Json(response))
 }
