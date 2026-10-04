@@ -9,7 +9,7 @@ const show_popup = ref(false)
 let hide_popup_timeout: ReturnType<typeof setTimeout> | undefined
 
 connection.onmessage = function (event) {
-    console.log(event);
+    // console.log(event);
     last_msg.value = event.data;
     show_popup.value = true;
 
@@ -21,7 +21,7 @@ connection.onmessage = function (event) {
         show_popup.value = false;
     }, 3000)
 
-    console.log(event.data)
+    console.log("Websocket Message:", event.data)
 }
 
 connection.onopen = function (event) {
