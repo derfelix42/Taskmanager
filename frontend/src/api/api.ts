@@ -7,6 +7,48 @@ export async function getCategoryColors() {
     return await res.json()
 }
 
+export type StatisticsValue = {
+    tasks_created: number
+    tracked_hours: number
+}
+
+export type StatisticsCategory = StatisticsValue & {
+    color: string
+    name: string
+    share: number
+}
+
+export type StatisticsResponse = {
+    overall: StatisticsValue
+    this_year: StatisticsValue
+    last_year: StatisticsValue
+    timeframe: {
+        info: {
+            timeframe: string
+            offset: number
+        }
+        overall: StatisticsValue
+        sleep: {
+            sessions: number
+            hours: number
+        }
+        categories: StatisticsCategory[]
+    }
+}
+
+export async function getStatistics(timeframe?: string, offset?: number): Promise<StatisticsResponse> {
+    const params = new URLSearchParams()
+    if (timeframe) params.set("timeframe", timeframe)
+    if (offset !== undefined) params.set("offset", String(offset))
+
+    const query = params.toString()
+    const res = await fetch(`/api/v2/statistics${query ? `?${query}` : ""}`)
+    if (!res.ok) {
+        throw new Error(`Could not load statistics (${res.status})`)
+    }
+    return await res.json() as StatisticsResponse
+}
+
 /**
  * Tasks
  */

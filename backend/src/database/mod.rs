@@ -2,6 +2,18 @@ use sqlx::{query, MySql, MySqlPool, Pool};
 
 use crate::models::{category, task, task_by_date};
 
+#[derive(Debug, sqlx::FromRow)]
+pub struct StatisticsAggregate {
+    pub tasks_created: i64,
+    pub tracked_seconds: i64,
+}
+
+#[derive(Debug, sqlx::FromRow)]
+pub struct StatisticsSleep {
+    pub sessions: i64,
+    pub seconds: i64,
+}
+
 #[derive(Clone, Debug)]
 pub struct Db {
     pub pool: Pool<MySql>,
@@ -37,6 +49,94 @@ impl Db {
 
         let rows: Vec<category> = sqlx::query_as(query).fetch_all(&self.pool).await?;
         Ok(rows)
+    }
+
+    pub async fn get_statistics(
+        &self,
+        range: Option<(chrono::NaiveDateTime, chrono::NaiveDateTime)>,
+        category: Option<i64>,
+    ) -> Result<StatisticsAggregate, sqlx::Error> {
+        let mut task_query =
+            String::from("SELECT CAST(COUNT(ID) AS SIGNED) FROM tasks WHERE deleted = 0");
+        if range.is_some() {
+            task_query.push_str(" AND due >= ? AND due < ?");
+        }
+        if category.is_some() {
+            task_query.push_str(" AND category = ?");
+        }
+        let mut count_query = sqlx::query_scalar::<_, i64>(&task_query);
+        if let Some((start, end)) = range {
+            count_query = count_query.bind(start).bind(end);
+        }
+        if let Some(category) = category {
+            count_query = count_query.bind(category);
+        }
+        let tasks_created = count_query.fetch_one(&self.pool).await?;
+
+        let mut tracked_query = String::from(
+            "SELECT CAST(COALESCE(SUM(TIMESTAMPDIFF(SECOND, h.start_time, \
+             COALESCE(h.stop_time, CURRENT_TIMESTAMP))), 0)
+             AS SIGNED) FROM task_history h JOIN tasks t ON t.ID = h.taskID
+             WHERE t.deleted = 0",
+        );
+        if let Some((start, end)) = range {
+            tracked_query.push_str(" AND t.due >= ? AND t.due < ?");
+        }
+        if let Some(category) = category {
+            tracked_query.push_str(" AND t.category = ?");
+        }
+        let mut tracked = sqlx::query_scalar::<_, i64>(&tracked_query);
+        if let Some((start, end)) = range {
+            tracked = tracked.bind(start).bind(end);
+        }
+        if let Some(category) = category {
+            tracked = tracked.bind(category);
+        }
+        let tracked_seconds = tracked.fetch_one(&self.pool).await?;
+
+        Ok(StatisticsAggregate {
+            tasks_created,
+            tracked_seconds,
+        })
+    }
+
+    pub async fn get_sleep_statistics(
+        &self,
+        range: Option<(chrono::NaiveDateTime, chrono::NaiveDateTime)>,
+    ) -> Result<StatisticsSleep, sqlx::Error> {
+        match range {
+            Some((start, end)) => {
+                sqlx::query_as(
+                    "SELECT CAST(COUNT(ID) AS SIGNED) AS sessions,
+                        CAST(COALESCE(SUM(TIMESTAMPDIFF(
+                            SECOND,
+                            GREATEST(start_time, ?),
+                            LEAST(COALESCE(stop_time, CURRENT_TIMESTAMP), ?)
+                        )), 0) AS SIGNED) AS seconds
+                 FROM sleep_history
+                 WHERE start_time < ? AND (stop_time IS NULL OR stop_time > ?)",
+                )
+                .bind(start)
+                .bind(end)
+                .bind(end)
+                .bind(start)
+                .fetch_one(&self.pool)
+                .await
+            }
+            None => {
+                sqlx::query_as(
+                    "SELECT CAST(COUNT(ID) AS SIGNED) AS sessions,
+                        CAST(COALESCE(SUM(TIMESTAMPDIFF(
+                            SECOND,
+                            start_time,
+                            COALESCE(stop_time, CURRENT_TIMESTAMP)
+                        )), 0) AS SIGNED) AS seconds
+                 FROM sleep_history",
+                )
+                .fetch_one(&self.pool)
+                .await
+            }
+        }
     }
 
     pub async fn create_category(&self, bezeichnung: &str, color: &str) -> Result<(), sqlx::Error> {

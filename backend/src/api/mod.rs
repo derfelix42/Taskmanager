@@ -14,6 +14,9 @@ use weatherHandler::weather_router;
 
 mod openweathermap;
 
+mod statistics;
+use statistics::statistics_router;
+
 pub fn get_api_router(database: &Db) -> Router {
     Router::new()
         .route(
@@ -29,5 +32,6 @@ pub fn get_api_router(database: &Db) -> Router {
         .route("/category", category_router())
         .nest("/task", task_router())
         .nest("/weather", weather_router())
+        .nest("/statistics", statistics_router())
         .with_state(database.clone())
 }
